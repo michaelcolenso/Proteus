@@ -1,0 +1,80 @@
+#:schema https://raw.githubusercontent.com/mintyfrankie/brilliant-CV/main/metadata.toml.schema.json
+
+# Set the output language
+# INFO: value must matches folder suffix; i.e "zh" -> "./modules_zh"
+language = "en"
+
+[layout]
+    # Optional values: skyblue, red, nephritis, concrete, darknight
+    # You can also use a custom color by hex code i.e. "#1E90FF"
+    awesome_color = "darknight"
+
+    # Skips are for controlling the spacing between sections and entries
+    before_section_skip = "5pt"
+    before_entry_skip = "1pt"
+    before_entry_description_skip = "1pt"
+
+    [layout.fonts]
+        regular_fonts = ["Source Sans Pro", "Source Sans 3"]
+        header_font = "Roboto"
+
+    [layout.header]
+        # Optional values: left, center, right
+        header_align = "left"
+
+        # Decide if you want to display profile photo or not
+        display_profile_photo = false
+
+    [layout.entry]
+        # Decide if you want to put your company in bold or your position in bold
+        display_entry_society_first = false
+
+        # Decide if you want to display organisation logo or not
+        display_logo = false
+
+[inject]
+    # Decide if you want to inject AI prompt or not
+    inject_ai_prompt = true
+
+    # Decide if you want to inject keywords or not
+    inject_keywords = true
+    injected_keywords_list = ["Construction Project Manager", "Lean Construction", "Multifamily", "High-Rise", "Historic Renovation", "Seattle"]
+
+[personal]
+    first_name = "Michael"
+    last_name = "Colenso"
+
+    # The order of this section will affect how the entries are displayed
+    # The custom value is for any additional information you want to add, name it as custom-1, custom-2, etc.
+    [personal.info]
+        phone = "my_phone"
+        email = "my_email"
+        [personal.info.custom-1]
+            # image = "" # Example: image("./path/to/image.png")
+            awesomeIcon = "home" # Example: "graduation-cap" see https://typst.app/universe/package/fontawesome/
+            text = "my_location"
+            link = "https://www.nmu.edu"
+
+# add a new section if you want to include the language of your choice
+# i.e. [[lang.ru]]
+# each section must contains the following fields
+[lang.en]
+    header_quote = "Dynamic Construction Project Manager combining technical expertise with leadership, communication, and client-focused collaboration with a track record of delivering complex projects to demanding owners ahead of schedule and under budget."
+    cv_footer = "Construction Project Manager"
+    letter_footer = "Construction Project Manager"
+
+[lang.fr]
+    header_quote = "Chef de projet de construction techniquement compétent et axé sur le client, livrant des projets complexes à temps et dans les limites du budget."
+    cv_footer = "Résumé"
+    letter_footer = "Lettre de motivation"
+
+[lang.zh]
+    header_quote = "技术娴熟且以客户为中心的建筑项目经理，按时并在预算内完成复杂项目。"
+    cv_footer = "简历"
+    letter_footer = "申请信"
+
+ # For languages that are not written in Latin script
+ # Currently supported non-latin language codes: ("zh", "ja", "ko", "ru")
+[lang.non_latin]
+    name = "迈克尔·科伦索"
+    font = "Heiti SC"
