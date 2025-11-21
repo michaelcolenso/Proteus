@@ -9,24 +9,27 @@
   recipientName: "Company Name Here",
   recipientAddress: "Company Address Here",
   date: datetime.today().display(),
-  subject: "Subject: Hey!",
+  subject: "Subject: Application for [Position Title]",
   signature: image("src/signature.png"),
 )
 
 Dear Hiring Manager,
 
-I am excited to submit my application for the Senior Data Analyst position at ABC Company. With over 5 years of experience in data analysis and a demonstrated track record of success, I am confident in my ability to make a valuable contribution to your team.
+I am writing to express my strong interest in the [Position Title] role at [Company Name]. With over 20 years of progressive experience in construction project management and a proven track record of delivering complex projects on time and under budget, I am confident I can make an immediate and valuable contribution to your team.
 
-In my current role as a Data Analyst at XYZ Company, I have gained extensive experience in data mining, quantitative analysis, and data visualization. Through my work, I have developed a deep understanding of statistical concepts and have become adept at using tools such as SQL, Python, and R to extract insights from complex datasets. I have also gained valuable experience in presenting complex data in a visually appealing and easily accessible manner to stakeholders across all levels of an organization.
+Throughout my career, I have successfully managed diverse construction projects ranging from $1M to $200M, including high-rise buildings, multifamily developments, luxury residential properties, and historic renovations. Most recently, as Project Manager at STS Construction, I led the on-site team for a 58-unit, 8-story podium-style multifamily project in Seattle, achieving zero safety incidents while maintaining aggressive schedule targets. At Osborne Construction, I managed the $40M Hyatt Place Hotel & Apartments project, implementing the Last Planner System mid-project and achieving substantial completion two months ahead of schedule while negotiating over $4M in late-stage scope changes.
 
-I believe that my experience in data analysis makes me an ideal candidate for the Senior Data Analyst position at ABC Company. I am particularly excited about the opportunity to apply my skills to support your organization's mission and drive impactful insights. Your focus on driving innovative solutions to complex problems aligns closely with my own passion for using data analysis to drive positive change in organizations.
+What sets me apart is my ability to combine technical construction expertise with strong client relations and collaborative problem-solving. I have consistently built trust with owners, architects, and subcontractors by demonstrating transparency, fairness, and solution-oriented leadership. Whether managing ultra-high-net-worth clients on luxury residential projects or coordinating complex logistics on occupied senior living facilities, I prioritize clear communication and stakeholder alignment.
 
-In my current role, I have been responsible for leading data projects from initiation to completion. I work closely with cross-functional teams to identify business problems and use data to develop solutions that drive business outcomes. I have a proven track record of delivering high-quality work on time and within budget.
+I am particularly drawn to [Company Name] because of [specific reason - their project portfolio/company values/market leadership/innovation in construction methods]. Your work on [specific project or sector] aligns perfectly with my experience and passion for [relevant specialization]. I am excited about the opportunity to bring my expertise in [relevant skills: Lean Construction/CPM scheduling/preconstruction/team leadership] to your organization.
 
-Furthermore, I have extensive experience in developing and implementing data-driven solutions that improve business operations. For example, I have implemented predictive models that have improved sales forecasting accuracy by 10%, resulting in significant cost savings. I have also developed dashboards that provide real-time insights into business performance, enabling stakeholders to make more informed decisions.
+My background includes:
+• Managing projects across multiple sectors: multifamily, high-rise, hospitality, healthcare, and historic renovation
+• Implementing Lean Construction principles and the Last Planner System to improve efficiency and collaboration
+• Successfully navigating complex change management and contract negotiations
+• Building and leading high-performing field teams while maintaining exemplary safety records
+• Developing strong relationships with clients, resulting in repeat business and referrals
 
-As a highly motivated and detail-oriented individual, I am confident that I would thrive in the fast-paced and dynamic environment at ABC Company. I am excited about the opportunity to work with a talented team of professionals and to continue developing my skills in data analysis.
-
-Thank you for considering my application. I look forward to the opportunity to discuss my qualifications further.
+I would welcome the opportunity to discuss how my experience and approach to project management can benefit [Company Name]. Thank you for considering my application.
 
 Sincerely,

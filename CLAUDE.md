@@ -21,18 +21,37 @@ This is a **professional CV and cover letter system** built with [Typst](https:/
 ```
 brilliantmikecv/
 ├── cv.typ                      # Main CV entry point - imports modules
-├── letter.typ                  # Cover letter template
-├── metadata.toml               # Central configuration (personal info, layout, colors)
+├── cv_senior_pm.typ            # Senior PM variant (leadership focus)
+├── cv_superintendent.typ       # Superintendent variant (field focus)
+├── cv_estimator.typ            # Estimator variant (preconstruction focus)
+├── cv_exec_summary.typ         # One-page executive summary
+├── letter.typ                  # Main cover letter template
+├── metadata.toml               # Central configuration (personal info, layout, colors, keywords)
+├── generate.sh                 # Quick build script for all variants
 │
 ├── modules_en/                 # English CV content modules
 │   ├── education.typ           # Education history
 │   ├── professional.typ        # Full professional experience
 │   ├── professional_one_page.typ # Condensed one-page version
 │   ├── projects.typ            # Selected projects showcase
-│   ├── skills.typ              # Technical/professional skills
+│   ├── portfolio_projects.typ  # Detailed project descriptions (LinkedIn/portfolio)
+│   ├── skills.typ              # Technical/professional skills (ATS-optimized)
 │   ├── certificates.typ        # Certifications and training
+│   ├── references.typ          # References available statement
+│   ├── exec_summary.typ        # Executive summary for one-page CV
 │   ├── publications.typ        # Publications/bibliography
 │   └── temp.typ                # Temporary/scratch file (empty)
+│
+├── letters/                    # Cover letter templates
+│   ├── README.md               # Letter templates documentation
+│   ├── senior_pm.typ           # Senior PM cover letter template
+│   ├── multifamily.typ         # Multifamily construction template
+│   └── lean_construction.typ   # Lean construction specialist template
+│
+├── applications/               # Job application tracking
+│   ├── README.md               # Application tracking guide
+│   ├── tracker.md              # Main application tracking table
+│   └── responses/              # Interview prep and follow-up notes
 │
 ├── src/                        # Asset directory
 │   ├── avatar.png              # Profile photo (693KB)
@@ -52,6 +71,7 @@ brilliantmikecv/
 ├── cv.pdf                      # Compiled CV output (330KB)
 ├── letter.pdf                  # Compiled cover letter output (162KB)
 ├── README.md                   # User documentation
+├── CLAUDE.md                   # AI assistant guide (this file)
 └── .gitignore                  # Git exclusions
 ```
 
@@ -109,15 +129,228 @@ All modules follow this pattern:
 
 ### Building Documents
 
+#### Quick Build with generate.sh Script
+
+The repository includes a convenient build script for all CV variants:
+
 ```bash
-# Compile CV
+# Generate specific CV variant
+./generate.sh senior-pm          # Senior PM focused CV
+./generate.sh superintendent     # Superintendent focused CV
+./generate.sh estimator          # Estimator/Preconstruction CV
+./generate.sh exec-summary       # One-page executive summary
+./generate.sh standard           # Standard full CV
+./generate.sh letter             # Cover letter
+
+# Generate all variants at once
+./generate.sh all
+
+# Watch mode (auto-recompile on file changes)
+./generate.sh watch senior-pm
+
+# Clean all compiled PDFs
+./generate.sh clean
+
+# Show help
+./generate.sh help
+```
+
+#### Manual Compilation
+
+```bash
+# Compile specific CV variant
+typst compile cv_senior_pm.typ
+typst compile cv_superintendent.typ
+typst compile cv_estimator.typ
+typst compile cv_exec_summary.typ
+
+# Compile standard CV
 typst compile cv.typ
 
 # Compile cover letter
 typst compile letter.typ
 
 # Watch mode (auto-recompile on changes)
-typst watch cv.typ
+typst watch cv_senior_pm.typ
+```
+
+### CV Variants System
+
+This repository includes multiple CV variants tailored for different job applications:
+
+#### Available Variants
+
+**cv_senior_pm.typ** - Senior Project Manager
+- **Emphasis**: Leadership, P&L management, large projects ($12M-$200M)
+- **Target Roles**: Senior PM, Project Executive, Construction Manager
+- **Modules**: professional, projects, skills, education, certificates
+- **Best For**: Leadership positions with budget accountability
+
+**cv_superintendent.typ** - Superintendent / Field Operations
+- **Emphasis**: On-site management, safety, trade coordination
+- **Target Roles**: Superintendent, Senior Superintendent, Field Manager
+- **Modules**: professional, projects, skills, certificates, education
+- **Best For**: Field-focused positions emphasizing safety and operations
+
+**cv_estimator.typ** - Estimator / Preconstruction Manager
+- **Emphasis**: Estimating, value engineering, preconstruction, buyout
+- **Target Roles**: Estimator, Senior Estimator, Preconstruction Manager
+- **Modules**: professional, projects, skills, education, certificates
+- **Best For**: Preconstruction and estimating positions
+
+**cv_exec_summary.typ** - One-Page Executive Summary
+- **Emphasis**: Quick overview with key highlights
+- **Target Roles**: Any (for initial contact/networking)
+- **Modules**: exec_summary, education
+- **Best For**: Networking events, recruiter emails, quick applications
+
+**cv.typ** - Standard Full CV
+- **Emphasis**: Comprehensive professional history
+- **Target Roles**: General applications
+- **Modules**: education, professional, projects (skills commented out)
+- **Best For**: When comprehensive detail is needed
+
+#### Using CV Variants
+
+**Workflow for job applications**:
+
+1. **Identify target role type** (Senior PM, Superintendent, Estimator, etc.)
+2. **Select appropriate CV variant** from list above
+3. **Customize keywords** in metadata.toml if needed (see Keyword Optimization below)
+4. **Select matching cover letter template** from letters/ directory
+5. **Generate documents**:
+   ```bash
+   ./generate.sh senior-pm    # Compiles cv_senior_pm.pdf
+   cp letters/senior_pm.typ letter.typ
+   # Edit letter.typ with company-specific details
+   ./generate.sh letter
+   ```
+6. **Track application** in applications/tracker.md
+
+### Cover Letter Template System
+
+The `letters/` directory contains targeted cover letter templates for different construction roles:
+
+#### Available Templates
+
+- **senior_pm.typ** - Senior PM roles emphasizing leadership and P&L management
+- **multifamily.typ** - Multifamily/apartment construction focused positions
+- **lean_construction.typ** - Roles focused on Lean Construction implementation
+
+#### Using Cover Letter Templates
+
+```bash
+# 1. Copy appropriate template to root directory
+cp letters/senior_pm.typ letter.typ
+
+# 2. Customize placeholders in letter.typ
+# - [Company Name]
+# - [Position Title]
+# - [Hiring Manager Name]
+# - [Company Address]
+# - [specific reason for interest]
+
+# 3. Compile
+./generate.sh letter
+# or
+typst compile letter.typ
+```
+
+#### Creating Custom Letters
+
+For specific applications, create dated versions:
+
+```bash
+# Copy base template
+cp letters/multifamily.typ letters/2025-01-15_turner-construction.typ
+
+# Customize for specific company
+# Save in letters/ directory for version control
+```
+
+### Application Tracking System
+
+The `applications/` directory provides a structured system for tracking all job applications:
+
+#### tracker.md
+Markdown table tracking all applications with:
+- Date applied
+- Company name
+- Position title
+- CV variant used
+- Cover letter template used
+- Current status
+- Next action/follow-up date
+
+#### Individual Application Files
+Create `applications/YYYY-MM-DD_company-name.md` for each application with:
+- Job posting details and URL
+- Company research notes
+- Why you're interested
+- Key talking points for interviews
+- Customizations made to CV/cover letter
+
+#### responses/ Directory
+Store interview prep notes, thank you emails, and follow-up communications
+
+#### Example Workflow
+
+```bash
+# 1. Create application file
+echo "# ABC Construction - Senior PM" > applications/2025-01-15_abc-construction.md
+
+# 2. Add company research and job requirements to file
+
+# 3. Generate appropriate CV
+./generate.sh senior-pm
+
+# 4. Customize cover letter
+cp letters/senior_pm.typ letter.typ
+# Edit with company specifics
+./generate.sh letter
+
+# 5. Update applications/tracker.md with new row
+
+# 6. Submit application
+
+# 7. Create interview prep notes if contacted
+# applications/responses/abc-construction-interview-prep.md
+```
+
+### Keyword Optimization
+
+The metadata.toml file includes keyword optimization profiles for different role types. These help with ATS (Applicant Tracking System) parsing.
+
+#### Available Keyword Profiles
+
+Located in metadata.toml:
+- `[keywords.senior_pm]` - Senior PM keywords
+- `[keywords.superintendent]` - Superintendent keywords
+- `[keywords.estimator]` - Estimator keywords
+- `[keywords.lean_specialist]` - Lean Construction keywords
+- `[keywords.multifamily]` - Multifamily construction keywords
+- `[keywords.luxury_residential]` - Luxury residential keywords
+
+#### Using Keyword Profiles
+
+1. **Identify target role type**
+2. **Find matching profile** in metadata.toml
+3. **Copy keywords** from the profile
+4. **Update `[inject] injected_keywords_list`** section with selected keywords
+5. **Recompile** CV
+
+**Example**:
+```toml
+[inject]
+    inject_keywords = true
+    # Copy from [keywords.senior_pm] profile
+    injected_keywords_list = [
+        "Senior Project Manager",
+        "P&L Management",
+        "Team Leadership",
+        "Multifamily",
+        "Seattle"
+    ]
 ```
 
 ### Common Modifications

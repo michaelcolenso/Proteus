@@ -78,3 +78,91 @@ language = "en"
 [lang.non_latin]
     name = "迈克尔·科伦索"
     font = "Heiti SC"
+
+# Keyword Optimization Profiles
+# Use these to customize injected keywords for different role types
+# To use: Copy the desired profile's keywords to [inject] injected_keywords_list above
+
+[keywords.senior_pm]
+    injected_keywords_list = [
+        "Senior Project Manager",
+        "Construction Management",
+        "P&L Management",
+        "Budget Accountability",
+        "Team Leadership",
+        "Client Relations",
+        "Multifamily",
+        "High-Rise",
+        "Seattle",
+        "Project Executive"
+    ]
+
+[keywords.superintendent]
+    injected_keywords_list = [
+        "Superintendent",
+        "Field Operations",
+        "Safety Management",
+        "OSHA",
+        "Trade Coordination",
+        "Quality Control",
+        "Subcontractor Management",
+        "On-site Leadership",
+        "Zero Incidents",
+        "Construction Operations"
+    ]
+
+[keywords.estimator]
+    injected_keywords_list = [
+        "Estimator",
+        "Preconstruction",
+        "Cost Estimating",
+        "Value Engineering",
+        "Bid Management",
+        "Buyout",
+        "Contract Negotiation",
+        "Scope Development",
+        "Budget Management",
+        "Primavera P6"
+    ]
+
+[keywords.lean_specialist]
+    injected_keywords_list = [
+        "Lean Construction",
+        "Last Planner System",
+        "Pull Planning",
+        "Continuous Improvement",
+        "Collaborative Planning",
+        "Process Optimization",
+        "Schedule Optimization",
+        "Lean Construction Institute",
+        "IPD",
+        "Target Value Delivery"
+    ]
+
+[keywords.multifamily]
+    injected_keywords_list = [
+        "Multifamily Construction",
+        "Podium Construction",
+        "Type III/V",
+        "Wood Frame",
+        "Apartment Development",
+        "Residential Construction",
+        "Urban Development",
+        "Seattle",
+        "Mixed-Use",
+        "Housing"
+    ]
+
+[keywords.luxury_residential]
+    injected_keywords_list = [
+        "Luxury Residential",
+        "High-End Construction",
+        "Client Relations",
+        "Custom Homes",
+        "Renovation",
+        "Historic Renovation",
+        "Ultra High Net Worth",
+        "Boutique Construction",
+        "Design-Build",
+        "Craftsmanship"
+    ]
