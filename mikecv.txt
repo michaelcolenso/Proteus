@@ -1,0 +1,723 @@
+<documents>
+<document index="1">
+<source>./cv.typ</source>
+<document_content>
+// Imports
+#import "@preview/brilliant-cv:2.0.3": cv
+#let metadata = toml("./metadata.toml")
+#let importModules(modules, lang: metadata.language) = {
+  for module in modules {
+    include {
+      "modules_" + lang + "/" + module + ".typ"
+    }
+  }
+}
+
+
+#show: cv.with(
+  metadata,
+  profilePhoto: none,
+)
+#importModules((
+      "education",
+
+  "professional",
+    "projects",
+    // "skills"
+))
+
+</document_content>
+</document>
+<document index="2">
+<source>./letter.typ</source>
+<document_content>
+// Imports
+#import "@preview/brilliant-cv:2.0.3": letter
+#let metadata = toml("./metadata.toml")
+
+
+#show: letter.with(
+  metadata,
+  myAddress: "Your Address Here",
+  recipientName: "Company Name Here",
+  recipientAddress: "Company Address Here",
+  date: datetime.today().display(),
+  subject: "Subject: Hey!",
+  signature: image("src/signature.png"),
+)
+
+Dear Hiring Manager,
+
+I am excited to submit my application for the Senior Data Analyst position at ABC Company. With over 5 years of experience in data analysis and a demonstrated track record of success, I am confident in my ability to make a valuable contribution to your team.
+
+In my current role as a Data Analyst at XYZ Company, I have gained extensive experience in data mining, quantitative analysis, and data visualization. Through my work, I have developed a deep understanding of statistical concepts and have become adept at using tools such as SQL, Python, and R to extract insights from complex datasets. I have also gained valuable experience in presenting complex data in a visually appealing and easily accessible manner to stakeholders across all levels of an organization.
+
+I believe that my experience in data analysis makes me an ideal candidate for the Senior Data Analyst position at ABC Company. I am particularly excited about the opportunity to apply my skills to support your organization's mission and drive impactful insights. Your focus on driving innovative solutions to complex problems aligns closely with my own passion for using data analysis to drive positive change in organizations.
+
+In my current role, I have been responsible for leading data projects from initiation to completion. I work closely with cross-functional teams to identify business problems and use data to develop solutions that drive business outcomes. I have a proven track record of delivering high-quality work on time and within budget.
+
+Furthermore, I have extensive experience in developing and implementing data-driven solutions that improve business operations. For example, I have implemented predictive models that have improved sales forecasting accuracy by 10%, resulting in significant cost savings. I have also developed dashboards that provide real-time insights into business performance, enabling stakeholders to make more informed decisions.
+
+As a highly motivated and detail-oriented individual, I am confident that I would thrive in the fast-paced and dynamic environment at ABC Company. I am excited about the opportunity to work with a talented team of professionals and to continue developing my skills in data analysis.
+
+Thank you for considering my application. I look forward to the opportunity to discuss my qualifications further.
+
+Sincerely,
+
+</document_content>
+</document>
+<document index="3">
+<source>./metadata.toml</source>
+<document_content>
+#:schema https://raw.githubusercontent.com/mintyfrankie/brilliant-CV/main/metadata.toml.schema.json
+
+# Set the output language
+# INFO: value must matches folder suffix; i.e "zh" -> "./modules_zh"
+language = "en"
+
+[layout]
+    # Optional values: skyblue, red, nephritis, concrete, darknight
+    # You can also use a custom color by hex code i.e. "#1E90FF"
+    awesome_color = "darknight"
+
+    # Skips are for controlling the spacing between sections and entries
+    before_section_skip = "5pt"
+    before_entry_skip = "1pt"
+    before_entry_description_skip = "1pt"
+
+    [layout.fonts]
+        regular_fonts = ["Source Sans Pro", "Source Sans 3"]
+        header_font = "Roboto"
+
+    [layout.header]
+        # Optional values: left, center, right
+        header_align = "left"
+
+        # Decide if you want to display profile photo or not
+        display_profile_photo = false
+
+    [layout.entry]
+        # Decide if you want to put your company in bold or your position in bold
+        display_entry_society_first = false
+
+        # Decide if you want to display organisation logo or not
+        display_logo = false
+
+[inject]
+    # Decide if you want to inject AI prompt or not
+    inject_ai_prompt = true
+
+    # Decide if you want to inject keywords or not
+    inject_keywords = true
+    injected_keywords_list = ["Construction Project Manager", "Lean Construction", "Multifamily", "High-Rise", "Historic Renovation", "Seattle"]
+
+[personal]
+    first_name = "Michael"
+    last_name = "Colenso"
+
+    # The order of this section will affect how the entries are displayed
+    # The custom value is for any additional information you want to add, name it as custom-1, custom-2, etc.
+    [personal.info]
+        phone = "my_phone"
+        email = "my_email"
+        [personal.info.custom-1]
+            # image = "" # Example: image("./path/to/image.png")
+            awesomeIcon = "home" # Example: "graduation-cap" see https://typst.app/universe/package/fontawesome/
+            text = "my_location"
+            link = "https://www.nmu.edu"
+
+# add a new section if you want to include the language of your choice
+# i.e. [[lang.ru]]
+# each section must contains the following fields
+[lang.en]
+    header_quote = "Dynamic Construction Project Manager combining technical expertise with leadership, communication, and client-focused collaboration with a track record of delivering complex projects to demanding owners ahead of schedule and under budget."
+    cv_footer = "Construction Project Manager"
+    letter_footer = "Construction Project Manager"
+
+[lang.fr]
+    header_quote = "Chef de projet de construction techniquement compétent et axé sur le client, livrant des projets complexes à temps et dans les limites du budget."
+    cv_footer = "Résumé"
+    letter_footer = "Lettre de motivation"
+
+[lang.zh]
+    header_quote = "技术娴熟且以客户为中心的建筑项目经理，按时并在预算内完成复杂项目。"
+    cv_footer = "简历"
+    letter_footer = "申请信"
+
+ # For languages that are not written in Latin script
+ # Currently supported non-latin language codes: ("zh", "ja", "ko", "ru")
+[lang.non_latin]
+    name = "迈克尔·科伦索"
+    font = "Heiti SC"
+
+</document_content>
+</document>
+<document index="4">
+<source>./mikecv.txt</source>
+<document_content>
+
+</document_content>
+</document>
+<document index="5">
+<source>./modules_en/certificates.typ</source>
+<document_content>
+// Imports
+#import "@preview/brilliant-cv:2.0.3": cvSection, cvHonor
+#let metadata = toml("../metadata.toml")
+#let cvSection = cvSection.with(metadata: metadata)
+#let cvHonor = cvHonor.with(metadata: metadata)
+
+
+#cvSection("Certificates")
+
+#cvHonor(
+  date: [2022],
+  title: [AWS Certified Security],
+  issuer: [Amazon Web Services (AWS)],
+)
+
+#cvHonor(
+  date: [2017],
+  title: [Applied Data Science with Python],
+  issuer: [Coursera],
+)
+
+#cvHonor(
+  date: [],
+  title: [SQL Fundamentals Track],
+  issuer: [Datacamp],
+)
+
+</document_content>
+</document>
+<document index="6">
+<source>./modules_en/education.typ</source>
+<document_content>
+// Imports
+#import "@preview/brilliant-cv:2.0.3": cvSection, cvEntry, hBar
+#let metadata = toml("../metadata.toml")
+#let cvSection = cvSection.with(metadata: metadata)
+#let cvEntry = cvEntry.with(metadata: metadata)
+
+
+#cvSection("Education")
+
+#cvEntry(
+  title: [Northern Michigan University],
+  society: [Bachelor of Science, Construction Management],
+  date: [2004],
+  location: [Marquette, MI],
+  logo: image("../src/logos/ucla.png"),
+  description: none,
+)
+
+</document_content>
+</document>
+<document index="7">
+<source>./modules_en/professional.typ</source>
+<document_content>
+// Imports
+#import "@preview/brilliant-cv:2.0.3": cvSection, cvEntry
+#let metadata = toml("../metadata.toml")
+#let cvSection = cvSection.with(metadata: metadata)
+#let cvEntry = cvEntry.with(metadata: metadata)
+
+#cvSection("Professional Experience")
+
+#columns[  
+  // #cvEntry(
+  //   title: [Bartender],
+  //   society: [Easy Street Records],
+  //   logo: none,
+  //   date: [2024 – Present],
+  //   location: [Seattle, WA],
+  //   description: list(
+  //     [Craft exceptional beverages while fostering a welcoming atmosphere in an iconic Seattle music venue],
+  //     [Maintain efficient bar operations while engaging with a diverse clientele in a fast-paced environment]
+  //   ),
+  //   tags: ("Customer Service", "Beverage Operations", "Music Venue")
+  // )
+
+  #cvEntry(    
+    title: [Project Manager],
+    society: [STS Construction],
+    logo: none,
+    date: [2022 – 2024],
+    location: [Seattle, WA],
+    description: list(
+      [Led on-site construction team to successfully complete a 58 unit, 8 story, podium style multifamily project in Seattle],
+      [Developed and enforced safety protocols, achieving zero incidents throughout all project phases],
+      [Consistently and effectively implemented a solutions-oriented approach to challenges, reducing conflict by acknowledging all perspectives and highlighting common interests.]
+    ),
+    tags: ("Multifamily Construction", "Team Leadership", "Budget Management")
+  )
+
+  #cvEntry(
+    title: [Project Manager],
+    society: [Toth Construction],
+    logo: none,
+    date: [2020 – 2022],
+    location: [Seattle, WA],
+    description: list(
+      [Managed high-end residential construction projects, ensuring impeccable coordination with subcontractors and vendors to deliver luxury built environments with grace and integrity.],
+      [Cultivated strong relationships with ultra-high-net-worth clients and world-class design professionals, as well as extraordinarily talented artisans and craftspeople.],
+    ),
+    tags: ("Client Relations", "Luxury Residential", "Project Scheduling")
+  )
+
+  #cvEntry(
+    title: [Project Manager],
+    society: [Osborne Construction Company],
+    logo: none,
+    date: [2018 – 2019],
+    location: [Redmond, WA],
+    description: list(
+      [Provided stakeholders with detailed monthly cost reports and cash flow projections, enhancing financial decision-making],
+      [Managed multiple and ongoing scope changes and successfully prepared,negotiated, and executed all owner change orders and subcontract modifications as required],
+      [Created and managed a comprehensive CPM project schedule that was crucial to the successful delivery of the project.]
+    ),
+    tags: ("Risk Management", "Financial Reporting", "Stakeholder Communication", "Change Management")
+  )
+
+  #cvEntry(
+    title: [Project Manager],
+    society: [Discovery Land Company],
+    logo: none,
+    date: [2017 – 2018],
+    location: [Abaco, Bahamas],
+    description: list(
+      [Oversaw construction of multiple luxury homes in a private development for extremely discerning clients expecting the highest level of service as well as the utmost discretion],
+      [Managed all project phases across international borders, efficiently resolving logistical challenges related to timely procurement of construction materials],
+      [Established strong vendor partnerships, ensuring material availability despite supply chain constraints on a remote and rural island location]
+    ),
+    tags: ("International Projects", "Luxury Residential", "Procurement")
+  )
+
+  #colbreak()
+
+  #cvEntry(
+    title: [Project Manager],
+    society: [SODO Builders],
+    logo: none,
+    date: [2016 – 2017],
+    location: [Seattle, WA],
+    description: list(
+      [Implemented and tracked changes to the scope of work while mitigating claims risk; Provided
+value-engineered solutions where applicable and negotiated subcontractor change orders when required.],
+      [Coordinated high-rise building envelope construction including curtain wall system, precast elements, and insulated metal panels for both towers.]
+    ),
+    tags: ("High-Rise Construction", "Value Engineering", "Claims Mitigation")
+  )
+
+  #cvEntry(
+    title: [Software Developer / Senior Software Engineer],
+    society: [Adonit, Team Coco, Cloudmunch],
+    logo: none,
+    date: [2012 – 2015],
+    location: [Los Angeles, CA & Seattle, WA],
+    description: list(
+      [Self-taught programming skills leading to significant contributions in professional software teams],
+      [Advanced to Senior Software Engineer at a cloud services startup, driving product development and scaling solutions]
+    ),
+    tags: ("Software Development", "Cross-Functional Collaboration")
+  )
+//   #cvEntry(
+//     title: [Senior Software Engineer],
+//     society: [Cloudmunch],
+//     logo: none,
+//     date: [Apr 2015 – Nov 2015 · 8 mos],
+//     location: [Bellevue, Washington],
+//     description: list(
+//         [Contributed to enterprise JavaScript applications development, implementing DevOps solutions for improved deployment processes.],
+//         [Collaborated with team members to maintain and enhance application architecture and system stability.]
+//     ),
+//     tags: ("JavaScript", "DevOps", "Web Development", "Team Collaboration")
+// )
+
+// #cvEntry(
+//     title: [Front End Web Developer],
+//     society: [Adonit],
+//     logo: none,
+//     date: [Mar 2014 – Mar 2015 · 1 yr 1 mo],
+//     location: [Austin, TX [Remote]],
+//     description: list(
+//         [Worked remotely within an agile team to build and maintain web applications using modern front-end practices.],
+//         [Utilized Sass, CoffeeScript, and MongoDB to implement features and improvements as part of the development team.]
+//     ),
+//     tags: ("Front-end Development", "Sass", "MongoDB", "Agile", "Remote Work")
+// )
+
+// #cvEntry(
+//     title: [Interactive Developer],
+//     society: [Crispin Porter + Bogusky],
+//     logo: none,
+//     date: [2013 – 2014 · 1 yr],
+//     location: [Santa Monica, California],
+//     description: list(
+//         [Built and maintained web applications for major brand clients as part of a collaborative development team.],
+//         [Participated in implementing modern frameworks and technologies to enhance application performance.]
+//     ),
+//     tags: ("Full Stack Development", "Web Development", "Modern Frameworks")
+// )
+
+// #cvEntry(
+//     title: [Web Developer],
+//     society: [Team Coco Digital],
+//     logo: none,
+//     date: [2013 – Jul 2013 · 7 mos],
+//     location: [Burbank, California],
+//     description: list(
+//         [Contributed to the development of interactive features for Conan O'Brien's digital platform.],
+//         [Assisted in implementing responsive design solutions to improve mobile user experience.]
+//     ),
+//     tags: ("Web Development", "Interactive Features", "Responsive Design")
+// )
+
+// #cvEntry(
+//     title: [Web Developer],
+//     society: [Lunchbox],
+//     logo: none,
+//     date: [Oct 2012 – Feb 2013 · 5 mos],
+//     location: [Culver City, California],
+//     description: list(
+//         [Developed and maintained web experiences for retail clients using HTML5, CSS3, and JavaScript.],
+//         [Collaborated with creative and marketing teams to implement new features and content updates.],
+//         [Worked with MongoDB and modern web technologies to improve existing platform functionality.]
+//     ),
+//     tags: ("Web Development", "HTML5", "CSS3", "JavaScript", "MongoDB")
+// )
+
+  #cvEntry(
+    title: [Project Engineer],
+    society: [Graham Construction],
+    logo: none,
+    date: [2007 – 2011],
+    location: [Seattle, WA],
+    description: list(
+      [Managed over \$50 million in contracted scope, completing two projects in 18 months for a single owner],
+      [Supported preconstruction efforts on negotiated and design-build projects, coordinating bids for public and private clients],
+      [Executed complex projects in education, retail, hospitality, and seismic retrofit sectors],
+    ),
+    tags: ("Preconstruction", "Project Management", "Multisector Experience")
+  )
+
+  #cvEntry(
+    title: [Project Engineer],
+    society: [Skender Construction],
+    logo: none,
+    date: [2006 – 2007],
+    location: [Chicago, IL],
+    description: list(
+      [Evaluated and reviewed bids to ensure alignment with project requirements and budget goals],
+      [Developed scopes of work and negotiated subcontracts for a senior care facility project],
+      [Monitored project progress, ensuring adherence to key milestones and objectives]
+    ),
+    tags: ("Bid Evaluation", "Contract Negotiation", "Healthcare Facilities")
+  )
+
+  #cvEntry(
+    title: [Field Engineer],
+    society: [West Builders],
+    logo: none,
+    date: [2004 – 2006],
+    location: [Los Angeles, CA],
+    description: list(
+      [Controlled project costs and monitored progress, ensuring adherence to schedules and budgets],
+      [Managed procurement, change analysis, and document control on a complex, high-stakes project]
+    ),
+    tags: ("Cost Control", "Procurement", "Project Documentation", "Multifamily")
+  )
+]
+
+#pagebreak()
+</document_content>
+</document>
+<document index="8">
+<source>./modules_en/professional_one_page.typ</source>
+<document_content>
+// Imports
+#import "@preview/brilliant-cv:2.0.3": cvSection, cvEntry
+#let metadata = toml("../metadata.toml")
+#let cvSection = cvSection.with(metadata: metadata)
+#let cvEntry = cvEntry.with(metadata: metadata)
+
+#cvSection("Professional Experience")
+
+#cvEntry(
+    title: [Bartender],
+    society: [Easy Street Records],
+    logo: none,
+    date: [2024 – Present],
+    location: [Seattle, WA],
+    description: list(
+      [Craft beverages and maintain efficient operations in iconic Seattle music venue],
+      [Foster welcoming atmosphere while engaging diverse clientele in fast-paced setting]
+    ),
+    tags: ("Customer Service", "Beverage Operations", "Music Venue")
+)
+
+#cvEntry(    
+    title: [Project Manager],
+    society: [STS Construction],
+    logo: none,
+    date: [2022 – 2024],
+    location: [Seattle, WA],
+    description: list(
+      [Managed 58-unit podium-style multifamily project through successful completion],
+      [Developed and enforced safety protocols resulting in zero incidents during construction],
+      [Implemented solutions-oriented approach to reduce conflicts and maintain project momentum]
+    ),
+    tags: ("Multifamily Construction", "Team Leadership", "Safety Management")
+)
+
+#cvEntry(
+    title: [Project Manager],
+    society: [Toth Construction],
+    logo: none,
+    date: [2020 – 2022],
+    location: [Seattle, WA],
+    description: list(
+      [Managed high-end residential projects, coordinating with elite design professionals and craftspeople],
+      [Maintained client satisfaction through meticulous attention to detail and clear communication]
+    ),
+    tags: ("Luxury Residential", "Client Relations", "Project Delivery")
+)
+
+#cvEntry(
+    title: [Project Manager],
+    society: [Discovery Land Company],
+    logo: none,
+    date: [2017 – 2018],
+    location: [Abaco, Bahamas],
+    description: list(
+      [Oversaw construction of luxury homes in remote island setting, resolving complex logistics challenges],
+      [Managed international procurement and vendor relationships to maintain material availability]
+    ),
+    tags: ("International Construction", "Luxury Residential", "Supply Chain")
+)
+
+#cvEntry(
+    title: [Software Developer],
+    society: [Various Tech Companies],
+    logo: none,
+    date: [2012 – 2015],
+    location: [California & Washington],
+    description: list(
+      [Built web applications using JavaScript, HTML5, CSS3, and MongoDB at Cloudmunch, Team Coco, and CP+B],
+      [Contributed to development teams at startups and established companies, focusing on front-end and full-stack solutions]
+    ),
+    tags: ("Web Development", "JavaScript", "Full Stack", "Agile")
+)]
+
+</document_content>
+</document>
+<document index="9">
+<source>./modules_en/projects.typ</source>
+<document_content>
+    // Imports
+    #import "@preview/brilliant-cv:2.0.3": cvSection, cvEntry
+    #let metadata = toml("../metadata.toml")
+    #let cvSection = cvSection.with(metadata: metadata)
+    #let cvEntry = cvEntry.with(metadata: metadata)
+    
+    #cvSection("Selected Projects")
+    
+    #columns[        
+    
+    #cvEntry(      title: [2210 Eastlake],
+      society: [8-story, 57-unit apartment building],
+      date: [\$12M],
+      location: [Seattle, WA],
+      description: list(
+        [35,000 SF, 8-story, 57-unit multifamily apartment building in Seattle’s Eastlake neighborhood (podium construction: 6 over 2).],
+        [Held full responsibility for project team development and direction, client relations, subcontractor coordination, project scheduling and controls, and project financials—including reporting and forecasting.]
+      ),
+      tags: ("Multifamily", "Project Management", "Team Leadership")
+    )
+    
+    #cvEntry(
+      title: [255 S. King St],
+      society: [Twin towers development in Pioneer Square],
+      date: [\$200M],
+      location: [Seattle, WA],
+      description: list(
+        [Managed the construction of a 600,000 SF development in Seattle's Pioneer Square, including two concrete towers: a 23-story Embassy Suites hotel and an 18-story office tower/parking garage connected by a 10-story glass atrium.],
+        [Coordinated complex logistics and sequencing for high-rise construction, ensuring adherence to aggressive timelines and budget constraints.]
+      ),
+      tags: ("High-Rise Construction", "Hospitality")
+    )
+    
+    #cvEntry(
+      title: [Hyatt Place Hotel & Apartments],
+      society: [Hotel and apartments completed two months early],
+      date: [\$40M],
+      location: [Seattle, WA],
+      description: list(
+        [Spearheaded mid-project implementation of the Last Planner System, creating aggressive and efficient construction schedules; achieved substantial completion two months early.],
+        [Implemented 25 Construction Change Directives in the final four months, successfully negotiating over \$4M in late changes to project scope while maintaining project momentum.],
+        [Fostered a culture of trust and collaboration with the owner/client by consistently demonstrating advocacy, fairness, diligence, and transparency throughout a challenging project.]
+      ),
+      tags: ("Hospitality", "Multi-Family", "Last Planner System", "Change Management")
+    )
+    
+    #cvEntry(
+      title: [The Alaska Building Renovation],
+      society: [Award-winning historic renovation],
+      date: [\$12M+],
+      location: [Seattle, WA],
+      description: list(
+        [Executed over \$6M in negotiated changes while maintaining a positive and cooperative relationship with the owner.],
+        [Developed marketing content, including copy and photography, contributing to the project's recognition with prestigious national awards.],
+        [- 2009 National Excellence in Construction Awards - Eagle Award Winner for Best Historic Restoration],
+        [- 2009 Northwest Construction - Best Historic Renovation]
+      ),
+      tags: ("Historic Restoration", "Seismic Retrofit", "Award-Winning Projects")
+    )
+    #colbreak()
+    #cvEntry(
+      title: [Barton Senior Residences],
+      society: [Senior residence project completed 15% faster],
+      date: [\$12M],
+      location: [Chicago, IL],
+      description: list(
+        [Led a project-specific Lean Construction initiative, collaborating closely with key trades to develop an aggressive and achievable project schedule using the Last Planner System.],
+        [Achieved nearly 10% budget savings through diligent and timely buyout negotiations and contract execution.]
+      ),
+      tags: ("Healthcare Facilities", "Lean Construction", "Scheduling")
+    )
+    
+    #cvEntry(
+      title: [Temple Lofts],
+      society: [Historic temple converted into luxury lofts],
+      date: [\$25M],
+      location: [Los Angeles, CA],
+      description: list(
+        [Managed the seismic retrofit and complete renovation of a historic Masonic Temple in downtown Long Beach, converting it into luxury loft apartments.],
+        [Preserved historical elements while integrating modern amenities, resulting in high tenant satisfaction and occupancy rates.],
+        [Navigated complex regulatory requirements for historic buildings, securing necessary approvals without project delays.]
+      ),
+      tags: ("Historic Renovation", "Seismic Retrofit", "Multi-Family Housing")
+    )
+    
+    #cvEntry(
+      title: [Quail Park of Lynnwood Expansion],
+      society: [Expansion of senior living facility],
+      date: [\$35M],
+      location: [Seattle, WA],
+      description: list(
+        [Managed a large 3-story addition to an existing and fully operational assisted living/memory care facility, ensuring minimal disruption to residents.],
+        [Added 14 independent cottage-style duplex residences, along with associated sitework and utility scope.],
+        [Coordinated closely with facility management to maintain safety and operational efficiency throughout construction.]
+      ),
+      tags: ("Senior Living", "Facility Expansion", "Project Coordination")
+    )
+
+        #cvEntry(
+      title: [Luxury Residential Projects],
+      society: [multiple projects],
+      date: [\$15M],
+      location: [Seattle & Bahamas],
+      description: list(
+        [Managed major remodels of historic homes in Seattle, including projects in The Highlands and Laurelhurst neighborhoods.],
+        [Coordinated construction of a custom apartment home on the 57th floor of a new Seattle high-rise. The client combined three units to create a unique and expansive space. Successfully integrated custom luxury residential design elements and materials into the building's mechanical and structural systems, presenting a notable yet satisfying challenge.],
+        [Built several high-end beach vacation homes at Bakers Bay, an exclusive private development in the Bahamas. Interesting logistical challenges related to this international, rural island location included material procurement, workforce availability, and schedule management. ]
+
+      ),
+      tags: ("Luxury Residential", "International", "Project Management")
+    )
+    ]
+
+</document_content>
+</document>
+<document index="10">
+<source>./modules_en/publications.typ</source>
+<document_content>
+// Imports
+#import "@preview/brilliant-cv:2.0.3": cvSection, cvPublication
+#let metadata = toml("../metadata.toml")
+#let cvSection = cvSection.with(metadata: metadata)
+
+
+#cvSection("Publications")
+
+#cvPublication(
+  bib: bibliography("../src/publications.bib"),
+  keyList: (
+    "smith2020",
+    "jones2021",
+    "wilson2022",
+  ),
+  refStyle: "apa",
+)
+
+</document_content>
+</document>
+<document index="11">
+<source>./modules_en/skills.typ</source>
+<document_content>
+// Imports
+#import "@preview/brilliant-cv:2.0.3": cvSection, cvSkill, hBar
+#let metadata = toml("../metadata.toml")
+#let cvSection = cvSection.with(metadata: metadata)
+
+
+#cvSection("Skills and Proficiencies")
+
+#cvSkill(
+  type: [General],
+  info: [Leadership #hBar() Client Relations #hBar() CPM Scheduling #hBar() Estimating #hBar() Preconstruction #hBar() Value Engineering #hBar() Forecasting/Cost Projections #hBar() Claims Analysis #hBar() Change Management #hBar() Lean Construction #hBar() Contract Negotiation #hBar() Scope Development #hBar() Business Development #hBar() Construction Operations #hBar() Verbal and Written Communication],
+)
+
+#cvSkill(
+  type: [Software],
+  info: [MS Project #hBar() Primavera P6 #hBar() Procore #hBar() Bluebeam #hBar() MS Excel/Word/Outlook #hBar() Smartsheet #hBar() BuilderTrend #hBar() Python #hBar() JavaScript #hBar() HTML #hBar() CSS]
+)
+
+
+
+</document_content>
+</document>
+<document index="12">
+<source>./modules_en/temp.typ</source>
+<document_content>
+
+</document_content>
+</document>
+<document index="13">
+<source>./src/publications.bib</source>
+<document_content>
+@article{smith2020,
+  author = {Smith, John},
+  title = {An Introduction to Data Analysis Techniques},
+  journal = {Journal of Data Science},
+  year = {2020},
+  volume = {15},
+  number = {2},
+  pages = {123-145},
+}
+
+@inproceedings{jones2021,
+  author = {Jones, Sarah and Brown, Michael},
+  title = {Exploratory Data Analysis for Predictive Modeling},
+  booktitle = {Proceedings of the International Conference on Data Science},
+  year = {2021},
+  pages = {256-267},
+}
+
+@book{wilson2022,
+  author = {Wilson, David},
+  title = {Machine Learning for Data Analysis},
+  publisher = {Springer},
+  year = {2022},
+}
+
+@techreport{brown2023,
+  author = {Brown, Emily},
+  title = {Data Visualization Techniques: A Comparative Study},
+  institution = {Technical Report},
+  year = {2023},
+}
+
+</document_content>
+</document>
+</documents>
