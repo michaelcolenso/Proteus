@@ -4,16 +4,26 @@
 #let cvSection = cvSection.with(metadata: metadata)
 
 
-#cvSection("Skills and Proficiencies")
+#cvSection("Skills & Core Competencies")
 
 #cvSkill(
-  type: [General],
-  info: [Leadership #hBar() Client Relations #hBar() CPM Scheduling #hBar() Estimating #hBar() Preconstruction #hBar() Value Engineering #hBar() Forecasting/Cost Projections #hBar() Claims Analysis #hBar() Change Management #hBar() Lean Construction #hBar() Contract Negotiation #hBar() Scope Development #hBar() Business Development #hBar() Construction Operations #hBar() Verbal and Written Communication],
+  type: [Project Management],
+  info: [CPM Scheduling #hBar() Budget Management (\$1M-\$200M) #hBar() Risk Mitigation #hBar() Contract Administration #hBar() Subcontractor Management #hBar() Owner Relations #hBar() Team Leadership #hBar() Safety Management #hBar() Quality Control #hBar() Progress Reporting],
 )
 
 #cvSkill(
-  type: [Software],
-  info: [MS Project #hBar() Primavera P6 #hBar() Procore #hBar() Bluebeam #hBar() MS Excel/Word/Outlook #hBar() Smartsheet #hBar() BuilderTrend #hBar() Python #hBar() JavaScript #hBar() HTML #hBar() CSS]
+  type: [Construction Specializations],
+  info: [High-Rise #hBar() Multifamily #hBar() Historic Renovation #hBar() Luxury Residential #hBar() Healthcare/Senior Living #hBar() Hospitality #hBar() Podium Construction #hBar() Seismic Retrofit #hBar() Occupied Facilities],
+)
+
+#cvSkill(
+  type: [Methodologies & Processes],
+  info: [Last Planner System #hBar() Lean Construction #hBar() Design-Build #hBar() Negotiated Work #hBar() Value Engineering #hBar() Pull Planning #hBar() Preconstruction Services #hBar() Estimating #hBar() Buyout Management #hBar() Change Order Management],
+)
+
+#cvSkill(
+  type: [Software & Technology],
+  info: [MS Project #hBar() Primavera P6 #hBar() Procore #hBar() Bluebeam Revu #hBar() MS Office Suite #hBar() Smartsheet #hBar() BuilderTrend #hBar() AutoCAD (reading/markup) #hBar() Excel (Advanced) #hBar() Python #hBar() JavaScript],
 )
 
 
