@@ -41,7 +41,7 @@
     date: [2020 – 2022],
     location: [Seattle, WA],
     description: list(
-      [Managed high-end residential construction projects, ensuring impeccable coordination with subcontractors and vendors to deliver luxury built environments with grace and integrity.],
+      [Managed high-end luxury residential construction projects, ensuring impeccable coordination with subcontractors and vendors to deliver luxury built environments with grace and integrity.],
       [Cultivated strong relationships with ultra-high-net-worth clients and world-class design professionals, as well as extraordinarily talented artisans and craftspeople.],
     ),
     tags: ("Client Relations", "Luxury Residential", "Project Scheduling")
