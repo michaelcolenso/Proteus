@@ -1,0 +1,364 @@
+# Achievement Metrics Database
+# Central store for all quantifiable achievements across CV, cover letters, and applications
+# Last updated: 2025-12-03
+
+achievements:
+  # ============================================================================
+  # PROJECT VALUES & SCOPE
+  # ============================================================================
+
+  - id: eastlake-value
+    metric: project_value
+    value: "$12M"
+    value_numeric: 12000000
+    project: "2210 Eastlake"
+    company: "STS Construction"
+    year: 2023
+    location: "Seattle, WA"
+    category: multifamily
+    tags: [budget, senior-pm, multifamily, superintendent]
+
+  - id: eastlake-units
+    metric: unit_count
+    value: "57 units"
+    value_numeric: 57
+    project: "2210 Eastlake"
+    company: "STS Construction"
+    year: 2023
+    location: "Seattle, WA"
+    category: multifamily
+    tags: [multifamily, senior-pm, superintendent]
+
+  - id: eastlake-sf
+    metric: square_footage
+    value: "35,000 SF"
+    value_numeric: 35000
+    project: "2210 Eastlake"
+    company: "STS Construction"
+    year: 2023
+    location: "Seattle, WA"
+    category: multifamily
+    tags: [multifamily, senior-pm, superintendent]
+
+  - id: eastlake-stories
+    metric: building_height
+    value: "8 stories"
+    value_numeric: 8
+    project: "2210 Eastlake"
+    company: "STS Construction"
+    year: 2023
+    location: "Seattle, WA"
+    category: multifamily
+    tags: [multifamily, senior-pm, high-rise, superintendent]
+
+  - id: king-street-value
+    metric: project_value
+    value: "$200M"
+    value_numeric: 200000000
+    project: "255 S. King St"
+    company: "SODO Builders"
+    year: 2017
+    location: "Seattle, WA"
+    category: mixed-use
+    tags: [budget, senior-pm, high-rise, hospitality]
+
+  - id: king-street-sf
+    metric: square_footage
+    value: "600,000 SF"
+    value_numeric: 600000
+    project: "255 S. King St"
+    company: "SODO Builders"
+    year: 2017
+    location: "Seattle, WA"
+    category: mixed-use
+    tags: [high-rise, senior-pm, hospitality]
+
+  - id: king-street-hotel-stories
+    metric: building_height
+    value: "23 stories"
+    value_numeric: 23
+    project: "255 S. King St - Embassy Suites Tower"
+    company: "SODO Builders"
+    year: 2017
+    location: "Seattle, WA"
+    category: hospitality
+    tags: [high-rise, senior-pm, hospitality]
+
+  - id: king-street-office-stories
+    metric: building_height
+    value: "18 stories"
+    value_numeric: 18
+    project: "255 S. King St - Office Tower"
+    company: "SODO Builders"
+    year: 2017
+    location: "Seattle, WA"
+    category: commercial
+    tags: [high-rise, senior-pm]
+
+  - id: hyatt-place-value
+    metric: project_value
+    value: "$40M"
+    value_numeric: 40000000
+    project: "Hyatt Place Hotel & Apartments"
+    company: "Osborne Construction"
+    year: 2019
+    location: "Seattle, WA"
+    category: mixed-use
+    tags: [budget, senior-pm, hospitality, multifamily, lean]
+
+  - id: hyatt-place-early-completion
+    metric: schedule_performance
+    value: "2 months early"
+    value_numeric: 2
+    unit: "months"
+    project: "Hyatt Place Hotel & Apartments"
+    company: "Osborne Construction"
+    year: 2019
+    location: "Seattle, WA"
+    category: mixed-use
+    tags: [senior-pm, scheduling, lean, hospitality]
+
+  - id: hyatt-place-change-orders
+    metric: change_order_value
+    value: "$4M+"
+    value_numeric: 4000000
+    project: "Hyatt Place Hotel & Apartments"
+    company: "Osborne Construction"
+    year: 2019
+    location: "Seattle, WA"
+    category: mixed-use
+    tags: [senior-pm, change-management, negotiation]
+
+  - id: hyatt-place-ccd-count
+    metric: directive_count
+    value: "25 CCDs"
+    value_numeric: 25
+    project: "Hyatt Place Hotel & Apartments"
+    company: "Osborne Construction"
+    year: 2019
+    location: "Seattle, WA"
+    category: mixed-use
+    tags: [senior-pm, change-management]
+
+  - id: alaska-building-value
+    metric: project_value
+    value: "$12M+"
+    value_numeric: 12000000
+    project: "The Alaska Building Renovation"
+    company: "Graham Construction"
+    year: 2009
+    location: "Seattle, WA"
+    category: historic-renovation
+    tags: [budget, senior-pm, historic, estimator]
+
+  - id: alaska-building-change-orders
+    metric: change_order_value
+    value: "$6M+"
+    value_numeric: 6000000
+    project: "The Alaska Building Renovation"
+    company: "Graham Construction"
+    year: 2009
+    location: "Seattle, WA"
+    category: historic-renovation
+    tags: [senior-pm, change-management, negotiation, estimator]
+
+  - id: barton-senior-value
+    metric: project_value
+    value: "$12M"
+    value_numeric: 12000000
+    project: "Barton Senior Residences"
+    company: "Skender Construction"
+    year: 2007
+    location: "Chicago, IL"
+    category: senior-living
+    tags: [budget, senior-pm, healthcare, lean]
+
+  - id: barton-senior-savings
+    metric: budget_savings
+    value: "10%"
+    value_numeric: 10
+    unit: "percent"
+    project: "Barton Senior Residences"
+    company: "Skender Construction"
+    year: 2007
+    location: "Chicago, IL"
+    category: senior-living
+    tags: [senior-pm, estimator, lean, negotiation]
+
+  - id: barton-senior-schedule
+    metric: schedule_performance
+    value: "15% faster"
+    value_numeric: 15
+    unit: "percent"
+    project: "Barton Senior Residences"
+    company: "Skender Construction"
+    year: 2007
+    location: "Chicago, IL"
+    category: senior-living
+    tags: [senior-pm, scheduling, lean]
+
+  - id: temple-lofts-value
+    metric: project_value
+    value: "$25M"
+    value_numeric: 25000000
+    project: "Temple Lofts"
+    company: "West Builders"
+    year: 2006
+    location: "Los Angeles, CA"
+    category: historic-renovation
+    tags: [budget, senior-pm, historic, multifamily]
+
+  - id: quail-park-value
+    metric: project_value
+    value: "$35M"
+    value_numeric: 35000000
+    project: "Quail Park of Lynnwood Expansion"
+    company: "Graham Construction"
+    year: 2011
+    location: "Seattle, WA"
+    category: senior-living
+    tags: [budget, senior-pm, healthcare]
+
+  - id: luxury-residential-value
+    metric: project_value
+    value: "$15M"
+    value_numeric: 15000000
+    project: "Luxury Residential Projects"
+    companies: ["Toth Construction", "Discovery Land Company"]
+    years: [2020, 2021, 2022]
+    location: "Seattle & Bahamas"
+    category: luxury-residential
+    tags: [budget, senior-pm, luxury, international]
+
+  - id: graham-contract-value
+    metric: contract_value
+    value: "$50M+"
+    value_numeric: 50000000
+    company: "Graham Construction"
+    date_range: "2007-2011"
+    location: "Seattle, WA"
+    category: multiple
+    tags: [budget, senior-pm, estimator]
+
+  # ============================================================================
+  # SAFETY PERFORMANCE
+  # ============================================================================
+
+  - id: sts-safety-record
+    metric: safety_incidents
+    value: "Zero incidents"
+    value_numeric: 0
+    company: "STS Construction"
+    project: "2210 Eastlake"
+    year: 2023
+    location: "Seattle, WA"
+    category: safety
+    tags: [safety, superintendent, senior-pm]
+
+  # ============================================================================
+  # TEAM & LEADERSHIP
+  # ============================================================================
+
+  - id: sts-team-size
+    metric: team_size
+    value: "58-unit on-site team"
+    description: "Led on-site construction team"
+    company: "STS Construction"
+    year: 2023
+    location: "Seattle, WA"
+    tags: [leadership, senior-pm, superintendent]
+
+  # ============================================================================
+  # AWARDS & RECOGNITION
+  # ============================================================================
+
+  - id: alaska-building-eagle-award
+    metric: award
+    value: "National Excellence in Construction Awards - Eagle Award"
+    category: "Best Historic Restoration"
+    year: 2009
+    project: "The Alaska Building Renovation"
+    company: "Graham Construction"
+    awarding_org: "Associated Builders and Contractors"
+    tags: [historic, senior-pm, awards]
+
+  - id: alaska-building-nw-award
+    metric: award
+    value: "Northwest Construction - Best Historic Renovation"
+    year: 2009
+    project: "The Alaska Building Renovation"
+    company: "Graham Construction"
+    tags: [historic, senior-pm, awards]
+
+  # ============================================================================
+  # EFFICIENCY & PROCESS IMPROVEMENTS
+  # ============================================================================
+
+  - id: hyatt-lean-implementation
+    metric: process_improvement
+    value: "Last Planner System implementation"
+    description: "Mid-project implementation of Last Planner System"
+    project: "Hyatt Place Hotel & Apartments"
+    company: "Osborne Construction"
+    year: 2019
+    location: "Seattle, WA"
+    impact: "Achieved substantial completion 2 months early"
+    tags: [lean, senior-pm, process-improvement]
+
+  - id: barton-lean-initiative
+    metric: process_improvement
+    value: "Lean Construction initiative with Last Planner System"
+    description: "Project-specific Lean Construction initiative"
+    project: "Barton Senior Residences"
+    company: "Skender Construction"
+    year: 2007
+    location: "Chicago, IL"
+    impact: "15% schedule improvement, 10% budget savings"
+    tags: [lean, senior-pm, process-improvement]
+
+# ============================================================================
+# METADATA
+# ============================================================================
+
+metadata:
+  version: "1.0"
+  last_updated: "2025-12-03"
+  total_achievements: 36
+  owner: "Michael Colenso"
+
+categories:
+  - multifamily
+  - high-rise
+  - historic-renovation
+  - luxury-residential
+  - senior-living
+  - healthcare
+  - hospitality
+  - commercial
+  - mixed-use
+  - international
+  - safety
+  - awards
+
+tags:
+  role_based:
+    - senior-pm
+    - superintendent
+    - estimator
+    - lean
+  skill_based:
+    - budget
+    - scheduling
+    - safety
+    - leadership
+    - negotiation
+    - change-management
+    - process-improvement
+  project_type:
+    - multifamily
+    - high-rise
+    - historic
+    - luxury
+    - healthcare
+    - hospitality
+    - international
