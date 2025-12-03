@@ -7,12 +7,15 @@ on:
       - 'metadata.toml'
       - 'modules_en/**'
       - 'src/**'
+      - '.github/workflows/compile-pdfs.yml'
   pull_request:
     paths:
       - '**.typ'
       - 'metadata.toml'
       - 'modules_en/**'
       - 'src/**'
+      - '.github/workflows/compile-pdfs.yml'
+  workflow_dispatch:
 
 jobs:
   compile-pdfs:
@@ -32,6 +35,13 @@ jobs:
         with:
           typst-version: 'latest'
 
+      - name: Verify Typst installation
+        run: |
+          echo "Checking Typst installation..."
+          which typst || echo "ERROR: typst not found in PATH"
+          typst --version || echo "ERROR: typst command failed"
+          echo "PATH: $PATH"
+
       - name: Install required fonts
         run: |
           sudo apt-get update
@@ -45,6 +55,12 @@ jobs:
       - name: Compile all CV variants
         run: |
           echo "=== Compiling all CV variants ==="
+
+          # Verify Typst is available
+          echo "Verifying Typst before compilation..."
+          which typst
+          typst --version
+          echo ""
 
           # Compile standard CV
           echo "Compiling cv.typ..."
