@@ -27,18 +27,10 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Install Typst
-        run: |
-          # Download latest Typst release from GitHub
-          TYPST_VERSION="v0.12.0"
-          wget "https://github.com/typst/typst/releases/download/${TYPST_VERSION}/typst-x86_64-unknown-linux-musl.tar.xz"
-          tar -xf typst-x86_64-unknown-linux-musl.tar.xz
-          chmod +x typst-x86_64-unknown-linux-musl/typst
-          sudo mv typst-x86_64-unknown-linux-musl/typst /usr/local/bin/typst
-          rm -rf typst-x86_64-unknown-linux-musl*
-          # Verify installation
-          which typst
-          typst --version
+      - name: Setup Typst
+        uses: typst-community/setup-typst@v3
+        with:
+          typst-version: 'latest'
 
       - name: Install required fonts
         run: |
