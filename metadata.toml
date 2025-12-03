@@ -47,8 +47,8 @@ language = "en"
     # The order of this section will affect how the entries are displayed
     # The custom value is for any additional information you want to add, name it as custom-1, custom-2, etc.
     [personal.info]
-        phone = "my_phone"
-        email = "my_email"
+        phone = "206.607.7836"
+        email = "michaelcolenso@gmail.com"
         [personal.info.custom-1]
             # image = "" # Example: image("./path/to/image.png")
             awesomeIcon = "home" # Example: "graduation-cap" see https://typst.app/universe/package/fontawesome/
