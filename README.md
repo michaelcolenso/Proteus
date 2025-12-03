@@ -556,6 +556,58 @@ The brilliant-cv template supports various section types:
 - `cvEntry()` - Job/education entries with full details
 - `hBar()` - Horizontal separator bar
 
+### Job Description Keyword Analyzer
+
+Optimize your CV keywords for ATS compatibility by analyzing job postings:
+
+```bash
+# Analyze a job posting
+python3 scripts/analyze_job.py --file job_posting.txt
+
+# Generate keyword suggestions
+python3 scripts/analyze_job.py --file job_posting.txt --suggest
+
+# Save keyword profile
+python3 scripts/analyze_job.py --file job_posting.txt --suggest --output new_keywords.toml
+```
+
+**Features**:
+- **ATS Match Score**: Percentage alignment with job requirements
+- **Keyword Extraction**: Automatically identifies relevant construction keywords
+- **Gap Analysis**: Shows missing keywords that might cause ATS rejection
+- **Ranked Suggestions**: Prioritized list of keywords to add
+- **Profile Generation**: Creates ready-to-use keyword profiles for metadata.toml
+
+**Workflow**:
+1. Save job posting to a text file
+2. Run analyzer to see match score and gaps
+3. Review suggested keywords
+4. Update metadata.toml with relevant keywords
+5. Recompile CV with optimized keywords
+
+**Example Output**:
+```
+ATS MATCH SCORE: 68.5%
+  ✓ GOOD - Decent alignment, room for improvement
+
+MISSING KEYWORDS:
+  ✗ procore
+  ✗ primavera p6
+  ✗ leed ap
+
+TOP SUGGESTIONS:
+  1. Procore (mentioned 3x)
+  2. Primavera P6 (mentioned 2x)
+  3. LEED AP (certification)
+```
+
+The analyzer focuses on construction-specific keywords including:
+- Roles (Project Manager, Superintendent, Estimator)
+- Skills (Lean Construction, Schedule Management, Safety)
+- Project Types (Multifamily, High-Rise, Renovation)
+- Tools (Procore, P6, Bluebeam)
+- Certifications (PMP, LEED, OSHA)
+
 ## Resources
 
 - [Typst Documentation](https://typst.app/docs)
