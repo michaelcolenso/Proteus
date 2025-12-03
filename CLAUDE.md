@@ -268,6 +268,139 @@ cp letters/multifamily.typ letters/2025-01-15_turner-construction.typ
 # Save in letters/ directory for version control
 ```
 
+### Multi-Format Export Pipeline
+
+**Location**: `scripts/export_cv.py` and integrated into `generate.sh`
+
+The Multi-Format Export Pipeline converts Typst-compiled CVs into multiple formats for different submission methods and platforms.
+
+#### Available Formats
+
+| Format | Purpose | Requirements | Use Case |
+|--------|---------|--------------|----------|
+| **PDF** | Standard application | typst | Email attachments, print |
+| **TXT** | Online forms | typst, pdftotext | Copy/paste into application fields |
+| **MD** | GitHub/LinkedIn | typst, pandoc | Profile updates, version control |
+| **HTML** | Portfolio websites | typst, pandoc | Online hosting, web links |
+
+#### Quick Usage
+
+```bash
+# Via generate.sh (recommended)
+./generate.sh export senior-pm all                  # All formats
+./generate.sh export senior-pm txt html             # Specific formats
+./generate.sh export-all all                        # All variants, all formats
+
+# Direct Python script (more control)
+python3 scripts/export_cv.py cv_senior_pm --formats all
+python3 scripts/export_cv.py cv_senior_pm --formats txt md --output-dir custom/
+python3 scripts/export_cv.py cv_senior_pm --formats pdf --ats  # ATS-optimized
+```
+
+#### Format Details
+
+**Plain Text (.txt)**:
+- Extracted from PDF using `pdftotext`
+- Layout preserved where possible
+- Perfect for online application forms that don't accept PDFs
+- ATS-friendly (no complex formatting)
+
+**Markdown (.md)**:
+- Converted via `pandoc` or text-based fallback
+- Structured with headers and bullet points
+- Ideal for:
+  - LinkedIn profile updates
+  - GitHub README
+  - Personal website CMS
+  - Version control systems
+
+**HTML (.html)**:
+- Converted via `pandoc` with embedded CSS styling
+- Self-contained (no external dependencies)
+- Responsive and print-friendly
+- Ideal for:
+  - Portfolio websites
+  - GitHub Pages hosting
+  - Sharing via web link
+
+**ATS-Optimized PDF**:
+- Simplified Typst template (future enhancement)
+- No complex layouts or columns
+- Maximum ATS compatibility
+- Note: Currently uses standard PDF; dedicated ATS templates coming soon
+
+#### Workflow Integration
+
+**Job Application Workflow**:
+1. Compile standard PDF: `./generate.sh senior-pm`
+2. Export for online form: `./generate.sh export senior-pm txt`
+3. Copy text content: `cat exports/cv_senior_pm.txt`
+4. Submit both PDF (attachment) and TXT (paste into form)
+
+**Portfolio Update Workflow**:
+1. Export to HTML: `./generate.sh export senior-pm html`
+2. Upload to website: `cp exports/cv_senior_pm.html ~/website/cv.html`
+3. Commit and deploy
+
+**LinkedIn Sync Workflow**:
+1. Export exec summary: `./generate.sh export exec-summary md`
+2. Review markdown: `cat exports/cv_exec_summary.md`
+3. Copy sections to LinkedIn profile
+
+#### Dependencies
+
+**Required**:
+- Python 3.x
+- Typst (for PDF compilation)
+
+**Optional** (for full functionality):
+```bash
+# Ubuntu/Debian
+sudo apt-get install poppler-utils pandoc
+
+# macOS
+brew install poppler pandoc
+```
+
+**Fallback Behavior**:
+- If `pdftotext` missing: TXT export fails
+- If `pandoc` missing: Uses text-based conversion (basic formatting)
+
+#### File Output
+
+All exports saved to `exports/` directory:
+```
+exports/
+├── cv_senior_pm.pdf        # Standard PDF
+├── cv_senior_pm.txt        # Plain text
+├── cv_senior_pm.md         # Markdown
+├── cv_senior_pm.html       # HTML
+└── cv_senior_pm_ats.pdf    # ATS-optimized (when --ats used)
+```
+
+#### AI Assistant Guidelines
+
+When helping with export tasks:
+1. **Check requirements**: Verify tools installed before recommending formats
+2. **Suggest appropriate format**: Match format to user's use case
+3. **Test fallbacks**: If optional tools missing, use basic conversions
+4. **Review output**: Check exported files for formatting issues
+5. **Document limitations**: Note when advanced features unavailable
+
+**Example**:
+```bash
+# User needs to apply via online form
+# 1. Export to text
+./generate.sh export senior-pm txt
+
+# 2. Verify output looks good
+cat exports/cv_senior_pm.txt | head -50
+
+# 3. If formatting issues, manually clean up the text file
+```
+
+For detailed documentation, see `exports/README.md`.
+
 ### Application Tracking System
 
 The `applications/` directory provides a structured system for tracking all job applications:

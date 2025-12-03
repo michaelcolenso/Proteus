@@ -60,6 +60,39 @@ typst compile letter.typ
 typst watch cv.typ
 ```
 
+### Multi-Format Export
+
+Export your CV to multiple formats for different use cases:
+
+```bash
+# Export to all formats (PDF, TXT, MD, HTML)
+./generate.sh export senior-pm all
+
+# Export to specific formats
+./generate.sh export senior-pm txt html
+
+# Export all CV variants
+./generate.sh export-all all
+```
+
+**Available Formats**:
+- **PDF**: Standard high-quality CV (via Typst)
+- **TXT**: Plain text for online application forms
+- **MD**: Markdown for GitHub/LinkedIn
+- **HTML**: Styled HTML for portfolio websites
+
+**Requirements**:
+- Python 3.x (required)
+- `pdftotext` from poppler-utils (optional, for TXT)
+- `pandoc` (optional, for MD/HTML)
+
+**Use Cases**:
+- **TXT**: Copy/paste into online job application forms
+- **MD**: Update LinkedIn profile or GitHub README
+- **HTML**: Host on personal website or portfolio
+
+See [exports/README.md](exports/README.md) for detailed documentation.
+
 ## Configuration
 
 ### metadata.toml
