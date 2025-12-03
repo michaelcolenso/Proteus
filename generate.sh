@@ -136,6 +136,43 @@ case $1 in
         esac
         ;;
 
+    "export")
+        if [ -z "$2" ] || [ -z "$3" ]; then
+            echo "Usage: ./generate.sh export [variant] [formats]"
+            echo "Example: ./generate.sh export senior-pm all"
+            echo "Example: ./generate.sh export senior-pm \"txt html md\""
+            echo "Formats: pdf, txt, md, html, all"
+            exit 1
+        fi
+
+        variant=$2
+        shift 2
+        formats="$@"
+
+        echo "=== Exporting $variant to formats: $formats ==="
+        python3 scripts/export_cv.py "cv_${variant}" --formats $formats
+        ;;
+
+    "export-all")
+        formats=${2:-all}
+        echo "=== Exporting all CV variants to format(s): $formats ==="
+        echo ""
+
+        python3 scripts/export_cv.py cv --formats $formats
+        echo ""
+        python3 scripts/export_cv.py cv_senior_pm --formats $formats
+        echo ""
+        python3 scripts/export_cv.py cv_superintendent --formats $formats
+        echo ""
+        python3 scripts/export_cv.py cv_estimator --formats $formats
+        echo ""
+        python3 scripts/export_cv.py cv_exec_summary --formats $formats
+
+        echo ""
+        echo -e "${GREEN}=== All variants exported ===${NC}"
+        echo "Check the exports/ directory for output files"
+        ;;
+
     "help"|"--help"|"-h"|"")
         echo "CV Generation Script"
         echo ""
@@ -151,12 +188,17 @@ case $1 in
         echo "  all              Generate all variants"
         echo "  clean            Remove all compiled PDFs"
         echo "  watch [variant]  Watch and auto-compile on changes"
+        echo "  export [variant] [formats]   Export CV to multiple formats"
+        echo "  export-all [formats]         Export all variants"
         echo "  help             Show this help message"
         echo ""
         echo "Examples:"
-        echo "  ./generate.sh senior-pm       # Compile senior PM CV"
-        echo "  ./generate.sh all             # Compile everything"
-        echo "  ./generate.sh watch senior-pm # Auto-compile on changes"
+        echo "  ./generate.sh senior-pm              # Compile senior PM CV"
+        echo "  ./generate.sh all                    # Compile everything"
+        echo "  ./generate.sh watch senior-pm        # Auto-compile on changes"
+        echo "  ./generate.sh export senior-pm all   # Export to all formats"
+        echo "  ./generate.sh export senior-pm txt html  # Export to specific formats"
+        echo "  ./generate.sh export-all all         # Export all variants, all formats"
         echo ""
         echo "CV Variants:"
         echo "  • cv_senior_pm.typ        - Senior PM emphasis"
@@ -164,6 +206,15 @@ case $1 in
         echo "  • cv_estimator.typ        - Preconstruction emphasis"
         echo "  • cv_exec_summary.typ     - One-page summary"
         echo "  • cv.typ                  - Standard full CV"
+        echo ""
+        echo "Export Formats:"
+        echo "  • pdf      - Standard PDF (via Typst)"
+        echo "  • txt      - Plain text (for online forms)"
+        echo "  • md       - Markdown (for GitHub/LinkedIn)"
+        echo "  • html     - Styled HTML (for portfolio)"
+        echo "  • all      - All of the above"
+        echo ""
+        echo "Note: Exporting requires Python 3 and optionally pdftotext/pandoc"
         echo ""
         ;;
 
