@@ -13,22 +13,39 @@ This repository contains a modular CV system that generates professional PDF doc
 ├── cv.typ                    # Main CV entry point
 ├── letter.typ                # Cover letter template
 ├── metadata.toml             # Central configuration file
+├── generate.sh               # Build script for all CV variants
 ├── modules_en/               # English CV sections
 │   ├── education.typ
 │   ├── professional.typ
 │   ├── projects.typ
 │   ├── skills.typ
 │   ├── certificates.typ
-│   └── publications.typ
+│   ├── publications.typ
+│   └── achievement_helpers.typ  # Achievement database integration
+├── data/                     # Achievement database
+│   └── achievements.yaml     # Centralized metrics and accomplishments
+├── scripts/                  # Utility scripts
+│   └── achievements.py       # Achievement database CLI tool
 ├── src/                      # Assets directory
 │   ├── avatar.png           # Profile photo
 │   ├── signature.png        # Signature for cover letter
 │   ├── logos/               # Company/organization logos
 │   └── publications.bib     # Bibliography file
+├── letters/                  # Cover letter templates
+│   ├── senior_pm.typ
+│   ├── multifamily.typ
+│   └── lean_construction.typ
+├── applications/             # Job application tracking
+│   ├── tracker.md
+│   └── responses/
 └── otfs/                     # Custom font files
 
 Generated outputs:
 ├── cv.pdf                    # Compiled CV
+├── cv_senior_pm.pdf         # Senior PM variant
+├── cv_superintendent.pdf    # Superintendent variant
+├── cv_estimator.pdf         # Estimator variant
+├── cv_exec_summary.pdf      # One-page executive summary
 └── letter.pdf               # Compiled cover letter
 ```
 
@@ -229,6 +246,153 @@ language = "en"  # Must match folder suffix (modules_en, modules_zh, etc.)
 - Use `#columns[]` for multi-column layouts
 - Use `#colbreak()` to break between columns
 
+## Achievement Database
+
+### Overview
+
+The Achievement Database is a centralized YAML data store for all quantifiable achievements, metrics, and accomplishments across your career. This ensures consistency across your CV, cover letters, and interview preparation materials.
+
+**Benefits**:
+- **Consistency**: Same numbers everywhere (CV, cover letter, LinkedIn, interviews)
+- **Easy Updates**: Change a value once, updates everywhere it's used
+- **Variant Generation**: Filter achievements by tags for role-specific CVs
+- **Analytics**: Track which achievements appear in successful applications
+- **Interview Prep**: Quick reference for your key metrics
+
+### Structure
+
+The database is located in `data/achievements.yaml` and contains structured achievement entries:
+
+```yaml
+achievements:
+  - id: eastlake-value
+    metric: project_value
+    value: "$12M"
+    value_numeric: 12000000
+    project: "2210 Eastlake"
+    company: "STS Construction"
+    year: 2023
+    location: "Seattle, WA"
+    category: multifamily
+    tags: [budget, senior-pm, multifamily, superintendent]
+```
+
+### Using the Achievement Script
+
+The `scripts/achievements.py` tool provides powerful querying and reporting:
+
+```bash
+# List all achievements
+python3 scripts/achievements.py list
+
+# Filter by tags (for CV variants)
+python3 scripts/achievements.py list --tags senior-pm multifamily
+
+# Show database statistics
+python3 scripts/achievements.py stats
+
+# Get specific achievement by ID
+python3 scripts/achievements.py get eastlake-value
+
+# Generate detailed report
+python3 scripts/achievements.py report --tags senior-pm --sort value
+
+# Export to JSON
+python3 scripts/achievements.py export --format json --output achievements.json
+```
+
+### Integrating Achievements in Typst
+
+Use the helper functions in `modules_en/achievement_helpers.typ`:
+
+```typst
+// Import the helpers
+#import "achievement_helpers.typ": get_achievement, get_achievement_numeric
+
+// Simple value retrieval
+[Managed a #get_achievement("eastlake-value") project with #get_achievement("eastlake-units")]
+// Output: "Managed a $12M project with 57 units"
+
+// Get all achievements for a project
+#let eastlake = get_project_achievements("2210 Eastlake")
+
+// Filter by tags for CV variants
+#let senior_pm_achievements = get_achievements_by_tags(("senior-pm", "budget"))
+
+// Calculate totals
+[Managed over #format_currency(get_total_project_value()) in projects]
+// Output: "Managed over $351M in projects"
+```
+
+### Available Helper Functions
+
+- `get_achievement(id)` - Get value string by ID
+- `get_achievement_numeric(id)` - Get numeric value for calculations
+- `get_project_achievements(project_name)` - All achievements for a project
+- `get_company_achievements(company_name)` - All achievements for a company
+- `get_achievements_by_tags(tags)` - Filter by tags
+- `get_total_project_value()` - Sum all project values
+- `format_currency(amount)` - Format numbers as currency ($12M, $351M, etc.)
+
+### Achievement Metrics
+
+Common metric types in the database:
+- `project_value` - Total project budget/value
+- `unit_count` - Number of units (multifamily)
+- `square_footage` - Building size
+- `building_height` - Number of stories
+- `schedule_performance` - Time saved/gained
+- `budget_savings` - Percentage or dollar savings
+- `change_order_value` - Change order amounts
+- `safety_incidents` - Safety record
+- `team_size` - Team members managed
+- `award` - Recognition and awards
+
+### Filtering by Tags
+
+Achievements are tagged for easy filtering:
+
+**Role-based tags**: `senior-pm`, `superintendent`, `estimator`, `lean`
+
+**Skill-based tags**: `budget`, `scheduling`, `safety`, `leadership`, `negotiation`
+
+**Project-type tags**: `multifamily`, `high-rise`, `historic`, `luxury`, `hospitality`
+
+Example workflow for creating a Superintendent-focused CV:
+```bash
+# See all superintendent achievements
+python3 scripts/achievements.py report --tags superintendent
+
+# Export for reference
+python3 scripts/achievements.py export --tags superintendent --output superintendent_achievements.json
+```
+
+### Adding New Achievements
+
+1. Open `data/achievements.yaml`
+2. Add a new achievement following the existing pattern:
+```yaml
+  - id: new-project-value
+    metric: project_value
+    value: "$25M"
+    value_numeric: 25000000
+    project: "New Project Name"
+    company: "Company Name"
+    year: 2024
+    location: "City, State"
+    category: multifamily
+    tags: [budget, senior-pm, multifamily]
+```
+3. Reference it in your Typst modules using `get_achievement("new-project-value")`
+
+### Best Practices
+
+1. **Use unique, descriptive IDs**: `eastlake-value` not `project1`
+2. **Always include both value and value_numeric**: Allows display and calculations
+3. **Tag appropriately**: Makes filtering for CV variants easy
+4. **Be specific with projects/companies**: Helps with filtering and reporting
+5. **Update centrally**: Never hardcode numbers in CV modules—always use the database
+
 ## Customization Guide
 
 ### Changing Colors
@@ -391,6 +555,58 @@ The brilliant-cv template supports various section types:
 - `cvSection()` - Standard section header
 - `cvEntry()` - Job/education entries with full details
 - `hBar()` - Horizontal separator bar
+
+### Job Description Keyword Analyzer
+
+Optimize your CV keywords for ATS compatibility by analyzing job postings:
+
+```bash
+# Analyze a job posting
+python3 scripts/analyze_job.py --file job_posting.txt
+
+# Generate keyword suggestions
+python3 scripts/analyze_job.py --file job_posting.txt --suggest
+
+# Save keyword profile
+python3 scripts/analyze_job.py --file job_posting.txt --suggest --output new_keywords.toml
+```
+
+**Features**:
+- **ATS Match Score**: Percentage alignment with job requirements
+- **Keyword Extraction**: Automatically identifies relevant construction keywords
+- **Gap Analysis**: Shows missing keywords that might cause ATS rejection
+- **Ranked Suggestions**: Prioritized list of keywords to add
+- **Profile Generation**: Creates ready-to-use keyword profiles for metadata.toml
+
+**Workflow**:
+1. Save job posting to a text file
+2. Run analyzer to see match score and gaps
+3. Review suggested keywords
+4. Update metadata.toml with relevant keywords
+5. Recompile CV with optimized keywords
+
+**Example Output**:
+```
+ATS MATCH SCORE: 68.5%
+  ✓ GOOD - Decent alignment, room for improvement
+
+MISSING KEYWORDS:
+  ✗ procore
+  ✗ primavera p6
+  ✗ leed ap
+
+TOP SUGGESTIONS:
+  1. Procore (mentioned 3x)
+  2. Primavera P6 (mentioned 2x)
+  3. LEED AP (certification)
+```
+
+The analyzer focuses on construction-specific keywords including:
+- Roles (Project Manager, Superintendent, Estimator)
+- Skills (Lean Construction, Schedule Management, Safety)
+- Project Types (Multifamily, High-Rise, Renovation)
+- Tools (Procore, P6, Bluebeam)
+- Certifications (PMP, LEED, OSHA)
 
 ## Resources
 

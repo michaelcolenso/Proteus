@@ -29,6 +29,12 @@ brilliantmikecv/
 ├── metadata.toml               # Central configuration (personal info, layout, colors, keywords)
 ├── generate.sh                 # Quick build script for all variants
 │
+├── data/                       # Achievement database
+│   └── achievements.yaml       # Centralized metrics and accomplishments (NEW)
+│
+├── scripts/                    # Utility scripts
+│   └── achievements.py         # Achievement database CLI tool (NEW)
+│
 ├── modules_en/                 # English CV content modules
 │   ├── education.typ           # Education history
 │   ├── professional.typ        # Full professional experience
@@ -40,6 +46,7 @@ brilliantmikecv/
 │   ├── references.typ          # References available statement
 │   ├── exec_summary.typ        # Executive summary for one-page CV
 │   ├── publications.typ        # Publications/bibliography
+│   ├── achievement_helpers.typ # Achievement database integration helpers (NEW)
 │   └── temp.typ                # Temporary/scratch file (empty)
 │
 ├── letters/                    # Cover letter templates
@@ -123,6 +130,117 @@ All modules follow this pattern:
   ),
   tags: ("Tag1", "Tag2", "Tag3")
 )
+```
+
+### Achievement Database
+
+**data/achievements.yaml** - Centralized metrics and accomplishments database
+
+The Achievement Database is a foundational data system that stores all quantifiable achievements, metrics, and accomplishments in a structured YAML format. This ensures consistency across CV, cover letters, and interview preparation.
+
+**Key Benefits**:
+- **Data Consistency**: All metrics (project values, team sizes, timelines) are defined once and used everywhere
+- **Easy Maintenance**: Update a value in one place, automatically reflected across all documents
+- **Variant Generation**: Filter achievements by tags to generate role-specific CVs
+- **Interview Preparation**: Quick reference for specific metrics during interviews
+- **Analytics**: Track which achievements are most relevant for successful applications
+
+**Structure**:
+```yaml
+achievements:
+  - id: eastlake-value              # Unique identifier
+    metric: project_value            # Metric type
+    value: "$12M"                    # Display value
+    value_numeric: 12000000          # Numeric value for calculations
+    project: "2210 Eastlake"         # Associated project
+    company: "STS Construction"      # Company
+    year: 2023                       # Year
+    location: "Seattle, WA"          # Location
+    category: multifamily            # Project category
+    tags: [budget, senior-pm, multifamily, superintendent]  # Filter tags
+```
+
+**Available Metric Types**:
+- `project_value` - Total project budget
+- `unit_count` - Number of units (multifamily)
+- `square_footage` - Building size
+- `building_height` - Number of stories
+- `schedule_performance` - Time saved/gained
+- `budget_savings` - Cost savings
+- `change_order_value` - Change order amounts
+- `safety_incidents` - Safety record
+- `team_size` - Team members managed
+- `award` - Recognition and awards
+- `process_improvement` - Methodology implementations
+
+**Tag System**:
+- **Role-based**: `senior-pm`, `superintendent`, `estimator`, `lean`
+- **Skill-based**: `budget`, `scheduling`, `safety`, `leadership`, `negotiation`
+- **Project-type**: `multifamily`, `high-rise`, `historic`, `luxury`, `hospitality`
+
+**scripts/achievements.py** - Achievement database CLI tool
+
+A Python script providing powerful querying and reporting capabilities:
+
+```bash
+# List all achievements
+python3 scripts/achievements.py list
+
+# Filter by tags (for CV variants)
+python3 scripts/achievements.py list --tags senior-pm multifamily
+
+# Show database statistics
+python3 scripts/achievements.py stats
+
+# Get specific achievement
+python3 scripts/achievements.py get eastlake-value
+
+# Generate detailed report
+python3 scripts/achievements.py report --tags senior-pm --sort value
+
+# Export to JSON
+python3 scripts/achievements.py export --format json
+```
+
+**modules_en/achievement_helpers.typ** - Typst integration functions
+
+Helper functions for accessing achievement data in CV modules:
+
+```typst
+// Import helpers
+#import "achievement_helpers.typ": get_achievement, get_achievement_numeric
+
+// Simple value retrieval
+[Managed a #get_achievement("eastlake-value") project]
+// Output: "Managed a $12M project"
+
+// Get numeric values for calculations
+#let total = get_total_project_value()
+[Over #format_currency(total) in projects]
+// Output: "Over $351M in projects"
+
+// Filter by tags for CV variants
+#let pm_achievements = get_achievements_by_tags(("senior-pm", "budget"))
+```
+
+**Usage in AI Workflows**:
+
+When modifying CV content:
+1. **Check the database first**: `python3 scripts/achievements.py get <id>`
+2. **Use database values**: Never hardcode metrics—always reference achievement IDs
+3. **Tag appropriately**: Ensure new achievements have correct tags for filtering
+4. **Maintain consistency**: Update database, not individual CV modules
+5. **Test integration**: Compile CV after database changes to verify references
+
+**Example Workflow - Creating a Superintendent CV**:
+```bash
+# 1. Review superintendent-relevant achievements
+python3 scripts/achievements.py report --tags superintendent
+
+# 2. Note which achievement IDs to emphasize
+# 3. Update cv_superintendent.typ to use those IDs
+# 4. Compile and verify
+./generate.sh superintendent
 ```
 
 ## Development Workflows
