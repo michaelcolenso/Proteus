@@ -10,12 +10,9 @@ This directory contains targeted cover letter templates for different types of c
 
 ## Available Templates
 
-- **construction_pm.typ** - General construction project manager positions
 - **senior_pm.typ** - Senior PM roles emphasizing leadership and P&L management
 - **lean_construction.typ** - Roles focused on Lean Construction implementation
-- **luxury_residential.typ** - High-end residential and client-facing roles
 - **multifamily.typ** - Multifamily/apartment development focused positions
-- **healthcare.typ** - Healthcare and senior living facility projects
 
 ## Creating Custom Letters
 
