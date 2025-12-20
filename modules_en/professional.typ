@@ -1,5 +1,6 @@
 // Imports
 #import "@preview/brilliant-cv:2.0.3": cvSection, cvEntry
+#import "achievement_helpers.typ": get_achievement
 #let metadata = toml("../metadata.toml")
 #let cvSection = cvSection.with(metadata: metadata)
 #let cvEntry = cvEntry.with(metadata: metadata)
@@ -20,14 +21,14 @@
   //   tags: ("Customer Service", "Beverage Operations", "Music Venue")
   // )
 
-  #cvEntry(    
+  #cvEntry(
     title: [Project Manager],
     society: [STS Construction],
     logo: none,
     date: [2022 – 2024],
     location: [Seattle, WA],
     description: list(
-      [Led on-site construction team to successfully complete a 58 unit, 8 story, podium style multifamily project in Seattle],
+      [Led on-site construction team to successfully complete a #get_achievement("eastlake-units"), #get_achievement("eastlake-stories"), podium style multifamily project in Seattle],
       [Developed and enforced safety protocols, achieving zero incidents throughout all project phases],
       [Consistently and effectively implemented a solutions-oriented approach to challenges, reducing conflict by acknowledging all perspectives and highlighting common interests.]
     ),

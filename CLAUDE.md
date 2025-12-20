@@ -604,6 +604,91 @@ Located in metadata.toml:
     ]
 ```
 
+#### Job Description Keyword Analyzer
+
+**Location**: `scripts/analyze_job.py`
+
+The Job Description Keyword Analyzer is a powerful tool for optimizing your CV's ATS compatibility by analyzing job postings and comparing them against your current keywords.
+
+**Key Features**:
+- Extract keywords from job descriptions
+- Compare with current CV keywords from metadata.toml
+- Calculate ATS match score
+- Suggest keyword additions for better matching
+- Generate custom keyword profiles for metadata.toml
+
+**Basic Usage**:
+
+```bash
+# Analyze a job posting file
+python3 scripts/analyze_job.py --file job_posting.txt
+
+# Analyze text directly
+python3 scripts/analyze_job.py --text "Senior Project Manager with 10+ years..."
+
+# Compare against specific CV variant
+python3 scripts/analyze_job.py --file job.txt --variant senior-pm
+
+# Generate keyword suggestions and save to file
+python3 scripts/analyze_job.py --file job.txt --suggest --output new_keywords.toml
+```
+
+**Workflow Example**:
+
+1. **Save job posting** to a text file (e.g., `applications/senior-pm-position.txt`)
+2. **Analyze the posting**:
+   ```bash
+   python3 scripts/analyze_job.py --file applications/senior-pm-position.txt --variant senior-pm
+   ```
+3. **Review the analysis**:
+   - ATS match score (percentage)
+   - Keywords found in job posting
+   - Keywords missing from your CV
+   - Suggested additions
+4. **Update metadata.toml** with recommended keywords
+5. **Recompile CV** with new keywords
+6. **Re-analyze** to verify improved match score
+
+**Output Example**:
+```
+=== JOB DESCRIPTION ANALYSIS ===
+ATS Match Score: 67%
+
+Keywords Found in Job Posting:
+- Senior Project Manager (3 occurrences)
+- Lean Construction (2 occurrences)
+- Multifamily (5 occurrences)
+- Budget Management (2 occurrences)
+
+Missing from Your CV:
+- P&L Management
+- Team Leadership
+- Safety Management
+
+Suggested Additions:
+[inject]
+    injected_keywords_list = [
+        "P&L Management",
+        "Team Leadership",
+        "Safety Management"
+    ]
+```
+
+**Use Cases**:
+- **Before applying**: Analyze job postings to optimize keywords
+- **ATS optimization**: Ensure your CV matches job requirements
+- **Custom profiles**: Generate role-specific keyword profiles
+- **Gap analysis**: Identify missing skills or terminology
+
+**AI Assistant Guidelines**:
+
+When helping with keyword optimization:
+1. **Suggest using the analyzer** when users ask about ATS optimization
+2. **Save job postings** to applications/ directory for analysis
+3. **Run analysis** before customizing CV for specific applications
+4. **Update metadata.toml** based on analyzer suggestions
+5. **Document changes** in applications/tracker.md
+
 ### Common Modifications
 
 #### 1. Adding a New Job Entry
