@@ -28,9 +28,9 @@
     date: [2022 – 2024],
     location: [Seattle, WA],
     description: list(
-      [Led on-site construction team to successfully complete a #get_achievement("eastlake-units"), #get_achievement("eastlake-stories"), podium style multifamily project in Seattle],
-      [Developed and enforced safety protocols, achieving zero incidents throughout all project phases],
-      [Consistently and effectively implemented a solutions-oriented approach to challenges, reducing conflict by acknowledging all perspectives and highlighting common interests.]
+      [Led on-site construction team to successfully complete a #get_achievement("eastlake-units"), #get_achievement("eastlake-stories"), podium style multifamily project while maintaining disciplined cost controls and schedule performance],
+      [Built and maintained detailed CPM schedules, weekly look-ahead plans, and client-ready progress reports to keep stakeholders aligned],
+      [Developed and enforced safety protocols, achieving zero incidents throughout all project phases]
     ),
     tags: ("Multifamily Construction", "Team Leadership", "Budget Management")
   )
@@ -42,8 +42,9 @@
     date: [2020 – 2022],
     location: [Seattle, WA],
     description: list(
-      [Managed high-end luxury residential construction projects, ensuring impeccable coordination with subcontractors and vendors to deliver luxury built environments with grace and integrity.],
-      [Cultivated strong relationships with ultra-high-net-worth clients and world-class design professionals, as well as extraordinarily talented artisans and craftspeople.],
+      [Managed high-end luxury residential construction from preconstruction through closeout, including ROM budgets, detailed estimates, and value engineering to optimize scope and finish selections.],
+      [Built and maintained master schedules, procurement logs, and subcontractor coordination plans to deliver custom homes on time and within budget.],
+      [Cultivated strong relationships with ultra-high-net-worth clients, architects, and design consultants, providing consistent updates and clear decision pathways.]
     ),
     tags: ("Client Relations", "Luxury Residential", "Project Scheduling")
   )
@@ -55,9 +56,9 @@
     date: [2018 – 2019],
     location: [Redmond, WA],
     description: list(
-      [Provided stakeholders with detailed monthly cost reports and cash flow projections, enhancing financial decision-making],
-      [Managed multiple and ongoing scope changes and successfully prepared,negotiated, and executed all owner change orders and subcontract modifications as required],
-      [Created and managed a comprehensive CPM project schedule that was crucial to the successful delivery of the project.]
+      [Provided stakeholders with detailed monthly cost reports, cash flow projections, and variance narratives to support budget decisions],
+      [Managed multiple and ongoing scope changes and successfully prepared, negotiated, and executed owner change orders and subcontract modifications],
+      [Created and managed a comprehensive CPM project schedule that was crucial to the successful delivery of the project]
     ),
     tags: ("Risk Management", "Financial Reporting", "Stakeholder Communication", "Change Management")
   )
@@ -69,9 +70,9 @@
     date: [2017 – 2018],
     location: [Abaco, Bahamas],
     description: list(
-      [Oversaw construction of multiple luxury homes in a private development for extremely discerning clients expecting the highest level of service as well as the utmost discretion],
-      [Managed all project phases across international borders, efficiently resolving logistical challenges related to timely procurement of construction materials],
-      [Established strong vendor partnerships, ensuring material availability despite supply chain constraints on a remote and rural island location]
+      [Oversaw construction of multiple luxury homes in a private development for extremely discerning clients expecting the highest level of service and discretion],
+      [Managed all project phases across international borders, including schedule development, procurement planning, and budget tracking for long-lead materials],
+      [Established strong vendor partnerships, ensuring material availability despite supply chain constraints on a remote island location]
     ),
     tags: ("International Projects", "Luxury Residential", "Procurement")
   )
@@ -178,8 +179,8 @@ value-engineered solutions where applicable and negotiated subcontractor change 
     location: [Seattle, WA],
     description: list(
       [Managed over \$50 million in contracted scope, completing two projects in 18 months for a single owner],
-      [Supported preconstruction efforts on negotiated and design-build projects, coordinating bids for public and private clients],
-      [Executed complex projects in education, retail, hospitality, and seismic retrofit sectors],
+      [Supported preconstruction efforts on negotiated and design-build projects, coordinating bids, ROM pricing, and detailed estimates for public and private clients],
+      [Executed complex projects in education, retail, hospitality, and seismic retrofit sectors]
     ),
     tags: ("Preconstruction", "Project Management", "Multisector Experience")
   )

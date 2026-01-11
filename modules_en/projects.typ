@@ -96,15 +96,15 @@
       tags: ("Senior Living", "Facility Expansion", "Project Coordination")
     )
 
-        #cvEntry(
+    #cvEntry(
       title: [Luxury Residential Projects],
       society: [multiple projects],
       date: [\$15M],
       location: [Seattle & Bahamas],
       description: list(
-        [Managed major remodels of historic homes in Seattle, including projects in The Highlands and Laurelhurst neighborhoods.],
-        [Coordinated construction of a custom apartment home on the 57th floor of a new Seattle high-rise. The client combined three units to create a unique and expansive space. Successfully integrated custom luxury residential design elements and materials into the building's mechanical and structural systems, presenting a notable yet satisfying challenge.],
-        [Built several high-end beach vacation homes at Bakers Bay, an exclusive private development in the Bahamas. Interesting logistical challenges related to this international, rural island location included material procurement, workforce availability, and schedule management. ]
+        [Managed major remodels of historic homes in Seattle, aligning design intent with constructability, budget targets, and phasing plans.],
+        [Coordinated construction of a custom apartment home on the 57th floor of a new Seattle high-rise, integrating luxury finishes with building mechanical and structural constraints while maintaining schedule and cost controls.],
+        [Built several high-end beach vacation homes at Bakers Bay, addressing procurement, workforce availability, and schedule management challenges for a remote, international site.]
 
       ),
       tags: ("Luxury Residential", "International", "Project Management")

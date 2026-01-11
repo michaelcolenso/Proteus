@@ -19,5 +19,5 @@
 
   "professional",
     "projects",
-    // "skills"
+    "skills"
 ))
