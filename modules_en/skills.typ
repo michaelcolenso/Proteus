@@ -8,7 +8,7 @@
 
 #cvSkill(
   type: [Project Management],
-  info: [CPM Scheduling #hBar() Budget Management (\$1M-\$200M) #hBar() Risk Mitigation #hBar() Contract Administration #hBar() Subcontractor Management #hBar() Owner Relations #hBar() Team Leadership #hBar() Safety Management #hBar() Quality Control #hBar() Progress Reporting],
+  info: [CPM Scheduling #hBar() Budget Management (\$1M-\$200M) #hBar() ROM & Detailed Estimating #hBar() Risk Mitigation #hBar() Contract Administration #hBar() Subcontractor Management #hBar() Owner Relations #hBar() Team Leadership #hBar() Safety Management #hBar() Quality Control #hBar() Progress Reporting],
 )
 
 #cvSkill(
@@ -18,12 +18,11 @@
 
 #cvSkill(
   type: [Methodologies & Processes],
-  info: [Last Planner System #hBar() Lean Construction #hBar() Design-Build #hBar() Negotiated Work #hBar() Value Engineering #hBar() Pull Planning #hBar() Preconstruction Services #hBar() Estimating #hBar() Buyout Management #hBar() Change Order Management],
+  info: [Last Planner System #hBar() Lean Construction #hBar() Design-Build #hBar() Negotiated Work #hBar() Value Engineering #hBar() Pull Planning #hBar() Preconstruction Services #hBar() Estimating #hBar() Buyout Management #hBar() Change Order Management #hBar() Client Updates],
 )
 
 #cvSkill(
   type: [Software & Technology],
   info: [MS Project #hBar() Primavera P6 #hBar() Procore #hBar() Bluebeam Revu #hBar() MS Office Suite #hBar() Smartsheet #hBar() BuilderTrend #hBar() AutoCAD (reading/markup) #hBar() Excel (Advanced) #hBar() Python #hBar() JavaScript],
 )
-
 
