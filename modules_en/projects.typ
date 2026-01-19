@@ -5,107 +5,108 @@
     #let cvEntry = cvEntry.with(metadata: metadata)
     
     #cvSection("Selected Projects")
-    
-    #columns[        
-    
-    #cvEntry(      title: [2210 Eastlake],
-      society: [8-story, 57-unit apartment building],
-      date: [\$12M],
-      location: [Seattle, WA],
-      description: list(
-        [35,000 SF, 8-story, 57-unit multifamily apartment building in Seattle’s Eastlake neighborhood (podium construction: 6 over 2).],
-        [Held full responsibility for project team development and direction, client relations, subcontractor coordination, project scheduling and controls, and project financials—including reporting and forecasting.]
-      ),
-      tags: ("Multifamily", "Project Management", "Team Leadership")
-    )
-    
+
+    #columns[
+
     #cvEntry(
-      title: [255 S. King St],
-      society: [Twin towers development in Pioneer Square],
-      date: [\$200M],
-      location: [Seattle, WA],
-      description: list(
-        [Managed the construction of a 600,000 SF development in Seattle's Pioneer Square, including two concrete towers: a 23-story Embassy Suites hotel and an 18-story office tower/parking garage connected by a 10-story glass atrium.],
-        [Coordinated complex logistics and sequencing for high-rise construction, ensuring adherence to aggressive timelines and budget constraints.]
-      ),
-      tags: ("High-Rise Construction", "Hospitality")
-    )
-    
-    #cvEntry(
-      title: [Hyatt Place Hotel & Apartments],
-      society: [Hotel and apartments completed two months early],
+      title: [Hotel Delivered 2 Months Early — Hyatt Place Hotel & Apartments],
+      society: [157-room hotel + 102 residential units],
       date: [\$40M],
       location: [Seattle, WA],
       description: list(
-        [Spearheaded mid-project implementation of the Last Planner System, creating aggressive and efficient construction schedules; achieved substantial completion two months early.],
-        [Implemented 25 Construction Change Directives in the final four months, successfully negotiating over \$4M in late changes to project scope while maintaining project momentum.],
-        [Fostered a culture of trust and collaboration with the owner/client by consistently demonstrating advocacy, fairness, diligence, and transparency throughout a challenging project.]
+        [*Spearheaded mid-project implementation of Last Planner System,* creating aggressive pull schedules that recovered 10 weeks and achieved substantial completion 2 months ahead of contract date],
+        [*Negotiated \$4M+ in late-stage scope changes* (25 CCDs in final 4 months) while maintaining project momentum and collaborative owner relationship],
+        [Dual-use project: 157-room Hyatt Place hotel with 102 residential apartment units]
       ),
       tags: ("Hospitality", "Multi-Family", "Last Planner System", "Change Management")
     )
-    
+
     #cvEntry(
-      title: [The Alaska Building Renovation],
-      society: [Award-winning historic renovation],
+      title: [\$200M Twin Towers — 255 S. King St],
+      society: [23-story hotel + 18-story office/parking],
+      date: [\$200M],
+      location: [Seattle, WA],
+      description: list(
+        [*Managed 600,000 SF dual-tower development* in Seattle's Pioneer Square: 23-story Embassy Suites hotel and 18-story office tower/parking garage connected by 10-story glass atrium],
+        [*Coordinated complex logistics and sequencing* for high-rise construction, ensuring adherence to aggressive timelines and budget constraints]
+      ),
+      tags: ("High-Rise Construction", "Hospitality")
+    )
+
+    #cvEntry(
+      title: [Award-Winning Historic Renovation — The Alaska Building],
+      society: [2009 National Excellence Eagle Award],
       date: [\$12M+],
       location: [Seattle, WA],
       description: list(
-        [Executed over \$6M in negotiated changes while maintaining a positive and cooperative relationship with the owner.],
-        [Developed marketing content, including copy and photography, contributing to the project's recognition with prestigious national awards.],
-        [- 2009 National Excellence in Construction Awards - Eagle Award Winner for Best Historic Restoration],
-        [- 2009 Northwest Construction - Best Historic Renovation]
+        [*Executed over \$6M in negotiated changes* while maintaining positive and cooperative relationship with owner],
+        [*2009 National Excellence in Construction Awards* — Eagle Award Winner for Best Historic Restoration],
+        [*2009 Northwest Construction* — Best Historic Renovation]
       ),
       tags: ("Historic Restoration", "Seismic Retrofit", "Award-Winning Projects")
     )
-    #colbreak()
+
     #cvEntry(
-      title: [Barton Senior Residences],
-      society: [Senior residence project completed 15% faster],
+      title: [2210 Eastlake],
+      society: [8-story, 57-unit podium multifamily],
       date: [\$12M],
-      location: [Chicago, IL],
+      location: [Seattle, WA],
       description: list(
-        [Led a project-specific Lean Construction initiative, collaborating closely with key trades to develop an aggressive and achievable project schedule using the Last Planner System.],
-        [Achieved nearly 10% budget savings through diligent and timely buyout negotiations and contract execution.]
+        [*35,000 SF, 8-story, 57-unit multifamily apartment building* in Seattle's Eastlake neighborhood (podium construction: 6 over 2)],
+        [*Held full responsibility for project P&L,* team development, client relations, subcontractor coordination, scheduling and controls, and financial reporting/forecasting]
       ),
-      tags: ("Healthcare Facilities", "Lean Construction", "Scheduling")
+      tags: ("Multifamily", "Project Management", "Team Leadership")
     )
-    
-    #cvEntry(
-      title: [Temple Lofts],
-      society: [Historic temple converted into luxury lofts],
-      date: [\$25M],
-      location: [Los Angeles, CA],
-      description: list(
-        [Managed the seismic retrofit and complete renovation of a historic Masonic Temple in downtown Long Beach, converting it into luxury loft apartments.],
-        [Preserved historical elements while integrating modern amenities, resulting in high tenant satisfaction and occupancy rates.],
-        [Navigated complex regulatory requirements for historic buildings, securing necessary approvals without project delays.]
-      ),
-      tags: ("Historic Renovation", "Seismic Retrofit", "Multi-Family Housing")
-    )
-    
+
+    #colbreak()
+
     #cvEntry(
       title: [Quail Park of Lynnwood Expansion],
-      society: [Expansion of senior living facility],
+      society: [Senior living facility expansion],
       date: [\$35M],
       location: [Seattle, WA],
       description: list(
-        [Managed a large 3-story addition to an existing and fully operational assisted living/memory care facility, ensuring minimal disruption to residents.],
-        [Added 14 independent cottage-style duplex residences, along with associated sitework and utility scope.],
-        [Coordinated closely with facility management to maintain safety and operational efficiency throughout construction.]
+        [*Managed large 3-story addition* to existing and fully operational assisted living/memory care facility, ensuring minimal disruption to residents],
+        [*Added 14 independent cottage-style duplex residences,* along with associated sitework and utility scope],
+        [Coordinated closely with facility management to maintain safety and operational efficiency throughout construction]
       ),
       tags: ("Senior Living", "Facility Expansion", "Project Coordination")
     )
 
     #cvEntry(
-      title: [Luxury Residential Projects],
-      society: [multiple projects],
+      title: [Barton Senior Residences — 15% Faster, 10% Under Budget],
+      society: [Senior care facility],
+      date: [\$12M],
+      location: [Chicago, IL],
+      description: list(
+        [*Led project-specific Lean Construction initiative,* collaborating closely with key trades to develop aggressive and achievable project schedule using Last Planner System],
+        [*Achieved nearly 10% budget savings* through diligent and timely buyout negotiations and contract execution]
+      ),
+      tags: ("Healthcare Facilities", "Lean Construction", "Scheduling")
+    )
+
+    #cvEntry(
+      title: [Temple Lofts — Historic Seismic Retrofit],
+      society: [Masonic Temple conversion to luxury lofts],
+      date: [\$25M],
+      location: [Los Angeles, CA],
+      description: list(
+        [*Managed seismic retrofit and complete renovation* of historic Masonic Temple in downtown Long Beach, converting it into luxury loft apartments],
+        [*Preserved historical elements* while integrating modern amenities, resulting in high tenant satisfaction and occupancy rates],
+        [Navigated complex regulatory requirements for historic buildings, securing necessary approvals without project delays]
+      ),
+      tags: ("Historic Renovation", "Seismic Retrofit", "Multi-Family Housing")
+    )
+
+    #cvEntry(
+      title: [Luxury Residential Portfolio],
+      society: [International + custom homes],
       date: [\$15M],
       location: [Seattle & Bahamas],
       description: list(
-        [Managed major remodels of historic homes in Seattle, aligning design intent with constructability, budget targets, and phasing plans.],
-        [Coordinated construction of a custom apartment home on the 57th floor of a new Seattle high-rise, integrating luxury finishes with building mechanical and structural constraints while maintaining schedule and cost controls.],
-        [Built several high-end beach vacation homes at Bakers Bay, addressing procurement, workforce availability, and schedule management challenges for a remote, international site.]
-
+        [*Managed major remodels of historic homes in Seattle,* aligning design intent with constructability, budget targets, and phasing plans],
+        [*Coordinated 57th-floor custom apartment buildout* in new Seattle high-rise, integrating luxury finishes with building mechanical and structural constraints],
+        [*Built several high-end beach vacation homes* at Bakers Bay, addressing procurement, workforce availability, and schedule management challenges for remote, international site]
       ),
       tags: ("Luxury Residential", "International", "Project Management")
     )

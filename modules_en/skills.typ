@@ -4,25 +4,25 @@
 #let cvSection = cvSection.with(metadata: metadata)
 
 
-#cvSection("Skills & Core Competencies")
+#cvSection("Core Competencies")
+
+#cvSkill(
+  type: [Project Expertise],
+  info: [Multifamily & High-Rise Construction #hBar() Luxury & Custom Residential #hBar() Historic Renovation & Seismic Retrofit #hBar() Healthcare/Senior Living #hBar() Hospitality #hBar() Podium Construction],
+)
 
 #cvSkill(
   type: [Project Management],
-  info: [CPM Scheduling #hBar() Budget Management (\$1M-\$200M) #hBar() ROM & Detailed Estimating #hBar() Risk Mitigation #hBar() Contract Administration #hBar() Subcontractor Management #hBar() Owner Relations #hBar() Team Leadership #hBar() Safety Management #hBar() Quality Control #hBar() Progress Reporting],
+  info: [CPM Scheduling #hBar() Preconstruction & Estimating #hBar() Value Engineering #hBar() GMP & Design-Build Delivery #hBar() P&L Management #hBar() Budget Management (\$1M-\$200M) #hBar() Team Leadership #hBar() Safety Management (Zero Incidents) #hBar() Quality Control],
 )
 
 #cvSkill(
-  type: [Construction Specializations],
-  info: [High-Rise #hBar() Multifamily #hBar() Historic Renovation #hBar() Luxury Residential #hBar() Healthcare/Senior Living #hBar() Hospitality #hBar() Podium Construction #hBar() Seismic Retrofit #hBar() Occupied Facilities],
+  type: [Core Competencies],
+  info: [Change Order Negotiation #hBar() Claims Mitigation #hBar() Client Relations #hBar() Last Planner System #hBar() Lean Construction #hBar() Subcontractor Management #hBar() Contract Administration #hBar() Pull Planning #hBar() Risk Management],
 )
 
 #cvSkill(
-  type: [Methodologies & Processes],
-  info: [Last Planner System #hBar() Lean Construction #hBar() Design-Build #hBar() Negotiated Work #hBar() Value Engineering #hBar() Pull Planning #hBar() Preconstruction Services #hBar() Estimating #hBar() Buyout Management #hBar() Change Order Management #hBar() Client Updates],
-)
-
-#cvSkill(
-  type: [Software & Technology],
-  info: [MS Project #hBar() Primavera P6 #hBar() Procore #hBar() Bluebeam Revu #hBar() MS Office Suite #hBar() Smartsheet #hBar() BuilderTrend #hBar() AutoCAD (reading/markup) #hBar() Excel (Advanced) #hBar() Python #hBar() JavaScript],
+  type: [Software & Tools],
+  info: [Procore #hBar() MS Project #hBar() Primavera P6 #hBar() Bluebeam Revu #hBar() MS Office Suite #hBar() Smartsheet #hBar() BuilderTrend #hBar() Excel (Advanced) #hBar() AutoCAD],
 )
 
