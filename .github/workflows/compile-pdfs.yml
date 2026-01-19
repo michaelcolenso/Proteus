@@ -17,9 +17,13 @@ on:
       - '.github/workflows/compile-pdfs.yml'
   workflow_dispatch:
 
+concurrency:
+  group: typst-compile-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   compile-pdfs:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     permissions:
       contents: write
@@ -37,23 +41,28 @@ jobs:
 
       - name: Verify Typst installation
         run: |
+          set -euo pipefail
           echo "Checking Typst installation..."
-          which typst || echo "ERROR: typst not found in PATH"
-          typst --version || echo "ERROR: typst command failed"
+          which typst
+          typst --version
           echo "PATH: $PATH"
 
       - name: Install required fonts
         run: |
+          set -euo pipefail
           sudo apt-get update
-          sudo apt-get install -y fonts-roboto fonts-font-awesome
+          sudo apt-get install -y --no-install-recommends fonts-roboto fonts-font-awesome unzip
           # Install Source Sans Pro
           mkdir -p ~/.local/share/fonts
-          wget -q https://github.com/adobe-fonts/source-sans/releases/download/3.052R/TTF-source-sans-3.052R.zip
-          unzip -q TTF-source-sans-3.052R.zip -d ~/.local/share/fonts/
-          fc-cache -fv
+          curl -fsSL -o /tmp/TTF-source-sans-3.052R.zip \
+            https://github.com/adobe-fonts/source-sans/releases/download/3.052R/TTF-source-sans-3.052R.zip
+          unzip -q /tmp/TTF-source-sans-3.052R.zip -d ~/.local/share/fonts/
+          rm -f /tmp/TTF-source-sans-3.052R.zip
+          fc-cache -f
 
       - name: Compile CVs and cover letter
         run: |
+          set -euo pipefail
           echo "=== Compiling CVs and cover letter ==="
 
           # Verify Typst is available
@@ -62,25 +71,12 @@ jobs:
           typst --version
           echo ""
 
-          # Compile CVs
-          echo "Compiling cv.typ..."
-          typst compile cv.typ cv.pdf
-
-          echo "Compiling cv_senior_pm.typ..."
-          typst compile cv_senior_pm.typ cv_senior_pm.pdf
-
-          echo "Compiling cv_superintendent.typ..."
-          typst compile cv_superintendent.typ cv_superintendent.pdf
-
-          echo "Compiling cv_estimator.typ..."
-          typst compile cv_estimator.typ cv_estimator.pdf
-
-          echo "Compiling cv_exec_summary.typ..."
-          typst compile cv_exec_summary.typ cv_exec_summary.pdf
-
-          # Compile Cover Letter
-          echo "Compiling letter.typ..."
-          typst compile letter.typ letter.pdf
+          # Compile CVs and cover letter
+          for source in cv.typ cv_senior_pm.typ cv_superintendent.typ cv_estimator.typ cv_exec_summary.typ letter.typ; do
+            output="${source%.typ}.pdf"
+            echo "Compiling ${source}..."
+            typst compile "${source}" "${output}"
+          done
 
           echo "=== Compilation complete ==="
           ls -lh *.pdf
