@@ -2,6 +2,11 @@
 node_modules/
 otfs/
 
+# Ignore variant CV PDFs (deprecated)
+cv_*.pdf
+
+# Ignore export directory
+exports/
 
 # Ignore log files
 *.log
