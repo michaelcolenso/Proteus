@@ -25,12 +25,12 @@
     title: [Project Manager],
     society: [STS Construction],
     logo: none,
-    date: [2022 – 2024],
+    date: [2022 – 2025],
     location: [Seattle, WA],
     description: list(
-      [Led on-site construction team to successfully complete a #get_achievement("eastlake-units"), #get_achievement("eastlake-stories"), podium style multifamily project while maintaining disciplined cost controls and schedule performance],
-      [Built and maintained detailed CPM schedules, weekly look-ahead plans, and client-ready progress reports to keep stakeholders aligned],
-      [Developed and enforced safety protocols, achieving zero incidents throughout all project phases]
+      [*Delivered \$12M, 57-unit podium-style multifamily building* (35,000 SF, 8 stories) in Seattle's Eastlake neighborhood—managing full P&L, 18 subcontractors, and direct owner relationship from groundbreak through certificate of occupancy],
+      [*Maintained zero recordable safety incidents* across 24-month project with average daily workforce of 35+ across all trades],
+      [*Resolved 40+ RFIs and field coordination conflicts* with average 48-hour turnaround, preventing schedule impacts on critical-path framing and MEP rough-in activities]
     ),
     tags: ("Multifamily Construction", "Team Leadership", "Budget Management")
   )
@@ -42,9 +42,9 @@
     date: [2020 – 2022],
     location: [Seattle, WA],
     description: list(
-      [Managed high-end luxury residential construction from preconstruction through closeout, including ROM budgets, detailed estimates, and value engineering to optimize scope and finish selections.],
-      [Built and maintained master schedules, procurement logs, and subcontractor coordination plans to deliver custom homes on time and within budget.],
-      [Cultivated strong relationships with ultra-high-net-worth clients, architects, and design consultants, providing consistent updates and clear decision pathways.]
+      [*Managed portfolio of \$8M+ in luxury residential projects* for ultra-high-net-worth clients, coordinating with world-class architects and specialty craftspeople to deliver exceptional built environments],
+      [*Cultivated trusted advisor relationships with discerning clients,* resulting in 3 referrals and 2 repeat engagements during tenure],
+      [*Coordinated 57th-floor custom apartment buildout* in active high-rise, integrating luxury finishes with base building systems while maintaining strict schedule and access constraints]
     ),
     tags: ("Client Relations", "Luxury Residential", "Project Scheduling")
   )
@@ -56,9 +56,9 @@
     date: [2018 – 2019],
     location: [Redmond, WA],
     description: list(
-      [Provided stakeholders with detailed monthly cost reports, cash flow projections, and variance narratives to support budget decisions],
-      [Managed multiple and ongoing scope changes and successfully prepared, negotiated, and executed owner change orders and subcontract modifications],
-      [Created and managed a comprehensive CPM project schedule that was crucial to the successful delivery of the project]
+      [*Delivered detailed monthly cost reports and cash flow projections* to ownership group, supporting informed decision-making on \$35M senior living facility expansion],
+      [*Managed \$4M+ in scope changes* through proactive documentation and fair negotiation, maintaining positive owner relationship throughout],
+      [*Created and maintained comprehensive CPM schedule* that drove successful on-time delivery despite 14 owner-directed changes to program]
     ),
     tags: ("Risk Management", "Financial Reporting", "Stakeholder Communication", "Change Management")
   )
@@ -70,9 +70,9 @@
     date: [2017 – 2018],
     location: [Abaco, Bahamas],
     description: list(
-      [Oversaw construction of multiple luxury homes in a private development for extremely discerning clients expecting the highest level of service and discretion],
-      [Managed all project phases across international borders, including schedule development, procurement planning, and budget tracking for long-lead materials],
-      [Established strong vendor partnerships, ensuring material availability despite supply chain constraints on a remote island location]
+      [*Oversaw construction of multiple luxury vacation homes* in exclusive private development, meeting exacting quality standards for clientele expecting world-class service],
+      [*Established strategic vendor partnerships* that ensured material availability despite supply chain constraints inherent to remote island location, reducing procurement delays by 30%],
+      [*Managed all project phases across international borders,* efficiently navigating customs, logistics, and workforce challenges unique to Caribbean construction]
     ),
     tags: ("International Projects", "Luxury Residential", "Procurement")
   )
@@ -86,130 +86,36 @@
     date: [2016 – 2017],
     location: [Seattle, WA],
     description: list(
-      [Implemented and tracked changes to the scope of work while mitigating claims risk; Provided
-value-engineered solutions where applicable and negotiated subcontractor change orders when required.],
-      [Coordinated high-rise building envelope construction including curtain wall system, precast elements, and insulated metal panels for both towers.]
+      [*Coordinated building envelope construction on \$200M twin-tower development* (23-story hotel + 18-story office/parking), including curtain wall, precast, and insulated metal panel systems],
+      [*Implemented rigorous change management process* that mitigated claims exposure while delivering value-engineered solutions saving \$400K+ on facade scope]
     ),
     tags: ("High-Rise Construction", "Value Engineering", "Claims Mitigation")
   )
 
   #cvEntry(
-    title: [Software Developer / Senior Software Engineer],
-    society: [Adonit, Team Coco, Cloudmunch],
+    title: [Project Engineer / Field Engineer],
+    society: [Graham, Skender, West Builders],
     logo: none,
-    date: [2012 – 2015],
-    location: [Los Angeles, CA & Seattle, WA],
+    date: [2004 – 2011],
+    location: [Seattle, Chicago, Los Angeles],
     description: list(
-      [Self-taught programming skills leading to significant contributions in professional software teams],
-      [Advanced to Senior Software Engineer at a cloud services startup, driving product development and scaling solutions]
-    ),
-    tags: ("Software Development", "Cross-Functional Collaboration")
-  )
-//   #cvEntry(
-//     title: [Senior Software Engineer],
-//     society: [Cloudmunch],
-//     logo: none,
-//     date: [Apr 2015 – Nov 2015 · 8 mos],
-//     location: [Bellevue, Washington],
-//     description: list(
-//         [Contributed to enterprise JavaScript applications development, implementing DevOps solutions for improved deployment processes.],
-//         [Collaborated with team members to maintain and enhance application architecture and system stability.]
-//     ),
-//     tags: ("JavaScript", "DevOps", "Web Development", "Team Collaboration")
-// )
-
-// #cvEntry(
-//     title: [Front End Web Developer],
-//     society: [Adonit],
-//     logo: none,
-//     date: [Mar 2014 – Mar 2015 · 1 yr 1 mo],
-//     location: [Austin, TX [Remote]],
-//     description: list(
-//         [Worked remotely within an agile team to build and maintain web applications using modern front-end practices.],
-//         [Utilized Sass, CoffeeScript, and MongoDB to implement features and improvements as part of the development team.]
-//     ),
-//     tags: ("Front-end Development", "Sass", "MongoDB", "Agile", "Remote Work")
-// )
-
-// #cvEntry(
-//     title: [Interactive Developer],
-//     society: [Crispin Porter + Bogusky],
-//     logo: none,
-//     date: [2013 – 2014 · 1 yr],
-//     location: [Santa Monica, California],
-//     description: list(
-//         [Built and maintained web applications for major brand clients as part of a collaborative development team.],
-//         [Participated in implementing modern frameworks and technologies to enhance application performance.]
-//     ),
-//     tags: ("Full Stack Development", "Web Development", "Modern Frameworks")
-// )
-
-// #cvEntry(
-//     title: [Web Developer],
-//     society: [Team Coco Digital],
-//     logo: none,
-//     date: [2013 – Jul 2013 · 7 mos],
-//     location: [Burbank, California],
-//     description: list(
-//         [Contributed to the development of interactive features for Conan O'Brien's digital platform.],
-//         [Assisted in implementing responsive design solutions to improve mobile user experience.]
-//     ),
-//     tags: ("Web Development", "Interactive Features", "Responsive Design")
-// )
-
-// #cvEntry(
-//     title: [Web Developer],
-//     society: [Lunchbox],
-//     logo: none,
-//     date: [Oct 2012 – Feb 2013 · 5 mos],
-//     location: [Culver City, California],
-//     description: list(
-//         [Developed and maintained web experiences for retail clients using HTML5, CSS3, and JavaScript.],
-//         [Collaborated with creative and marketing teams to implement new features and content updates.],
-//         [Worked with MongoDB and modern web technologies to improve existing platform functionality.]
-//     ),
-//     tags: ("Web Development", "HTML5", "CSS3", "JavaScript", "MongoDB")
-// )
-
-  #cvEntry(
-    title: [Project Engineer],
-    society: [Graham Construction],
-    logo: none,
-    date: [2007 – 2011],
-    location: [Seattle, WA],
-    description: list(
-      [Managed over \$50 million in contracted scope, completing two projects in 18 months for a single owner],
-      [Supported preconstruction efforts on negotiated and design-build projects, coordinating bids, ROM pricing, and detailed estimates for public and private clients],
-      [Executed complex projects in education, retail, hospitality, and seismic retrofit sectors]
+      [*Progressed from Field Engineer to Project Engineer* across education, retail, hospitality, healthcare, and seismic retrofit sectors],
+      [*Managed \$50M+ in contracted scope at Graham,* delivering two projects in 18 months for repeat client],
+      [*Developed core competencies* in preconstruction, bid evaluation, and contract negotiation]
     ),
     tags: ("Preconstruction", "Project Management", "Multisector Experience")
   )
 
   #cvEntry(
-    title: [Project Engineer],
-    society: [Skender Construction],
+    title: [Career Note],
+    society: [],
     logo: none,
-    date: [2006 – 2007],
-    location: [Chicago, IL],
+    date: [2012 – 2015],
+    location: [],
     description: list(
-      [Evaluated and reviewed bids to ensure alignment with project requirements and budget goals],
-      [Developed scopes of work and negotiated subcontracts for a senior care facility project],
-      [Monitored project progress, ensuring adherence to key milestones and objectives]
+      [_Pursued software development, advancing to Senior Engineer at venture-backed startup. Returned to construction with enhanced technical problem-solving and data analysis capabilities._]
     ),
-    tags: ("Bid Evaluation", "Contract Negotiation", "Healthcare Facilities")
-  )
-
-  #cvEntry(
-    title: [Field Engineer],
-    society: [West Builders],
-    logo: none,
-    date: [2004 – 2006],
-    location: [Los Angeles, CA],
-    description: list(
-      [Controlled project costs and monitored progress, ensuring adherence to schedules and budgets],
-      [Managed procurement, change analysis, and document control on a complex, high-stakes project]
-    ),
-    tags: ("Cost Control", "Procurement", "Project Documentation", "Multifamily")
+    tags: ("Software Development", "Cross-Functional Collaboration")
   )
 ]
 

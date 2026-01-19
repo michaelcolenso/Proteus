@@ -38,7 +38,39 @@ language = "en"
 
     # Decide if you want to inject keywords or not
     inject_keywords = true
-    injected_keywords_list = ["Construction Project Manager", "High-End Residential", "Custom Homes", "ROM Estimating", "Value Engineering", "Budgeting", "Scheduling", "Client Relations", "Seattle"]
+    injected_keywords_list = [
+        "Senior Project Manager",
+        "Construction Management",
+        "General Contractor",
+        "GC",
+        "Multifamily Construction",
+        "High-Rise Construction",
+        "Luxury Residential",
+        "Custom Residential",
+        "Historic Renovation",
+        "Seismic Retrofit",
+        "CPM Scheduling",
+        "Preconstruction",
+        "Estimating",
+        "Value Engineering",
+        "GMP",
+        "Design-Build",
+        "Change Order Negotiation",
+        "Claims Mitigation",
+        "Client Relations",
+        "P&L Management",
+        "Budget Management",
+        "Team Leadership",
+        "Safety Management",
+        "OSHA",
+        "Procore",
+        "MS Project",
+        "Bluebeam",
+        "Last Planner System",
+        "Lean Construction",
+        "Seattle",
+        "Subcontractor Management"
+    ]
 
 [personal]
     first_name = "Michael"
@@ -51,17 +83,17 @@ language = "en"
         email = "michaelcolenso@gmail.com"
         [personal.info.custom-1]
             # image = "" # Example: image("./path/to/image.png")
-            awesomeIcon = "home" # Example: "graduation-cap" see https://typst.app/universe/package/fontawesome/
-            text = "my_location"
-            link = "https://www.nmu.edu"
+            awesomeIcon = "location-dot" # Example: "graduation-cap" see https://typst.app/universe/package/fontawesome/
+            text = "Seattle, WA"
+            link = ""
 
 # add a new section if you want to include the language of your choice
 # i.e. [[lang.ru]]
 # each section must contains the following fields
 [lang.en]
-    header_quote = "High-end residential Construction Project Manager with deep expertise in budgeting, detailed scheduling, ROM and hard-bid estimating, and value engineering—delivering luxury custom homes on time, within budget, and to exacting quality standards."
-    cv_footer = "Construction Project Manager"
-    letter_footer = "Construction Project Manager"
+    header_quote = "Senior Construction Project Manager with 18+ years delivering $300M+ in complex projects—high-rise, historic renovation, luxury residential, and multifamily—for general contractors across the U.S. and internationally. Track record of recovering troubled schedules (delivered $40M hotel 2 months early), navigating scope volatility ($6M+ in negotiated changes on single projects), and building lasting trust with demanding clients. Zero recordable safety incidents across recent project portfolio."
+    cv_footer = "Senior Construction Project Manager"
+    letter_footer = "Senior Construction Project Manager"
 
 [lang.fr]
     header_quote = "Chef de projet de construction techniquement compétent et axé sur le client, livrant des projets complexes à temps et dans les limites du budget."
