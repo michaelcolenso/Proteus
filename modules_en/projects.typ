@@ -1,10 +1,10 @@
-    // Imports
-    #import "@preview/brilliant-cv:2.0.3": cvSection, cvEntry
-    #let metadata = toml("../metadata.toml")
-    #let cvSection = cvSection.with(metadata: metadata)
-    #let cvEntry = cvEntry.with(metadata: metadata)
-    
-    #cvSection("Selected Projects")
+// Imports
+#import "@preview/brilliant-cv:2.0.3": cvSection, cvEntry
+#let metadata = toml("../metadata.toml")
+#let cvSection = cvSection.with(metadata: metadata)
+#let cvEntry = cvEntry.with(metadata: metadata)
+
+#cvSection("Selected Projects")
 
     #columns[
 

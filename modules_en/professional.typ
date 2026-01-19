@@ -108,10 +108,10 @@
 
   #cvEntry(
     title: [Career Note],
-    society: [],
+    society: [Technology Sector],
     logo: none,
     date: [2012 – 2015],
-    location: [],
+    location: [San Francisco Bay Area],
     description: list(
       [_Pursued software development, advancing to Senior Engineer at venture-backed startup. Returned to construction with enhanced technical problem-solving and data analysis capabilities._]
     ),
