@@ -52,9 +52,9 @@ jobs:
           unzip -q TTF-source-sans-3.052R.zip -d ~/.local/share/fonts/
           fc-cache -fv
 
-      - name: Compile all CV variants
+      - name: Compile CV and cover letter
         run: |
-          echo "=== Compiling all CV variants ==="
+          echo "=== Compiling CV and cover letter ==="
 
           # Verify Typst is available
           echo "Verifying Typst before compilation..."
@@ -62,31 +62,13 @@ jobs:
           typst --version
           echo ""
 
-          # Compile standard CV
+          # Compile CV
           echo "Compiling cv.typ..."
           typst compile cv.typ cv.pdf
 
-          # Compile Senior PM variant
-          echo "Compiling cv_senior_pm.typ..."
-          typst compile cv_senior_pm.typ cv_senior_pm.pdf
-
-          # Compile Superintendent variant
-          echo "Compiling cv_superintendent.typ..."
-          typst compile cv_superintendent.typ cv_superintendent.pdf
-
-          # Compile Estimator variant
-          echo "Compiling cv_estimator.typ..."
-          typst compile cv_estimator.typ cv_estimator.pdf
-
-          # Compile Executive Summary
-          echo "Compiling cv_exec_summary.typ..."
-          typst compile cv_exec_summary.typ cv_exec_summary.pdf
-
-          # Compile Cover Letter (only if it exists)
-          if [ -f "letter.typ" ]; then
-            echo "Compiling letter.typ..."
-            typst compile letter.typ letter.pdf
-          fi
+          # Compile Cover Letter
+          echo "Compiling letter.typ..."
+          typst compile letter.typ letter.pdf
 
           echo "=== Compilation complete ==="
           ls -lh *.pdf
@@ -97,12 +79,8 @@ jobs:
           name: cv-pdfs
           path: |
             cv.pdf
-            cv_senior_pm.pdf
-            cv_superintendent.pdf
-            cv_estimator.pdf
-            cv_exec_summary.pdf
             letter.pdf
-          if-no-files-found: warn
+          if-no-files-found: error
 
       - name: Commit and push PDFs
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
