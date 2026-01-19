@@ -14,7 +14,7 @@ compile_cv() {
     local description=$2
 
     echo -e "${BLUE}Compiling ${variant}...${NC}"
-    if typst compile "${variant}.typ" "${variant}.pdf"; then
+    if typst compile --font-path otfs "${variant}.typ" "${variant}.pdf"; then
         echo -e "${GREEN}✓ ${description} compiled successfully${NC}"
         echo -e "  Output: ${variant}.pdf"
         return 0
@@ -54,7 +54,7 @@ case $1 in
     "letter")
         echo "=== Generating Cover Letter ==="
         echo -e "${BLUE}Compiling letter.typ...${NC}"
-        if typst compile letter.typ letter.pdf; then
+        if typst compile --font-path otfs letter.typ letter.pdf; then
             echo -e "${GREEN}✓ Cover letter compiled successfully${NC}"
             echo -e "  Output: letter.pdf"
         else
@@ -82,7 +82,7 @@ case $1 in
         echo ""
 
         echo -e "${BLUE}Compiling cover letter...${NC}"
-        if typst compile letter.typ letter.pdf; then
+        if typst compile --font-path otfs letter.typ letter.pdf; then
             echo -e "${GREEN}✓ Cover letter compiled${NC}"
         fi
 
@@ -107,27 +107,27 @@ case $1 in
         case $2 in
             "senior-pm")
                 echo "Watching cv_senior_pm.typ (Ctrl+C to stop)"
-                typst watch cv_senior_pm.typ
+                typst watch --font-path otfs cv_senior_pm.typ
                 ;;
             "superintendent")
                 echo "Watching cv_superintendent.typ (Ctrl+C to stop)"
-                typst watch cv_superintendent.typ
+                typst watch --font-path otfs cv_superintendent.typ
                 ;;
             "estimator")
                 echo "Watching cv_estimator.typ (Ctrl+C to stop)"
-                typst watch cv_estimator.typ
+                typst watch --font-path otfs cv_estimator.typ
                 ;;
             "exec-summary")
                 echo "Watching cv_exec_summary.typ (Ctrl+C to stop)"
-                typst watch cv_exec_summary.typ
+                typst watch --font-path otfs cv_exec_summary.typ
                 ;;
             "standard")
                 echo "Watching cv.typ (Ctrl+C to stop)"
-                typst watch cv.typ
+                typst watch --font-path otfs cv.typ
                 ;;
             "letter")
                 echo "Watching letter.typ (Ctrl+C to stop)"
-                typst watch letter.typ
+                typst watch --font-path otfs letter.typ
                 ;;
             *)
                 echo "Unknown watch target: $2"
