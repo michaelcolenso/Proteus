@@ -81,11 +81,7 @@ language = "en"
     [personal.info]
         phone = "206.607.7836"
         email = "michaelcolenso@gmail.com"
-        [personal.info.custom-1]
-            # image = "" # Example: image("./path/to/image.png")
-            awesomeIcon = "location-dot" # Example: "graduation-cap" see https://typst.app/universe/package/fontawesome/
-            text = "Seattle, WA"
-            # link = "" # No link needed for location
+        location = "Seattle, WA"
 
 # add a new section if you want to include the language of your choice
 # i.e. [[lang.ru]]
