@@ -32,6 +32,7 @@ class CVExporter:
         self.source_file = Path(source_file)
         self.output_dir = Path(output_dir)
         self.output_dir.mkdir(exist_ok=True)
+        self.font_dir = Path(__file__).resolve().parents[1] / "otfs"
 
         if not self.source_file.exists():
             raise FileNotFoundError(f"Source file not found: {source_file}")
@@ -71,8 +72,13 @@ class CVExporter:
             output_file = self.output_dir / f"{self.base_name}.pdf"
 
         # Compile with Typst
+        command = ['typst', 'compile']
+        if self.font_dir.is_dir():
+            command.extend(['--font-path', str(self.font_dir)])
+        command.extend([str(self.source_file), str(output_file)])
+
         result = subprocess.run(
-            ['typst', 'compile', str(self.source_file), str(output_file)],
+            command,
             capture_output=True,
             text=True
         )
@@ -269,7 +275,7 @@ class CVExporter:
         css = """
 <style>
 body {
-    font-family: 'Source Sans Pro', 'Helvetica Neue', Arial, sans-serif;
+    font-family: 'Source Sans 3', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
     max-width: 8.5in;
     margin: 0 auto;
     padding: 1in;

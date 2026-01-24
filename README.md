@@ -136,7 +136,7 @@ The `metadata.toml` file is the central configuration hub. Key sections:
     before_entry_description_skip = "1pt"
 
     [layout.fonts]
-        regular_fonts = ["Source Sans Pro", "Source Sans 3"]
+        regular_fonts = ["Source Sans 3"]
         header_font = "Roboto"
 
     [layout.header]

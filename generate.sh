@@ -52,11 +52,11 @@ case $1 in
         case $target in
             "cv")
                 echo "Watching cv.typ (Ctrl+C to stop)"
-                typst watch cv.typ
+                typst watch --font-path otfs cv.typ
                 ;;
             "letter")
                 echo "Watching letter.typ (Ctrl+C to stop)"
-                typst watch letter.typ
+                typst watch --font-path otfs letter.typ
                 ;;
             *)
                 echo "Unknown watch target: $target"
