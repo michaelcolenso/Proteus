@@ -21,13 +21,9 @@ This is a **professional CV and cover letter system** built with [Typst](https:/
 ```
 brilliantmikecv/
 ├── cv.typ                      # Main CV entry point - imports modules
-├── cv_senior_pm.typ            # Senior PM variant (leadership focus)
-├── cv_superintendent.typ       # Superintendent variant (field focus)
-├── cv_estimator.typ            # Estimator variant (preconstruction focus)
-├── cv_exec_summary.typ         # One-page executive summary
-├── letter.typ                  # Main cover letter template
+├── letter.typ                  # Cover letter template
 ├── metadata.toml               # Central configuration (personal info, layout, colors, keywords)
-├── generate.sh                 # Quick build script for all variants
+├── generate.sh                 # Build script for CV and cover letter
 │
 ├── data/                       # Achievement database
 │   └── achievements.yaml       # Centralized metrics and accomplishments (NEW)
@@ -249,22 +245,22 @@ python3 scripts/achievements.py report --tags superintendent
 
 #### Quick Build with generate.sh Script
 
-The repository includes a convenient build script for all CV variants:
+The repository includes a convenient build script:
 
 ```bash
-# Generate specific CV variant
-./generate.sh senior-pm          # Senior PM focused CV
-./generate.sh superintendent     # Superintendent focused CV
-./generate.sh estimator          # Estimator/Preconstruction CV
-./generate.sh exec-summary       # One-page executive summary
-./generate.sh standard           # Standard full CV
-./generate.sh letter             # Cover letter
+# Generate CV (default)
+./generate.sh
+./generate.sh cv
 
-# Generate all variants at once
+# Generate cover letter
+./generate.sh letter
+
+# Generate both
 ./generate.sh all
 
 # Watch mode (auto-recompile on file changes)
-./generate.sh watch senior-pm
+./generate.sh watch         # Watch CV
+./generate.sh watch letter  # Watch letter
 
 # Clean all compiled PDFs
 ./generate.sh clean
@@ -276,74 +272,16 @@ The repository includes a convenient build script for all CV variants:
 #### Manual Compilation
 
 ```bash
-# Compile specific CV variant
-typst compile cv_senior_pm.typ
-typst compile cv_superintendent.typ
-typst compile cv_estimator.typ
-typst compile cv_exec_summary.typ
-
-# Compile standard CV
+# Compile CV
 typst compile cv.typ
 
 # Compile cover letter
 typst compile letter.typ
 
 # Watch mode (auto-recompile on changes)
-typst watch cv_senior_pm.typ
+typst watch cv.typ
+typst watch letter.typ
 ```
-
-### CV Variants System
-
-This repository includes multiple CV variants tailored for different job applications:
-
-#### Available Variants
-
-**cv_senior_pm.typ** - Senior Project Manager
-- **Emphasis**: Leadership, P&L management, large projects ($12M-$200M)
-- **Target Roles**: Senior PM, Project Executive, Construction Manager
-- **Modules**: professional, projects, skills, education, certificates
-- **Best For**: Leadership positions with budget accountability
-
-**cv_superintendent.typ** - Superintendent / Field Operations
-- **Emphasis**: On-site management, safety, trade coordination
-- **Target Roles**: Superintendent, Senior Superintendent, Field Manager
-- **Modules**: professional, projects, skills, certificates, education
-- **Best For**: Field-focused positions emphasizing safety and operations
-
-**cv_estimator.typ** - Estimator / Preconstruction Manager
-- **Emphasis**: Estimating, value engineering, preconstruction, buyout
-- **Target Roles**: Estimator, Senior Estimator, Preconstruction Manager
-- **Modules**: professional, projects, skills, education, certificates
-- **Best For**: Preconstruction and estimating positions
-
-**cv_exec_summary.typ** - One-Page Executive Summary
-- **Emphasis**: Quick overview with key highlights
-- **Target Roles**: Any (for initial contact/networking)
-- **Modules**: exec_summary, education
-- **Best For**: Networking events, recruiter emails, quick applications
-
-**cv.typ** - Standard Full CV
-- **Emphasis**: Comprehensive professional history
-- **Target Roles**: General applications
-- **Modules**: education, professional, projects (skills commented out)
-- **Best For**: When comprehensive detail is needed
-
-#### Using CV Variants
-
-**Workflow for job applications**:
-
-1. **Identify target role type** (Senior PM, Superintendent, Estimator, etc.)
-2. **Select appropriate CV variant** from list above
-3. **Customize keywords** in metadata.toml if needed (see Keyword Optimization below)
-4. **Select matching cover letter template** from letters/ directory
-5. **Generate documents**:
-   ```bash
-   ./generate.sh senior-pm    # Compiles cv_senior_pm.pdf
-   cp letters/senior_pm.typ letter.typ
-   # Edit letter.typ with company-specific details
-   ./generate.sh letter
-   ```
-6. **Track application** in applications/tracker.md
 
 ### Cover Letter Template System
 
@@ -405,14 +343,13 @@ The Multi-Format Export Pipeline converts Typst-compiled CVs into multiple forma
 
 ```bash
 # Via generate.sh (recommended)
-./generate.sh export senior-pm all                  # All formats
-./generate.sh export senior-pm txt html             # Specific formats
-./generate.sh export-all all                        # All variants, all formats
+./generate.sh export all                  # All formats
+./generate.sh export txt html             # Specific formats
 
 # Direct Python script (more control)
-python3 scripts/export_cv.py cv_senior_pm --formats all
-python3 scripts/export_cv.py cv_senior_pm --formats txt md --output-dir custom/
-python3 scripts/export_cv.py cv_senior_pm --formats pdf --ats  # ATS-optimized
+python3 scripts/export_cv.py cv --formats all
+python3 scripts/export_cv.py cv --formats txt md --output-dir custom/
+python3 scripts/export_cv.py cv --formats pdf --ats  # ATS-optimized
 ```
 
 #### Format Details
@@ -450,19 +387,19 @@ python3 scripts/export_cv.py cv_senior_pm --formats pdf --ats  # ATS-optimized
 #### Workflow Integration
 
 **Job Application Workflow**:
-1. Compile standard PDF: `./generate.sh senior-pm`
-2. Export for online form: `./generate.sh export senior-pm txt`
-3. Copy text content: `cat exports/cv_senior_pm.txt`
+1. Compile PDF: `./generate.sh cv`
+2. Export for online form: `./generate.sh export txt`
+3. Copy text content: `cat exports/cv.txt`
 4. Submit both PDF (attachment) and TXT (paste into form)
 
 **Portfolio Update Workflow**:
-1. Export to HTML: `./generate.sh export senior-pm html`
-2. Upload to website: `cp exports/cv_senior_pm.html ~/website/cv.html`
+1. Export to HTML: `./generate.sh export html`
+2. Upload to website: `cp exports/cv.html ~/website/cv.html`
 3. Commit and deploy
 
 **LinkedIn Sync Workflow**:
-1. Export exec summary: `./generate.sh export exec-summary md`
-2. Review markdown: `cat exports/cv_exec_summary.md`
+1. Export to markdown: `./generate.sh export md`
+2. Review markdown: `cat exports/cv.md`
 3. Copy sections to LinkedIn profile
 
 #### Dependencies
@@ -489,11 +426,11 @@ brew install poppler pandoc
 All exports saved to `exports/` directory:
 ```
 exports/
-├── cv_senior_pm.pdf        # Standard PDF
-├── cv_senior_pm.txt        # Plain text
-├── cv_senior_pm.md         # Markdown
-├── cv_senior_pm.html       # HTML
-└── cv_senior_pm_ats.pdf    # ATS-optimized (when --ats used)
+├── cv.pdf        # Standard PDF
+├── cv.txt        # Plain text
+├── cv.md         # Markdown
+├── cv.html       # HTML
+└── cv_ats.pdf    # ATS-optimized (when --ats used)
 ```
 
 #### AI Assistant Guidelines
@@ -509,10 +446,10 @@ When helping with export tasks:
 ```bash
 # User needs to apply via online form
 # 1. Export to text
-./generate.sh export senior-pm txt
+./generate.sh export txt
 
 # 2. Verify output looks good
-cat exports/cv_senior_pm.txt | head -50
+cat exports/cv.txt | head -50
 
 # 3. If formatting issues, manually clean up the text file
 ```

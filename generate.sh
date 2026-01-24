@@ -1,6 +1,6 @@
 #!/bin/bash
-# Quick CV Generation Script
-# Compiles different CV variants for various job applications
+# CV Generation Script
+# Compiles CV and cover letter
 
 # Colors for output
 GREEN='\033[0;32m'
@@ -9,119 +9,48 @@ YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
 # Function to compile and show status
-compile_cv() {
-    local variant=$1
-    local description=$2
+compile_file() {
+    local source=$1
+    local output=$2
+    local description=$3
 
-    echo -e "${BLUE}Compiling ${variant}...${NC}"
-    if typst compile --font-path otfs "${variant}.typ" "${variant}.pdf"; then
+    echo -e "${BLUE}Compiling ${source}...${NC}"
+    if typst compile "${source}" "${output}"; then
         echo -e "${GREEN}✓ ${description} compiled successfully${NC}"
-        echo -e "  Output: ${variant}.pdf"
+        echo -e "  Output: ${output}"
         return 0
     else
-        echo -e "${YELLOW}✗ Failed to compile ${variant}${NC}"
+        echo -e "${YELLOW}✗ Failed to compile ${source}${NC}"
         return 1
     fi
 }
 
 # Main script
 case $1 in
-    "senior-pm")
-        echo "=== Generating Senior PM CV ==="
-        compile_cv "cv_senior_pm" "Senior Project Manager CV"
-        ;;
-
-    "superintendent")
-        echo "=== Generating Superintendent CV ==="
-        compile_cv "cv_superintendent" "Superintendent CV"
-        ;;
-
-    "estimator")
-        echo "=== Generating Estimator CV ==="
-        compile_cv "cv_estimator" "Estimator/Preconstruction CV"
-        ;;
-
-    "exec-summary")
-        echo "=== Generating Executive Summary CV ==="
-        compile_cv "cv_exec_summary" "One-Page Executive Summary"
-        ;;
-
-    "standard")
-        echo "=== Generating Standard CV ==="
-        compile_cv "cv" "Standard CV"
+    "cv"|"")
+        echo "=== Generating CV ==="
+        compile_file "cv.typ" "cv.pdf" "CV"
         ;;
 
     "letter")
         echo "=== Generating Cover Letter ==="
-        echo -e "${BLUE}Compiling letter.typ...${NC}"
-        if typst compile --font-path otfs letter.typ letter.pdf; then
-            echo -e "${GREEN}✓ Cover letter compiled successfully${NC}"
-            echo -e "  Output: letter.pdf"
-        else
-            echo -e "${YELLOW}✗ Failed to compile cover letter${NC}"
-        fi
+        compile_file "letter.typ" "letter.pdf" "Cover Letter"
         ;;
 
     "all")
-        echo "=== Generating All CV Variants ==="
+        echo "=== Generating All Documents ==="
         echo ""
-
-        compile_cv "cv" "Standard CV"
+        compile_file "cv.typ" "cv.pdf" "CV"
         echo ""
-
-        compile_cv "cv_senior_pm" "Senior PM CV"
+        compile_file "letter.typ" "letter.pdf" "Cover Letter"
         echo ""
-
-        compile_cv "cv_superintendent" "Superintendent CV"
-        echo ""
-
-        compile_cv "cv_estimator" "Estimator CV"
-        echo ""
-
-        compile_cv "cv_exec_summary" "Executive Summary"
-        echo ""
-
-        echo -e "${BLUE}Compiling cover letter...${NC}"
-        if typst compile --font-path otfs letter.typ letter.pdf; then
-            echo -e "${GREEN}✓ Cover letter compiled${NC}"
-        fi
-
-        echo ""
-        echo -e "${GREEN}=== All variants compiled ===${NC}"
-        echo "Check the root directory for PDF outputs"
-        ;;
-
-    "clean")
-        echo "=== Cleaning compiled PDFs ==="
-        rm -f cv.pdf cv_*.pdf letter.pdf
-        echo -e "${GREEN}✓ Cleaned all PDF files${NC}"
+        echo -e "${GREEN}=== All documents compiled ===${NC}"
         ;;
 
     "watch")
-        if [ -z "$2" ]; then
-            echo "Usage: ./generate.sh watch [variant]"
-            echo "Example: ./generate.sh watch senior-pm"
-            exit 1
-        fi
-
-        case $2 in
-            "senior-pm")
-                echo "Watching cv_senior_pm.typ (Ctrl+C to stop)"
-                typst watch --font-path otfs cv_senior_pm.typ
-                ;;
-            "superintendent")
-                echo "Watching cv_superintendent.typ (Ctrl+C to stop)"
-                typst watch --font-path otfs cv_superintendent.typ
-                ;;
-            "estimator")
-                echo "Watching cv_estimator.typ (Ctrl+C to stop)"
-                typst watch --font-path otfs cv_estimator.typ
-                ;;
-            "exec-summary")
-                echo "Watching cv_exec_summary.typ (Ctrl+C to stop)"
-                typst watch --font-path otfs cv_exec_summary.typ
-                ;;
-            "standard")
+        target=${2:-cv}
+        case $target in
+            "cv")
                 echo "Watching cv.typ (Ctrl+C to stop)"
                 typst watch --font-path otfs cv.typ
                 ;;
@@ -130,82 +59,55 @@ case $1 in
                 typst watch --font-path otfs letter.typ
                 ;;
             *)
-                echo "Unknown watch target: $2"
+                echo "Unknown watch target: $target"
+                echo "Available targets: cv, letter"
                 exit 1
                 ;;
         esac
         ;;
 
     "export")
-        if [ -z "$2" ] || [ -z "$3" ]; then
-            echo "Usage: ./generate.sh export [variant] [formats]"
-            echo "Example: ./generate.sh export senior-pm all"
-            echo "Example: ./generate.sh export senior-pm \"txt html md\""
-            echo "Formats: pdf, txt, md, html, all"
-            exit 1
+        if [ -z "$2" ]; then
+            formats="all"
+        else
+            shift
+            formats="$@"
         fi
 
-        variant=$2
-        shift 2
-        formats="$@"
-
-        echo "=== Exporting $variant to formats: $formats ==="
-        python3 scripts/export_cv.py "cv_${variant}" --formats $formats
-        ;;
-
-    "export-all")
-        formats=${2:-all}
-        echo "=== Exporting all CV variants to format(s): $formats ==="
-        echo ""
-
+        echo "=== Exporting CV to format(s): $formats ==="
         python3 scripts/export_cv.py cv --formats $formats
-        echo ""
-        python3 scripts/export_cv.py cv_senior_pm --formats $formats
-        echo ""
-        python3 scripts/export_cv.py cv_superintendent --formats $formats
-        echo ""
-        python3 scripts/export_cv.py cv_estimator --formats $formats
-        echo ""
-        python3 scripts/export_cv.py cv_exec_summary --formats $formats
-
-        echo ""
-        echo -e "${GREEN}=== All variants exported ===${NC}"
-        echo "Check the exports/ directory for output files"
         ;;
 
-    "help"|"--help"|"-h"|"")
+    "clean")
+        echo "=== Cleaning compiled PDFs ==="
+        rm -f cv.pdf letter.pdf
+        echo -e "${GREEN}✓ Cleaned all PDF files${NC}"
+        ;;
+
+    "help"|"--help"|"-h")
         echo "CV Generation Script"
         echo ""
         echo "Usage: ./generate.sh [command]"
         echo ""
         echo "Commands:"
-        echo "  senior-pm        Generate Senior PM focused CV"
-        echo "  superintendent   Generate Superintendent focused CV"
-        echo "  estimator        Generate Estimator/Preconstruction CV"
-        echo "  exec-summary     Generate one-page executive summary"
-        echo "  standard         Generate standard CV (cv.typ)"
-        echo "  letter           Generate cover letter"
-        echo "  all              Generate all variants"
-        echo "  clean            Remove all compiled PDFs"
-        echo "  watch [variant]  Watch and auto-compile on changes"
-        echo "  export [variant] [formats]   Export CV to multiple formats"
-        echo "  export-all [formats]         Export all variants"
-        echo "  help             Show this help message"
+        echo "  cv              Generate CV (default)"
+        echo "  letter          Generate cover letter"
+        echo "  all             Generate CV and cover letter"
+        echo "  watch [target]  Watch and auto-compile on changes (cv or letter)"
+        echo "  export [formats] Export CV to multiple formats"
+        echo "  clean           Remove all compiled PDFs"
+        echo "  help            Show this help message"
         echo ""
         echo "Examples:"
-        echo "  ./generate.sh senior-pm              # Compile senior PM CV"
-        echo "  ./generate.sh all                    # Compile everything"
-        echo "  ./generate.sh watch senior-pm        # Auto-compile on changes"
-        echo "  ./generate.sh export senior-pm all   # Export to all formats"
-        echo "  ./generate.sh export senior-pm txt html  # Export to specific formats"
-        echo "  ./generate.sh export-all all         # Export all variants, all formats"
-        echo ""
-        echo "CV Variants:"
-        echo "  • cv_senior_pm.typ        - Senior PM emphasis"
-        echo "  • cv_superintendent.typ   - Field operations emphasis"
-        echo "  • cv_estimator.typ        - Preconstruction emphasis"
-        echo "  • cv_exec_summary.typ     - One-page summary"
-        echo "  • cv.typ                  - Standard full CV"
+        echo "  ./generate.sh                    # Compile CV"
+        echo "  ./generate.sh cv                 # Compile CV"
+        echo "  ./generate.sh letter             # Compile cover letter"
+        echo "  ./generate.sh all                # Compile everything"
+        echo "  ./generate.sh watch              # Auto-compile CV on changes"
+        echo "  ./generate.sh watch letter       # Auto-compile letter on changes"
+        echo "  ./generate.sh export             # Export CV to all formats"
+        echo "  ./generate.sh export txt html    # Export CV to specific formats"
+        echo "  ./generate.sh clean              # Remove PDFs"
         echo ""
         echo "Export Formats:"
         echo "  • pdf      - Standard PDF (via Typst)"

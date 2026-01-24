@@ -42,10 +42,6 @@ This repository contains a modular CV system that generates professional PDF doc
 
 Generated outputs:
 ├── cv.pdf                    # Compiled CV
-├── cv_senior_pm.pdf         # Senior PM variant
-├── cv_superintendent.pdf    # Superintendent variant
-├── cv_estimator.pdf         # Estimator variant
-├── cv_exec_summary.pdf      # One-page executive summary
 └── letter.pdf               # Compiled cover letter
 ```
 
@@ -83,13 +79,13 @@ Export your CV to multiple formats for different use cases:
 
 ```bash
 # Export to all formats (PDF, TXT, MD, HTML)
-./generate.sh export senior-pm all
+./generate.sh export all
 
-# Export to specific formats
-./generate.sh export senior-pm txt html
+# Export to specific formats only
+./generate.sh export txt html
 
-# Export all CV variants
-./generate.sh export-all all
+# Just compile the PDF
+./generate.sh cv
 ```
 
 **Available Formats**:
