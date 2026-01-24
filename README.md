@@ -106,6 +106,34 @@ Export your CV to multiple formats for different use cases:
 
 See [exports/README.md](exports/README.md) for detailed documentation.
 
+## Automated Job Application Pipeline
+
+Use the pipeline script to analyze a job posting, generate an ATS keyword
+profile, and optionally export a tailored CV variant in one step:
+
+```bash
+# Analyze from a file and export a senior PM variant
+./scripts/job_pipeline.py \
+  --file sample_job_posting.txt \
+  --company "Example Builder" \
+  --title "Senior Project Manager" \
+  --variant cv_senior_pm.typ \
+  --formats pdf txt
+
+# Analyze inline text and print JSON output
+./scripts/job_pipeline.py \
+  --text "Senior Project Manager with multifamily experience..." \
+  --company "Inline Co" \
+  --title "Senior PM" \
+  --print-json
+```
+
+Outputs:
+- `applications/reports/<company>-<title>.md`: analysis report with match score
+  and missing keywords
+- `applications/keywords/<company>-<title>.toml`: keyword profile snippet ready
+  to merge into `metadata.toml`
+
 ## Configuration
 
 ### metadata.toml
