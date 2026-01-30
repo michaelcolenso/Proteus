@@ -29,10 +29,10 @@
     location: [Seattle, WA],
     description: list(
       [*Delivered \$12M, 57-unit podium-style multifamily building* (35,000 SF, 8 stories) in Seattle's Eastlake neighborhood—managing full P&L, 18 subcontractors, and direct owner relationship from groundbreak through certificate of occupancy],
-      [*Maintained zero recordable safety incidents* across 24-month project with average daily workforce of 35+ across all trades],
+      [*Maintained zero recordable safety incidents* across 24-month project while coordinating 35+ daily trade workforce and field leadership],
       [*Resolved 40+ RFIs and field coordination conflicts* with average 48-hour turnaround, preventing schedule impacts on critical-path framing and MEP rough-in activities]
     ),
-    tags: ("Multifamily Construction", "Team Leadership", "Budget Management")
+    tags: ("Multifamily Construction", "Production Leadership", "Budget Management")
   )
 
   #cvEntry(
@@ -46,7 +46,7 @@
       [*Cultivated trusted advisor relationships with discerning clients,* resulting in 3 referrals and 2 repeat engagements during tenure],
       [*Coordinated 57th-floor custom apartment buildout* in active high-rise, integrating luxury finishes with base building systems while maintaining strict schedule and access constraints]
     ),
-    tags: ("Client Relations", "Luxury Residential", "Project Scheduling")
+    tags: ("Client Experience", "Luxury Residential", "Project Scheduling")
   )
 
   #cvEntry(

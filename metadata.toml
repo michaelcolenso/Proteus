@@ -39,37 +39,32 @@ language = "en"
     # Decide if you want to inject keywords or not
     inject_keywords = true
     injected_keywords_list = [
-        "Senior Project Manager",
-        "Construction Management",
-        "General Contractor",
-        "GC",
-        "Multifamily Construction",
-        "High-Rise Construction",
+        "Head of Remodeling",
+        "Production Leadership",
+        "Construction Operations",
+        "Residential Remodeling",
         "Luxury Residential",
         "Custom Residential",
         "Historic Renovation",
-        "Seismic Retrofit",
-        "CPM Scheduling",
-        "Preconstruction",
-        "Estimating",
-        "Value Engineering",
-        "GMP",
-        "Design-Build",
-        "Change Order Negotiation",
-        "Claims Mitigation",
-        "Client Relations",
+        "Client Experience",
+        "Quality Control",
         "P&L Management",
+        "Job Costing",
         "Budget Management",
         "Team Leadership",
+        "Process Improvement",
+        "Preconstruction",
+        "Value Engineering",
+        "Schedule Management",
+        "Change Order Negotiation",
+        "Subcontractor Management",
         "Safety Management",
-        "OSHA",
         "Procore",
         "MS Project",
         "Bluebeam",
-        "Last Planner System",
+        "BuilderTrend",
         "Lean Construction",
-        "Seattle",
-        "Subcontractor Management"
+        "Seattle"
     ]
 
 [personal]
@@ -91,9 +86,9 @@ language = "en"
 # i.e. [[lang.ru]]
 # each section must contains the following fields
 [lang.en]
-    header_quote = "Senior Construction Project Manager with 18+ years delivering $300M+ in complex projects—high-rise, historic renovation, luxury residential, and multifamily—for general contractors across the U.S. and internationally. Track record of recovering troubled schedules (delivered $40M hotel 2 months early), navigating scope volatility ($6M+ in negotiated changes on single projects), and building lasting trust with demanding clients. Zero recordable safety incidents across recent project portfolio."
-    cv_footer = "Senior Construction Project Manager"
-    letter_footer = "Senior Construction Project Manager"
+    header_quote = "Construction leader with 18+ years delivering $300M+ in residential and mixed-use projects, including luxury remodels, historic renovations, and multifamily builds. Known for aligning preconstruction and production teams, tightening schedules, and protecting margins through rigorous job costing, value engineering, and change management. Track record includes delivering a $40M project 2 months early, navigating $6M+ in negotiated changes, and maintaining zero recordable safety incidents while earning trusted-advisor status with discerning clients."
+    cv_footer = "Head of Remodeling"
+    letter_footer = "Head of Remodeling"
 
 [lang.fr]
     header_quote = "Chef de projet de construction techniquement compétent et axé sur le client, livrant des projets complexes à temps et dans les limites du budget."
