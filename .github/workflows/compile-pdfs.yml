@@ -72,7 +72,16 @@ jobs:
           echo ""
 
           # Compile CVs and cover letter
-          for source in cv.typ letter.typ; do
+          sources=(
+            cv.typ
+            cv_estimator.typ
+            cv_exec_summary.typ
+            cv_senior_pm.typ
+            cv_superintendent.typ
+            letter.typ
+          )
+
+          for source in "${sources[@]}"; do
             output="${source%.typ}.pdf"
             echo "Compiling ${source}..."
             typst compile "${source}" "${output}"
@@ -87,6 +96,10 @@ jobs:
           name: cv-pdfs
           path: |
             cv.pdf
+            cv_estimator.pdf
+            cv_exec_summary.pdf
+            cv_senior_pm.pdf
+            cv_superintendent.pdf
             letter.pdf
           if-no-files-found: error
 
