@@ -78,6 +78,16 @@ case $1 in
         python3 scripts/export_cv.py cv --formats $formats
         ;;
 
+    "autopilot")
+        if [ -z "$2" ]; then
+            echo "Usage: ./generate.sh autopilot <job_posting.txt> [--update-tracker]"
+            exit 1
+        fi
+        shift
+        echo "=== Building application autopilot brief ==="
+        python3 scripts/application_autopilot.py --file "$@"
+        ;;
+
     "clean")
         echo "=== Cleaning compiled PDFs ==="
         rm -f cv.pdf letter.pdf
@@ -95,6 +105,7 @@ case $1 in
         echo "  all             Generate CV and cover letter"
         echo "  watch [target]  Watch and auto-compile on changes (cv or letter)"
         echo "  export [formats] Export CV to multiple formats"
+        echo "  autopilot <file> Generate tailored application brief from job posting"
         echo "  clean           Remove all compiled PDFs"
         echo "  help            Show this help message"
         echo ""
@@ -107,6 +118,7 @@ case $1 in
         echo "  ./generate.sh watch letter       # Auto-compile letter on changes"
         echo "  ./generate.sh export             # Export CV to all formats"
         echo "  ./generate.sh export txt html    # Export CV to specific formats"
+        echo "  ./generate.sh autopilot sample_job_posting.txt"
         echo "  ./generate.sh clean              # Remove PDFs"
         echo ""
         echo "Export Formats:"

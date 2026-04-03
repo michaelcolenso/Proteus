@@ -23,7 +23,11 @@ import re
 from pathlib import Path
 from typing import List, Dict, Set, Tuple
 from collections import Counter
-import toml
+try:
+    import tomllib as toml_loader
+except ModuleNotFoundError:  # pragma: no cover
+    toml_loader = None
+    import toml as toml_legacy
 
 
 class JobAnalyzer:
@@ -258,7 +262,10 @@ def load_cv_keywords(metadata_path: str = "metadata.toml") -> List[str]:
     """Load current CV keywords from metadata.toml"""
     try:
         with open(metadata_path, 'r') as f:
-            metadata = toml.load(f)
+            if toml_loader:
+                metadata = toml_loader.loads(f.read())
+            else:
+                metadata = toml_legacy.load(f)
 
         keywords = metadata.get('inject', {}).get('injected_keywords_list', [])
         return keywords

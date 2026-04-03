@@ -88,6 +88,25 @@ Export your CV to multiple formats for different use cases:
 ./generate.sh cv
 ```
 
+### Application Autopilot (New)
+
+Generate a tailored application brief from a job posting:
+
+```bash
+# Build a recommendation package (CV variant, letter template, keywords, achievements)
+./generate.sh autopilot sample_job_posting.txt
+
+# Also append a suggested row to the application tracker
+./generate.sh autopilot sample_job_posting.txt --update-tracker
+```
+
+The autopilot flow combines:
+- Job keyword analysis and ATS scoring
+- Suggested keyword profile snippet for `metadata.toml`
+- Recommended CV variant + cover letter template
+- Top achievement evidence to emphasize
+- Suggested follow-up date and commands
+
 **Available Formats**:
 - **PDF**: Standard high-quality CV (via Typst)
 - **TXT**: Plain text for online application forms
