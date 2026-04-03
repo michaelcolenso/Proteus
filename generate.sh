@@ -88,6 +88,11 @@ case $1 in
         python3 scripts/application_autopilot.py --file "$@"
         ;;
 
+    "autopilot-ui")
+        echo "=== Launching application autopilot UI ==="
+        python3 scripts/autopilot_ui.py "${@:2}"
+        ;;
+
     "clean")
         echo "=== Cleaning compiled PDFs ==="
         rm -f cv.pdf letter.pdf
@@ -106,6 +111,7 @@ case $1 in
         echo "  watch [target]  Watch and auto-compile on changes (cv or letter)"
         echo "  export [formats] Export CV to multiple formats"
         echo "  autopilot <file> Generate tailored application brief from job posting"
+        echo "  autopilot-ui [args] Launch local web UI for autopilot"
         echo "  clean           Remove all compiled PDFs"
         echo "  help            Show this help message"
         echo ""
@@ -119,6 +125,7 @@ case $1 in
         echo "  ./generate.sh export             # Export CV to all formats"
         echo "  ./generate.sh export txt html    # Export CV to specific formats"
         echo "  ./generate.sh autopilot sample_job_posting.txt"
+        echo "  ./generate.sh autopilot-ui --port 8787"
         echo "  ./generate.sh clean              # Remove PDFs"
         echo ""
         echo "Export Formats:"
