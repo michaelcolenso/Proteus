@@ -107,6 +107,16 @@ The autopilot flow combines:
 - Top achievement evidence to emphasize
 - Suggested follow-up date and commands
 
+### Application Autopilot UI
+
+Prefer a browser form instead of CLI flags? Run the local UI:
+
+```bash
+python3 scripts/autopilot_ui.py --port 8787
+```
+
+Then open `http://127.0.0.1:8787` and paste the job posting text. The UI generates the same autopilot brief file and can optionally append a row to `applications/tracker.md`.
+
 **Available Formats**:
 - **PDF**: Standard high-quality CV (via Typst)
 - **TXT**: Plain text for online application forms
