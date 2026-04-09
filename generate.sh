@@ -37,12 +37,19 @@ case $1 in
         compile_file "letter.typ" "letter.pdf" "Cover Letter"
         ;;
 
+    "portfolio")
+        echo "=== Generating Luxury Residential Portfolio ==="
+        compile_file "portfolio.typ" "portfolio.pdf" "Portfolio"
+        ;;
+
     "all")
         echo "=== Generating All Documents ==="
         echo ""
         compile_file "cv.typ" "cv.pdf" "CV"
         echo ""
         compile_file "letter.typ" "letter.pdf" "Cover Letter"
+        echo ""
+        compile_file "portfolio.typ" "portfolio.pdf" "Portfolio"
         echo ""
         echo -e "${GREEN}=== All documents compiled ===${NC}"
         ;;
@@ -58,9 +65,13 @@ case $1 in
                 echo "Watching letter.typ (Ctrl+C to stop)"
                 typst watch --font-path otfs letter.typ
                 ;;
+            "portfolio")
+                echo "Watching portfolio.typ (Ctrl+C to stop)"
+                typst watch --font-path otfs portfolio.typ
+                ;;
             *)
                 echo "Unknown watch target: $target"
-                echo "Available targets: cv, letter"
+                echo "Available targets: cv, letter, portfolio"
                 exit 1
                 ;;
         esac
@@ -95,7 +106,7 @@ case $1 in
 
     "clean")
         echo "=== Cleaning compiled PDFs ==="
-        rm -f cv.pdf letter.pdf
+        rm -f cv.pdf letter.pdf portfolio.pdf
         echo -e "${GREEN}✓ Cleaned all PDF files${NC}"
         ;;
 
@@ -107,8 +118,9 @@ case $1 in
         echo "Commands:"
         echo "  cv              Generate CV (default)"
         echo "  letter          Generate cover letter"
-        echo "  all             Generate CV and cover letter"
-        echo "  watch [target]  Watch and auto-compile on changes (cv or letter)"
+        echo "  portfolio       Generate luxury residential portfolio"
+        echo "  all             Generate CV, cover letter, and portfolio"
+        echo "  watch [target]  Watch and auto-compile on changes (cv, letter, or portfolio)"
         echo "  export [formats] Export CV to multiple formats"
         echo "  autopilot <file> Generate tailored application brief from job posting"
         echo "  autopilot-ui [args] Launch local web UI for autopilot"
