@@ -9,11 +9,14 @@ from scripts.discover_jobs import (
     DiscoveryState,
     JobPosting,
     canonicalize_url,
+    filter_recent_jobs,
+    load_fixture_jobs,
+    load_config,
     parse_career_page,
     parse_lever_jobs,
-    load_config,
     parse_posted_at,
     score_jobs,
+    render_latest_report,
 )
 
 
@@ -192,6 +195,53 @@ class ScoringAndStateTests(unittest.TestCase):
             self.assertEqual(len(fresh), 1)
             self.assertEqual(jobs_path.read_text(encoding="utf-8").count("\n"), 1)
             self.assertIn("Project Manager", seen_path.read_text(encoding="utf-8"))
+
+
+class ReportTests(unittest.TestCase):
+    def test_render_latest_report_includes_ranked_jobs_and_errors(self):
+        job = JobPosting(
+            title="Senior Project Manager",
+            company="Acme",
+            location="Seattle, WA",
+            url="https://example.com/job",
+            source="fixture",
+            score=31.0,
+            score_reasons=["matched: project manager", "location: Seattle, WA"],
+        )
+        report = render_latest_report([job], ["broken-source: timeout"], limit=10)
+        self.assertIn("# Latest Job Discovery", report)
+        self.assertIn("Senior Project Manager", report)
+        self.assertIn("broken-source: timeout", report)
+
+    def test_load_fixture_jobs_reads_json_payload(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            fixture = Path(tmp) / "jobs.json"
+            fixture.write_text(
+                '[{"title":"Estimator","company":"Acme","location":"Seattle, WA","url":"https://example.com/e","source":"fixture"}]',
+                encoding="utf-8",
+            )
+            jobs = load_fixture_jobs(fixture)
+        self.assertEqual(jobs[0].title, "Estimator")
+
+    def test_filter_recent_jobs_uses_since_hours(self):
+        fresh = JobPosting(
+            title="Project Manager",
+            company="Acme",
+            location="Seattle, WA",
+            url="https://example.com/fresh",
+            source="fixture",
+            posted_at="2026-04-19T10:00:00+00:00",
+        )
+        stale = JobPosting(
+            title="Project Manager",
+            company="Acme",
+            location="Seattle, WA",
+            url="https://example.com/stale",
+            source="fixture",
+            posted_at="2026-04-17T10:00:00+00:00",
+        )
+        jobs = filter_recent_jobs([fresh, stale], since_hours=24, now=datetime(2026, 4, 19, 12, 0, tzinfo=timezone.utc))
+        self.assertEqual([job.url for job in jobs], ["https://example.com/fresh"])
 
 
 class AdapterTests(unittest.TestCase):

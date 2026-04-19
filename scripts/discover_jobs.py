@@ -286,6 +286,19 @@ def fetch_source(source: dict[str, Any]) -> list["JobPosting"]:
     raise ValueError(f"Unsupported source type: {source_type}")
 
 
+def load_fixture_jobs(path: Path | str) -> list["JobPosting"]:
+    fixture_path = Path(path)
+    payload = json.loads(fixture_path.read_text(encoding="utf-8"))
+    if not isinstance(payload, list):
+        raise ValueError("Fixture file must contain a JSON list")
+    jobs: list[JobPosting] = []
+    for item in payload:
+        if not isinstance(item, dict):
+            raise ValueError("Fixture entries must be JSON objects")
+        jobs.append(JobPosting(**item))
+    return jobs
+
+
 def parse_scalar(value: str) -> Any:
     text = value.strip()
     if text == "":
@@ -608,6 +621,113 @@ def _normalize_list(values: Iterable[Any] | None) -> list[str]:
     return [str(value) for value in values]
 
 
+def _parse_timestamp(value: str | None) -> datetime | None:
+    parsed = parse_posted_at(value)
+    if not parsed:
+        return None
+    dt = datetime.fromisoformat(parsed.replace("Z", "+00:00"))
+    if dt.tzinfo is None:
+        dt = dt.replace(tzinfo=timezone.utc)
+    return dt.astimezone(timezone.utc)
+
+
+def filter_recent_jobs(
+    jobs: Iterable[JobPosting],
+    since_hours: int,
+    now: datetime | None = None,
+) -> list[JobPosting]:
+    if since_hours <= 0:
+        return list(jobs)
+
+    current = now or datetime.now(timezone.utc)
+    cutoff = current - timedelta(hours=since_hours)
+    fresh: list[JobPosting] = []
+    for job in jobs:
+        timestamp = _parse_timestamp(job.posted_at) or _parse_timestamp(job.discovered_at)
+        if timestamp is None or timestamp >= cutoff:
+            fresh.append(job)
+    return fresh
+
+
+def render_latest_report(jobs: Iterable[JobPosting], errors: Iterable[str], limit: int) -> str:
+    job_list = list(jobs)
+    selected = job_list[: max(limit, 0)]
+    error_list = [error for error in errors if error]
+    generated = utc_now()
+    lines = [
+        "# Latest Job Discovery",
+        "",
+        f"Generated: {generated}",
+        f"Total matches: {len(job_list)}",
+        "",
+        "## Top Matches",
+    ]
+
+    if not selected:
+        lines.extend(["", "_No matches found._"])
+    else:
+        for index, job in enumerate(selected, start=1):
+            reasons = ", ".join(job.score_reasons) if job.score_reasons else "none"
+            lines.extend(
+                [
+                    "",
+                    f"### {index}. {job.title}",
+                    f"- Company: {job.company}",
+                    f"- Location: {job.location or 'Unknown'}",
+                    f"- Score: {job.score:.1f}",
+                    f"- Source: {job.source}",
+                    f"- URL: {job.url}",
+                    f"- Reasons: {reasons}",
+                ]
+            )
+            if job.description:
+                lines.append(f"- Description: {job.description}")
+            elif job.snippet:
+                lines.append(f"- Snippet: {job.snippet}")
+
+    if error_list:
+        lines.extend(["", "## Source Errors"])
+        for error in error_list:
+            lines.append(f"- {error}")
+
+    lines.append("")
+    return "\n".join(lines)
+
+
+def write_autopilot_inputs(jobs: Iterable[JobPosting], output_dir: Path | str) -> list[Path]:
+    output_path = Path(output_dir)
+    output_path.mkdir(parents=True, exist_ok=True)
+    written: list[Path] = []
+    for job in jobs:
+        file_path = output_path / f"{job.id}.txt"
+        content = [
+            f"Company: {job.company}",
+            f"Title: {job.title}",
+            f"Location: {job.location}",
+        ]
+        detail = job.description or job.snippet
+        if detail:
+            content.extend(["", detail.strip()])
+        file_path.write_text("\n".join(content).rstrip() + "\n", encoding="utf-8")
+        written.append(file_path)
+    return written
+
+
+def discover(config: DiscoveryConfig, fixture_path: Path | str | None = None) -> tuple[list[JobPosting], list[str]]:
+    if fixture_path is not None:
+        return load_fixture_jobs(fixture_path), []
+
+    jobs: list[JobPosting] = []
+    errors: list[str] = []
+    for source in config.sources:
+        try:
+            jobs.extend(fetch_source(source))
+        except Exception as exc:  # pragma: no cover - exercised in smoke and integration use
+            source_name = str(source.get("name") or source.get("type") or "source")
+            errors.append(f"{source_name}: {exc}")
+    return jobs, errors
+
+
 def load_config(path: Path | str = DEFAULT_CONFIG) -> DiscoveryConfig:
     config_path = Path(path)
     text = config_path.read_text(encoding="utf-8")
@@ -630,12 +750,49 @@ def load_config(path: Path | str = DEFAULT_CONFIG) -> DiscoveryConfig:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Load the job discovery config and report basic counts.")
+    parser = argparse.ArgumentParser(description="Discover jobs, write reports, and prepare autopilot inputs.")
     parser.add_argument("--config", default=str(DEFAULT_CONFIG), help="Path to discovery sources config")
+    parser.add_argument("--since-hours", type=int, default=48, help="Only keep jobs discovered or posted recently")
+    parser.add_argument("--limit", type=int, default=25, help="Maximum jobs to include in the latest report")
+    parser.add_argument(
+        "--autopilot-top",
+        type=int,
+        default=0,
+        help="Write autopilot inputs for the top N ranked jobs",
+    )
+    parser.add_argument(
+        "--dry-run-fixtures",
+        type=Path,
+        default=None,
+        help="Load jobs from a JSON fixture file instead of fetching live sources",
+    )
     args = parser.parse_args()
 
     config = load_config(args.config)
-    print(f"Loaded {len(config.sources)} sources, {len(config.queries)} queries")
+    state = DiscoveryState(DISCOVERY_DIR)
+    jobs, errors = discover(config, args.dry_run_fixtures)
+    recent_jobs = filter_recent_jobs(jobs, args.since_hours)
+    ranked = score_jobs(recent_jobs, config)
+    fresh = state.filter_new(ranked)
+    state.record_jobs(fresh)
+
+    latest_path = DISCOVERY_DIR / "latest.md"
+    latest_path.write_text(render_latest_report(ranked, errors, args.limit), encoding="utf-8")
+
+    if args.autopilot_top > 0:
+        autopilot_dir = DISCOVERY_DIR / "job_texts"
+        selected_jobs = ranked[: args.autopilot_top]
+        written = write_autopilot_inputs(selected_jobs, autopilot_dir)
+        for path in written:
+            print(f"Autopilot input: {path}")
+        if written:
+            print("Run ./generate.sh autopilot <file> with one of the generated inputs.")
+
+    print(f"Discovered {len(jobs)} jobs; {len(fresh)} new; wrote {latest_path}")
+    if errors:
+        print(f"Source errors: {len(errors)}")
+        for error in errors:
+            print(f"- {error}")
     return 0
 
 
