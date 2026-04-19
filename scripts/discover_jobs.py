@@ -582,6 +582,12 @@ class DiscoveryState:
                 result[str(key)] = dict(value)
         return result
 
+    def reset(self) -> None:
+        self._seen = {}
+        for path in (self.seen_path, self.jobs_path):
+            if path.exists():
+                path.unlink()
+
     def filter_new(self, jobs: Iterable[JobPosting]) -> list[JobPosting]:
         fresh: list[JobPosting] = []
         batch_seen: set[str] = set()
@@ -621,6 +627,14 @@ def _normalize_list(values: Iterable[Any] | None) -> list[str]:
     return [str(value) for value in values]
 
 
+def _source_is_enabled(source: dict[str, Any]) -> bool:
+    return source.get("enabled") is not False
+
+
+def count_enabled_sources(config: DiscoveryConfig) -> int:
+    return sum(1 for source in config.sources if _source_is_enabled(source))
+
+
 def _markdown_inline(text: str | None) -> str:
     if not text:
         return ""
@@ -655,7 +669,12 @@ def filter_recent_jobs(
     return fresh
 
 
-def render_latest_report(jobs: Iterable[JobPosting], errors: Iterable[str], limit: int) -> str:
+def render_latest_report(
+    jobs: Iterable[JobPosting],
+    errors: Iterable[str],
+    limit: int,
+    new_count: int | None = None,
+) -> str:
     job_list = list(jobs)
     selected = job_list[: max(limit, 0)]
     error_list = [error for error in errors if error]
@@ -665,12 +684,24 @@ def render_latest_report(jobs: Iterable[JobPosting], errors: Iterable[str], limi
         "",
         f"Generated: {generated}",
         f"Total matches: {len(job_list)}",
-        "",
-        "## Top Matches",
     ]
+    if new_count is not None:
+        lines.append(f"New matches: {new_count}")
+    if error_list:
+        lines.append(f"Source errors: {len(error_list)}")
+
+    lines.extend(["", "## Top Matches"])
 
     if not selected:
-        lines.extend(["", "_No matches found._"])
+        if job_list:
+            lines.extend(["", "_No jobs shown because the report limit is 0._"])
+        else:
+            lines.extend(
+                [
+                    "",
+                    "_No matches found. Enable public sources in `applications/discovery/sources.yaml`, then run `./generate.sh discover` again._",
+                ]
+            )
     else:
         for index, job in enumerate(selected, start=1):
             reasons = ", ".join(job.score_reasons) if job.score_reasons else "none"
@@ -712,6 +743,8 @@ def write_autopilot_inputs(jobs: Iterable[JobPosting], output_dir: Path | str) -
             f"Company: {job.company}",
             f"Title: {job.title}",
             f"Location: {job.location}",
+            f"Source: {job.source}",
+            f"URL: {job.url}",
         ]
         detail = job.description or job.snippet
         if detail:
@@ -742,6 +775,16 @@ def resolve_runtime_dir(fixture_path: Path | str | None = None) -> Path:
     return DISCOVERY_DIR
 
 
+def nonnegative_int(value: str) -> int:
+    try:
+        parsed = int(value)
+    except ValueError as exc:
+        raise argparse.ArgumentTypeError("must be an integer") from exc
+    if parsed < 0:
+        raise argparse.ArgumentTypeError("must be greater than or equal to 0")
+    return parsed
+
+
 def load_config(path: Path | str = DEFAULT_CONFIG) -> DiscoveryConfig:
     config_path = Path(path)
     text = config_path.read_text(encoding="utf-8")
@@ -766,11 +809,11 @@ def load_config(path: Path | str = DEFAULT_CONFIG) -> DiscoveryConfig:
 def main() -> int:
     parser = argparse.ArgumentParser(description="Discover jobs, write reports, and prepare autopilot inputs.")
     parser.add_argument("--config", default=str(DEFAULT_CONFIG), help="Path to discovery sources config")
-    parser.add_argument("--since-hours", type=int, default=48, help="Only keep jobs discovered or posted recently")
-    parser.add_argument("--limit", type=int, default=25, help="Maximum jobs to include in the latest report")
+    parser.add_argument("--since-hours", type=nonnegative_int, default=48, help="Only keep jobs discovered or posted recently; 0 keeps all")
+    parser.add_argument("--limit", type=nonnegative_int, default=25, help="Maximum jobs to include in the latest report")
     parser.add_argument(
         "--autopilot-top",
-        type=int,
+        type=nonnegative_int,
         default=0,
         help="Write autopilot inputs for the top N ranked jobs",
     )
@@ -780,11 +823,22 @@ def main() -> int:
         default=None,
         help="Load jobs from a JSON fixture file instead of fetching live sources",
     )
+    parser.add_argument(
+        "--reset-state",
+        action="store_true",
+        help="Clear prior discovery state before this run",
+    )
     args = parser.parse_args()
 
     config = load_config(args.config)
+    if args.dry_run_fixtures is None and count_enabled_sources(config) == 0:
+        print(f"No enabled discovery sources in {args.config}. Enable public sources before running live discovery.")
+
     runtime_dir = resolve_runtime_dir(args.dry_run_fixtures)
     state = DiscoveryState(runtime_dir)
+    if args.reset_state:
+        state.reset()
+
     jobs, errors = discover(config, args.dry_run_fixtures)
     recent_jobs = filter_recent_jobs(jobs, args.since_hours)
     ranked = score_jobs(recent_jobs, config)
@@ -792,7 +846,7 @@ def main() -> int:
     state.record_jobs(fresh)
 
     latest_path = runtime_dir / "latest.md"
-    latest_path.write_text(render_latest_report(ranked, errors, args.limit), encoding="utf-8")
+    latest_path.write_text(render_latest_report(ranked, errors, args.limit, new_count=len(fresh)), encoding="utf-8")
 
     if args.autopilot_top > 0:
         autopilot_dir = runtime_dir / "job_texts"
@@ -802,8 +856,10 @@ def main() -> int:
             print(f"Autopilot input: {path}")
         if written:
             print("Run ./generate.sh autopilot <file> with one of the generated inputs.")
+        else:
+            print("No autopilot inputs written because no ranked jobs matched.")
 
-    print(f"Discovered {len(jobs)} jobs; {len(fresh)} new; wrote {latest_path}")
+    print(f"Discovered {len(jobs)} jobs; {len(ranked)} recent matches; {len(fresh)} new; wrote {latest_path}")
     if errors:
         print(f"Source errors: {len(errors)}")
         for error in errors:

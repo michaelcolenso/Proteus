@@ -9,9 +9,11 @@ from scripts.discover_jobs import (
     DiscoveryState,
     JobPosting,
     canonicalize_url,
+    count_enabled_sources,
     filter_recent_jobs,
     load_fixture_jobs,
     load_config,
+    nonnegative_int,
     parse_career_page,
     parse_lever_jobs,
     parse_posted_at,
@@ -90,6 +92,17 @@ sources:
         self.assertIsInstance(config, DiscoveryConfig)
         self.assertIn("construction project manager", config.queries)
         self.assertTrue(config.sources)
+
+    def test_count_enabled_sources_ignores_disabled_entries(self):
+        config = DiscoveryConfig(
+            sources=[
+                {"name": "live", "type": "career_page", "enabled": True},
+                {"name": "disabled", "type": "lever", "enabled": False},
+                {"name": "implicit", "type": "career_page"},
+            ]
+        )
+
+        self.assertEqual(count_enabled_sources(config), 2)
 
 
 class ScoringAndStateTests(unittest.TestCase):
@@ -198,6 +211,24 @@ class ScoringAndStateTests(unittest.TestCase):
             self.assertEqual(jobs_path.read_text(encoding="utf-8").count("\n"), 1)
             self.assertIn("Project Manager", seen_path.read_text(encoding="utf-8"))
 
+    def test_discovery_state_reset_clears_seen_and_history(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            state = DiscoveryState(Path(tmp))
+            job = JobPosting(
+                title="Project Manager",
+                company="Builder",
+                location="Seattle, WA",
+                url="https://example.com/job",
+                source="fixture",
+            )
+
+            state.record_jobs([job])
+            state.reset()
+
+            self.assertFalse((Path(tmp) / "jobs.jsonl").exists())
+            self.assertFalse((Path(tmp) / "seen.json").exists())
+            self.assertEqual(state.filter_new([job]), [job])
+
 
 class ReportTests(unittest.TestCase):
     def test_render_latest_report_includes_ranked_jobs_and_errors(self):
@@ -210,10 +241,34 @@ class ReportTests(unittest.TestCase):
             score=31.0,
             score_reasons=["matched: project manager", "location: Seattle, WA"],
         )
-        report = render_latest_report([job], ["broken-source: timeout"], limit=10)
+        report = render_latest_report([job], ["broken-source: timeout"], limit=10, new_count=1)
         self.assertIn("# Latest Job Discovery", report)
+        self.assertIn("New matches: 1", report)
+        self.assertIn("Source errors: 1", report)
         self.assertIn("Senior Project Manager", report)
         self.assertIn("broken-source: timeout", report)
+
+    def test_render_latest_report_has_helpful_empty_state(self):
+        report = render_latest_report([], [], limit=10, new_count=0)
+
+        self.assertIn("Total matches: 0", report)
+        self.assertIn("New matches: 0", report)
+        self.assertIn("Enable public sources", report)
+
+    def test_render_latest_report_explains_zero_limit(self):
+        job = JobPosting(
+            title="Project Manager",
+            company="Acme",
+            location="Seattle, WA",
+            url="https://example.com/job",
+            source="fixture",
+        )
+
+        report = render_latest_report([job], [], limit=0)
+
+        self.assertIn("Total matches: 1", report)
+        self.assertIn("report limit is 0", report)
+        self.assertNotIn("### 1. Project Manager", report)
 
     def test_load_fixture_jobs_reads_json_payload(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -278,10 +333,19 @@ class ReportTests(unittest.TestCase):
             self.assertEqual([path.name for path in written], [f"{job.id}.txt"])
             self.assertFalse(stale.exists())
             self.assertEqual(sorted(path.name for path in output_dir.glob("*.txt")), [f"{job.id}.txt"])
+            content = written[0].read_text(encoding="utf-8")
+            self.assertIn("Source: fixture", content)
+            self.assertIn("URL: https://example.com/job", content)
 
     def test_resolve_runtime_dir_uses_dry_run_subdir_for_fixtures(self):
         self.assertEqual(resolve_runtime_dir(Path("/tmp/example.json")), Path(__file__).resolve().parents[1] / "applications/discovery/dry_run")
         self.assertEqual(resolve_runtime_dir(None), Path(__file__).resolve().parents[1] / "applications/discovery")
+
+    def test_nonnegative_int_rejects_negative_values(self):
+        self.assertEqual(nonnegative_int("0"), 0)
+        self.assertEqual(nonnegative_int("12"), 12)
+        with self.assertRaises(Exception):
+            nonnegative_int("-1")
 
 
 class AdapterTests(unittest.TestCase):
