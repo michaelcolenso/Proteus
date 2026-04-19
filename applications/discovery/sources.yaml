@@ -1,0 +1,41 @@
+queries:
+  - construction project manager
+  - senior project manager construction
+  - multifamily project manager
+  - construction superintendent
+  - construction estimator
+  - owner's representative construction
+
+locations:
+  - Seattle, WA
+  - Bellevue, WA
+  - Remote
+
+include_terms:
+  - project manager
+  - senior project manager
+  - construction manager
+  - superintendent
+  - estimator
+  - preconstruction
+  - owner representative
+  - multifamily
+  - luxury residential
+  - general contractor
+
+exclude_terms:
+  - software engineer
+  - product manager
+  - account executive
+  - internship
+  - unpaid
+
+sources:
+  - type: lever
+    name: sample-lever
+    url: https://jobs.lever.co/example
+    enabled: false
+  - type: career_page
+    name: sample-career-page
+    url: https://example.com/careers
+    enabled: false
