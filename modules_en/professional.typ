@@ -7,20 +7,7 @@
 
 #cvSection("Professional Experience")
 
-#columns[  
-  // #cvEntry(
-  //   title: [Bartender],
-  //   society: [Easy Street Records],
-  //   logo: none,
-  //   date: [2024 – Present],
-  //   location: [Seattle, WA],
-  //   description: list(
-  //     [Craft exceptional beverages while fostering a welcoming atmosphere in an iconic Seattle music venue],
-  //     [Maintain efficient bar operations while engaging with a diverse clientele in a fast-paced environment]
-  //   ),
-  //   tags: ("Customer Service", "Beverage Operations", "Music Venue")
-  // )
-
+#columns(2, gutter: 1em)[
   #cvEntry(
     title: [Project Manager],
     society: [STS Construction],
@@ -28,9 +15,8 @@
     date: [2022 – 2025],
     location: [Seattle, WA],
     description: list(
-      [*Delivered \$12M, 57-unit podium-style multifamily building* (35,000 SF, 8 stories) in Seattle's Eastlake neighborhood—managing full P&L, 18 subcontractors, and direct owner relationship from groundbreak through certificate of occupancy],
-      [*Maintained zero recordable safety incidents* across 24-month project while coordinating 35+ daily trade workforce and field leadership],
-      [*Resolved 40+ RFIs and field coordination conflicts* with average 48-hour turnaround, preventing schedule impacts on critical-path framing and MEP rough-in activities]
+      [*Spearheaded \$12M, 57-unit multifamily delivery,* optimizing P&L management, 18 subcontractor teams, and client relations from groundbreak to occupancy],
+      [*Secured zero recordable safety incidents* over 24 months, orchestrating a 35+ person workforce through rigorous field leadership],
     ),
     tags: ("Multifamily Construction", "Production Leadership", "Budget Management")
   )
@@ -42,9 +28,8 @@
     date: [2020 – 2022],
     location: [Seattle, WA],
     description: list(
-      [*Managed portfolio of \$8M+ in luxury residential projects* for ultra-high-net-worth clients, coordinating with world-class architects and specialty craftspeople to deliver exceptional built environments],
-      [*Cultivated trusted advisor relationships with discerning clients,* resulting in 3 referrals and 2 repeat engagements during tenure],
-      [*Coordinated 57th-floor custom apartment buildout* in active high-rise, integrating luxury finishes with base building systems while maintaining strict schedule and access constraints]
+      [*Strategically directed \$8M+ in luxury residential projects,* uniting world-class architects and artisans to execute flawless, high-end environments],
+      [*Cemented long-term client loyalty,* securing formal referrals and repeat commissions through exceptional advisor-level engagement],
     ),
     tags: ("Client Experience", "Luxury Residential", "Project Scheduling")
   )
@@ -56,12 +41,13 @@
     date: [2018 – 2019],
     location: [Redmond, WA],
     description: list(
-      [*Delivered detailed monthly cost reports and cash flow projections* to ownership group, supporting informed decision-making on \$35M senior living facility expansion],
-      [*Managed \$4M+ in scope changes* through proactive documentation and fair negotiation, maintaining positive owner relationship throughout],
-      [*Created and maintained comprehensive CPM schedule* that drove successful on-time delivery despite 14 owner-directed changes to program]
+      [*Drove data-backed owner decision-making* through high-precision cost reports and cash flow modeling for a \$35M facility expansion],
+      [*Captured \$4M+ in scope variance,* neutralizing claims exposure through rigorous documentation and principled negotiation],
     ),
     tags: ("Risk Management", "Financial Reporting", "Stakeholder Communication", "Change Management")
   )
+
+  #colbreak()
 
   #cvEntry(
     title: [Project Manager],
@@ -70,14 +56,11 @@
     date: [2017 – 2018],
     location: [Abaco, Bahamas],
     description: list(
-      [*Oversaw construction of multiple luxury vacation homes* in exclusive private development, meeting exacting quality standards for clientele expecting world-class service],
-      [*Established strategic vendor partnerships* that ensured material availability despite supply chain constraints inherent to remote island location, reducing procurement delays by 30%],
-      [*Managed all project phases across international borders,* efficiently navigating customs, logistics, and workforce challenges unique to Caribbean construction]
+      [*Elevated luxury vacation home delivery* in exclusive development, surpassing exacting benchmarks for ultra-discerning clientele],
+      [*Optimized supply chain resilience* by architecting strategic vendor partnerships, capturing 30% reduction in lead times],
     ),
     tags: ("International Projects", "Luxury Residential", "Procurement")
   )
-
-  #colbreak()
 
   #cvEntry(
     title: [Project Manager],
@@ -86,8 +69,8 @@
     date: [2016 – 2017],
     location: [Seattle, WA],
     description: list(
-      [*Coordinated building envelope construction on \$200M twin-tower development* (23-story hotel + 18-story office/parking), including curtain wall, precast, and insulated metal panel systems],
-      [*Implemented rigorous change management process* that mitigated claims exposure while delivering value-engineered solutions saving \$400K+ on facade scope]
+      [*Engineered complex building envelope delivery* for a \$200M twin-tower landmark, precisely integrating curtain wall and precast systems],
+      [*Captured \$400K+ in value-engineered facade savings* by pioneering a proactive change management framework that mitigated exposure],
     ),
     tags: ("High-Rise Construction", "Value Engineering", "Claims Mitigation")
   )
@@ -99,24 +82,9 @@
     date: [2004 – 2011],
     location: [Seattle, Chicago, Los Angeles],
     description: list(
-      [*Progressed from Field Engineer to Project Engineer* across education, retail, hospitality, healthcare, and seismic retrofit sectors],
-      [*Managed \$50M+ in contracted scope at Graham,* delivering two projects in 18 months for repeat client],
-      [*Developed core competencies* in preconstruction, bid evaluation, and contract negotiation]
+      [*Accelerated professional progression* from Field Engineer to Project Engineer through hands-on leadership across high-stakes education and hospitality projects],
+      [*Commanded \$50M+ in contracted scope,* establishing repeat-client satisfaction by delivering large-scale projects within compressed windows],
     ),
     tags: ("Preconstruction", "Project Management", "Multisector Experience")
   )
-
-  #cvEntry(
-    title: [Career Note],
-    society: [],
-    logo: none,
-    date: [2012 – 2015],
-    location: [],
-    description: list(
-      [_Pursued software development, advancing to Senior Engineer at venture-backed startup. Returned to construction with enhanced technical problem-solving and data analysis capabilities._]
-    ),
-    tags: ("Software Development", "Cross-Functional Collaboration")
-  )
 ]
-
-#pagebreak()

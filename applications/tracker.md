@@ -5,6 +5,9 @@
 | Date | Company | Position | CV Variant | Letter | Status | Next Step | Notes |
 |------|---------|----------|------------|--------|--------|-----------|-------|
 | 2025-01-15 | Example Construction | Senior PM | cv_senior_pm | senior_pm | Applied | Follow up 1/22 | Multifamily focus |
+| 2026-04-09 | About the job | [Role from posting] | cv_superintendent | senior_pm | Applied | Follow up 2026-04-16 | Added via autopilot UI |
+| 2026-04-09 | About the job | [Role from posting] | cv_senior_pm | senior_pm | Applied | Follow up 2026-04-16 | Added via autopilot UI |
+| 2026-04-09 | About the job | [Role from posting] | cv_superintendent | senior_pm | Applied | Follow up 2026-04-16 | Added via autopilot UI |
 |  |  |  |  |  |  |  |  |
 
 ## Interview Pipeline
