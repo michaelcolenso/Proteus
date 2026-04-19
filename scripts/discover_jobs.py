@@ -74,6 +74,16 @@ def parse_posted_at(value: str | None) -> str | None:
     if not text:
         return None
 
+    lowered = text.lower()
+
+    if lowered == "today":
+        return _format_utc(datetime.now(timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0))
+
+    if lowered == "yesterday":
+        return _format_utc(
+            datetime.now(timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0) - timedelta(days=1)
+        )
+
     date_only = re.fullmatch(r"(\d{4})-(\d{2})-(\d{2})", text)
     if date_only:
         year, month, day = map(int, date_only.groups())
@@ -84,13 +94,15 @@ def parse_posted_at(value: str | None) -> str | None:
         month, day, year = map(int, slash_date.groups())
         return _format_utc(datetime(year, month, day, tzinfo=timezone.utc))
 
-    relative = re.fullmatch(r"(\d+)\s+(hour|hours|day|days)\s+ago", text.lower())
+    relative = re.fullmatch(r"(\d+)\+?\s*(h|hr|hrs|hour|hours|d|day|days|w|wk|wks|week|weeks)\s+ago", lowered)
     if relative:
         amount = int(relative.group(1))
         unit = relative.group(2)
         now = datetime.now(timezone.utc).replace(microsecond=0)
-        if unit.startswith("hour"):
+        if unit in {"h", "hr", "hrs", "hour", "hours"}:
             return _format_utc(now - timedelta(hours=amount))
+        if unit in {"w", "wk", "wks", "week", "weeks"}:
+            return _format_utc(now - timedelta(days=amount * 7))
         return _format_utc(now - timedelta(days=amount))
 
     iso_text = text.replace("Z", "+00:00")
@@ -388,7 +400,14 @@ class DiscoveryState:
         return result
 
     def filter_new(self, jobs: Iterable[JobPosting]) -> list[JobPosting]:
-        return [job for job in jobs if job.id not in self._seen]
+        fresh: list[JobPosting] = []
+        batch_seen: set[str] = set()
+        for job in jobs:
+            if job.id in self._seen or job.id in batch_seen:
+                continue
+            batch_seen.add(job.id)
+            fresh.append(job)
+        return fresh
 
     def record_jobs(self, jobs: Iterable[JobPosting]) -> None:
         records = list(jobs)

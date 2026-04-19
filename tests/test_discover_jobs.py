@@ -1,6 +1,7 @@
 import os
 import tempfile
 import unittest
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 from scripts.discover_jobs import (
@@ -138,6 +139,57 @@ class ScoringAndStateTests(unittest.TestCase):
         self.assertEqual(parse_posted_at("2026-04-18"), "2026-04-18T00:00:00+00:00")
         self.assertEqual(parse_posted_at("2026-04-18T12:30:00Z"), "2026-04-18T12:30:00+00:00")
         self.assertIsNotNone(parse_posted_at("2 days ago"))
+
+    def test_parse_posted_at_supports_common_relative_public_formats(self):
+        now = datetime.now(timezone.utc)
+
+        today = parse_posted_at("today")
+        yesterday = parse_posted_at("yesterday")
+        thirty_plus_days_ago = parse_posted_at("30+ days ago")
+        two_days_ago = parse_posted_at("2d ago")
+        two_weeks_ago = parse_posted_at("2 weeks ago")
+
+        self.assertIsNotNone(today)
+        self.assertIsNotNone(yesterday)
+        self.assertIsNotNone(thirty_plus_days_ago)
+        self.assertIsNotNone(two_days_ago)
+        self.assertIsNotNone(two_weeks_ago)
+
+        self.assertEqual(today, now.replace(hour=0, minute=0, second=0, microsecond=0).isoformat())
+        self.assertEqual(yesterday, (now - timedelta(days=1)).replace(hour=0, minute=0, second=0, microsecond=0).isoformat())
+        self.assertTrue(parse_posted_at("30+ days ago").startswith((now - timedelta(days=30)).date().isoformat()))
+        self.assertTrue(parse_posted_at("2d ago").startswith((now - timedelta(days=2)).date().isoformat()))
+        self.assertTrue(parse_posted_at("2 weeks ago").startswith((now - timedelta(days=14)).date().isoformat()))
+
+    def test_discovery_state_filters_duplicates_within_single_batch_and_records_once(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            state = DiscoveryState(Path(tmp))
+            jobs = [
+                JobPosting(
+                    title="Project Manager",
+                    company="Builder",
+                    location="Seattle, WA",
+                    url="https://example.com/job",
+                    source="fixture",
+                ),
+                JobPosting(
+                    title="Project Manager",
+                    company="Builder",
+                    location="Seattle, WA",
+                    url="https://example.com/job",
+                    source="fixture",
+                ),
+            ]
+
+            fresh = state.filter_new(jobs)
+            state.record_jobs(fresh)
+
+            jobs_path = Path(tmp) / "jobs.jsonl"
+            seen_path = Path(tmp) / "seen.json"
+
+            self.assertEqual(len(fresh), 1)
+            self.assertEqual(jobs_path.read_text(encoding="utf-8").count("\n"), 1)
+            self.assertIn("Project Manager", seen_path.read_text(encoding="utf-8"))
 
 
 if __name__ == "__main__":
