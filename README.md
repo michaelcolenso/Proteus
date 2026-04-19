@@ -107,6 +107,17 @@ The autopilot flow combines:
 - Top achievement evidence to emphasize
 - Suggested follow-up date and commands
 
+### Job Discovery
+
+Discover fresh public job postings and rank them for construction PM relevance:
+
+```bash
+./generate.sh discover --limit 25
+./generate.sh discover --autopilot-top 5
+```
+
+Discovery reads editable source settings from `applications/discovery/sources.yaml` and writes the latest ranked report to `applications/discovery/latest.md`. Dry-run fixture runs write isolated output under `applications/discovery/dry_run/`. The first version uses public sources only and does not use logged-in accounts, captcha solving, or access-control bypasses.
+
 ### Application Autopilot UI
 
 Prefer a browser form instead of CLI flags? Run the local UI:
