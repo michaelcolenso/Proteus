@@ -5,11 +5,13 @@ import argparse
 import json
 import hashlib
 import re
+from html.parser import HTMLParser
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any, Iterable
-from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
+from urllib.parse import parse_qsl, urlencode, urljoin, urlsplit, urlunsplit
+from urllib.request import Request, urlopen
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_CONFIG = REPO_ROOT / "applications/discovery/sources.yaml"
@@ -114,6 +116,134 @@ def parse_posted_at(value: str | None) -> str | None:
     if parsed.tzinfo is None:
         parsed = parsed.replace(tzinfo=timezone.utc)
     return _format_utc(parsed)
+
+
+class LinkCollector(HTMLParser):
+    def __init__(self) -> None:
+        super().__init__()
+        self.links: list[tuple[str, str]] = []
+        self._current_href: str | None = None
+        self._current_text: list[str] = []
+
+    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        if tag.lower() != "a":
+            return
+        self._current_href = dict(attrs).get("href")
+        self._current_text = []
+
+    def handle_data(self, data: str) -> None:
+        if self._current_href is not None:
+            self._current_text.append(data)
+
+    def handle_endtag(self, tag: str) -> None:
+        if tag.lower() != "a" or self._current_href is None:
+            return
+        text = re.sub(r"\s+", " ", "".join(self._current_text)).strip()
+        self.links.append((self._current_href, text))
+        self._current_href = None
+        self._current_text = []
+
+
+def fetch_text(url: str, timeout: int = 12) -> str:
+    request = Request(url, headers={"User-Agent": "ProteusJobDiscovery/1.0 (+public job discovery)"})
+    with urlopen(request, timeout=timeout) as response:
+        data = response.read()
+        return data.decode("utf-8", errors="replace")
+
+
+def _first_string(*values: Any) -> str:
+    for value in values:
+        if isinstance(value, str) and value.strip():
+            return value.strip()
+    return ""
+
+
+def parse_lever_jobs(payload: Any, source: dict[str, Any]) -> list["JobPosting"]:
+    if not isinstance(payload, list):
+        return []
+
+    company = str(source.get("company") or source.get("name", "Unknown Company"))
+    source_name = str(source.get("name", "lever"))
+    jobs: list[JobPosting] = []
+
+    for item in payload:
+        if not isinstance(item, dict):
+            continue
+
+        title = _first_string(item.get("text"), item.get("title"))
+        url = _first_string(item.get("hostedUrl"), item.get("applyUrl"))
+        if not title or not url:
+            continue
+
+        categories = item.get("categories")
+        location = ""
+        if isinstance(categories, dict):
+            location = _first_string(categories.get("location"))
+
+        description = _first_string(item.get("descriptionPlain"), item.get("description"))
+        snippet_source = _first_string(item.get("additionalPlain"))
+        snippet = snippet_source[:300] if snippet_source else ""
+
+        jobs.append(
+            JobPosting(
+                title=title,
+                company=company,
+                location=location,
+                url=url,
+                source=source_name,
+                description=description,
+                snippet=snippet,
+            )
+        )
+
+    return jobs
+
+
+def parse_career_page(html: str, source: dict[str, Any]) -> list["JobPosting"]:
+    collector = LinkCollector()
+    collector.feed(html)
+
+    company = str(source.get("company") or source.get("name", "Unknown Company"))
+    source_name = str(source.get("name", "career_page"))
+    location = str(source.get("location", ""))
+    base_url = str(source["url"])
+    keywords = ("project manager", "construction manager", "superintendent", "estimator", "preconstruction")
+
+    jobs: list[JobPosting] = []
+    for href, text in collector.links:
+        if not href or not text:
+            continue
+        normalized_text = re.sub(r"\s+", " ", text).strip()
+        lowered = normalized_text.lower()
+        if not any(keyword in lowered for keyword in keywords):
+            continue
+        jobs.append(
+            JobPosting(
+                title=normalized_text,
+                company=company,
+                location=location,
+                url=urljoin(base_url, href),
+                source=source_name,
+            )
+        )
+
+    return jobs
+
+
+def fetch_source(source: dict[str, Any]) -> list["JobPosting"]:
+    if source.get("enabled") is False:
+        return []
+
+    source_type = str(source.get("type", ""))
+    if source_type == "lever":
+        payload = json.loads(fetch_text(str(source["url"]).rstrip("/") + "?mode=json"))
+        return parse_lever_jobs(payload, source)
+
+    if source_type == "career_page":
+        html = fetch_text(str(source["url"]))
+        return parse_career_page(html, source)
+
+    raise ValueError(f"Unsupported source type: {source_type}")
 
 
 def parse_scalar(value: str) -> Any:

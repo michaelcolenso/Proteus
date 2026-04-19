@@ -9,6 +9,8 @@ from scripts.discover_jobs import (
     DiscoveryState,
     JobPosting,
     canonicalize_url,
+    parse_career_page,
+    parse_lever_jobs,
     load_config,
     parse_posted_at,
     score_jobs,
@@ -190,6 +192,35 @@ class ScoringAndStateTests(unittest.TestCase):
             self.assertEqual(len(fresh), 1)
             self.assertEqual(jobs_path.read_text(encoding="utf-8").count("\n"), 1)
             self.assertIn("Project Manager", seen_path.read_text(encoding="utf-8"))
+
+
+class AdapterTests(unittest.TestCase):
+    def test_parse_lever_jobs(self):
+        payload = [
+            {
+                "text": "Senior Project Manager",
+                "hostedUrl": "https://jobs.lever.co/acme/123",
+                "categories": {"location": "Seattle, WA"},
+                "descriptionPlain": "Manage multifamily construction.",
+            }
+        ]
+        jobs = parse_lever_jobs(payload, {"name": "acme", "url": "https://jobs.lever.co/acme"})
+        self.assertEqual(len(jobs), 1)
+        self.assertEqual(jobs[0].title, "Senior Project Manager")
+        self.assertEqual(jobs[0].company, "acme")
+        self.assertEqual(jobs[0].location, "Seattle, WA")
+
+    def test_parse_generic_career_page_links(self):
+        html = """
+        <html><body>
+          <a href="/careers/senior-project-manager">Senior Project Manager - Seattle</a>
+          <a href="/about">About</a>
+        </body></html>
+        """
+        jobs = parse_career_page(html, {"name": "Acme Builders", "url": "https://example.com/careers"})
+        self.assertEqual(len(jobs), 1)
+        self.assertEqual(jobs[0].url, "https://example.com/careers/senior-project-manager")
+        self.assertEqual(jobs[0].title, "Senior Project Manager - Seattle")
 
 
 if __name__ == "__main__":
