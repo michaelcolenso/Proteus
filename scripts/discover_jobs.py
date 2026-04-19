@@ -10,8 +10,9 @@ from pathlib import Path
 from typing import Any, Iterable
 from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 
-DEFAULT_CONFIG = Path("applications/discovery/sources.yaml")
-DISCOVERY_DIR = Path("applications/discovery")
+REPO_ROOT = Path(__file__).resolve().parents[1]
+DEFAULT_CONFIG = REPO_ROOT / "applications/discovery/sources.yaml"
+DISCOVERY_DIR = REPO_ROOT / "applications/discovery"
 TRACKING_PARAMS = {
     "utm_source",
     "utm_medium",
@@ -38,6 +39,7 @@ def canonicalize_url(url: str) -> str:
         for key, value in parse_qsl(parts.query, keep_blank_values=True)
         if key.lower() not in TRACKING_PARAMS
     ]
+    query_pairs.sort()
     path = parts.path or ""
     if path.endswith("/") and path != "/":
         path = path.rstrip("/")

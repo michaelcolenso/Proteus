@@ -1,3 +1,4 @@
+import os
 import tempfile
 import unittest
 from pathlib import Path
@@ -51,6 +52,28 @@ sources:
     def test_canonicalize_url_removes_tracking_params_and_fragments(self):
         url = "https://example.com/jobs/123?utm_source=mail&gh_src=abc&query=pm#apply"
         self.assertEqual(canonicalize_url(url), "https://example.com/jobs/123?query=pm")
+
+    def test_canonicalize_url_sorts_non_tracking_query_params(self):
+        canonical_a = canonicalize_url("https://example.com/job?b=2&a=1&utm_source=x")
+        canonical_b = canonicalize_url("https://example.com/job?a=1&b=2&utm_source=x")
+
+        self.assertEqual(canonical_a, "https://example.com/job?a=1&b=2")
+        self.assertEqual(canonical_a, canonical_b)
+
+    def test_load_config_uses_repo_default_from_scripts_cwd(self):
+        repo_root = Path(__file__).resolve().parents[1]
+        scripts_dir = repo_root / "scripts"
+        original_cwd = Path.cwd()
+
+        try:
+            os.chdir(scripts_dir)
+            config = load_config()
+        finally:
+            os.chdir(original_cwd)
+
+        self.assertIsInstance(config, DiscoveryConfig)
+        self.assertIn("construction project manager", config.queries)
+        self.assertTrue(config.sources)
 
 
 if __name__ == "__main__":
