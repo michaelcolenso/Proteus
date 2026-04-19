@@ -3,7 +3,15 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from scripts.discover_jobs import DiscoveryConfig, JobPosting, canonicalize_url, load_config
+from scripts.discover_jobs import (
+    DiscoveryConfig,
+    DiscoveryState,
+    JobPosting,
+    canonicalize_url,
+    load_config,
+    parse_posted_at,
+    score_jobs,
+)
 
 
 class ConfigAndModelTests(unittest.TestCase):
@@ -74,6 +82,62 @@ sources:
         self.assertIsInstance(config, DiscoveryConfig)
         self.assertIn("construction project manager", config.queries)
         self.assertTrue(config.sources)
+
+
+class ScoringAndStateTests(unittest.TestCase):
+    def test_score_jobs_rewards_relevance_location_and_penalizes_exclusions(self):
+        config = DiscoveryConfig(
+            locations=["Seattle, WA"],
+            include_terms=["project manager", "multifamily", "construction"],
+            exclude_terms=["software"],
+        )
+        jobs = [
+            JobPosting(
+                title="Senior Project Manager",
+                company="Builder",
+                location="Seattle, WA",
+                url="https://example.com/a",
+                source="fixture",
+                description="Lead multifamily construction projects.",
+            ),
+            JobPosting(
+                title="Software Product Manager",
+                company="Tech",
+                location="Seattle, WA",
+                url="https://example.com/b",
+                source="fixture",
+                description="Software roadmap role.",
+            ),
+        ]
+
+        ranked = score_jobs(jobs, config)
+
+        self.assertGreater(ranked[0].score, ranked[1].score)
+        self.assertIn("matched: project manager", ranked[0].score_reasons)
+        self.assertIn("location: Seattle, WA", ranked[0].score_reasons)
+        self.assertIn("penalty: software", ranked[1].score_reasons)
+
+    def test_discovery_state_filters_seen_jobs_and_preserves_first_seen(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            state = DiscoveryState(Path(tmp))
+            job = JobPosting(
+                title="Project Manager",
+                company="Builder",
+                location="Seattle, WA",
+                url="https://example.com/job",
+                source="fixture",
+            )
+            fresh = state.filter_new([job])
+            state.record_jobs(fresh)
+            repeated = state.filter_new([job])
+
+        self.assertEqual(len(fresh), 1)
+        self.assertEqual(repeated, [])
+
+    def test_parse_posted_at_normalizes_common_public_formats(self):
+        self.assertEqual(parse_posted_at("2026-04-18"), "2026-04-18T00:00:00+00:00")
+        self.assertEqual(parse_posted_at("2026-04-18T12:30:00Z"), "2026-04-18T12:30:00+00:00")
+        self.assertIsNotNone(parse_posted_at("2 days ago"))
 
 
 if __name__ == "__main__":

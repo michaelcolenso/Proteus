@@ -2,10 +2,11 @@
 from __future__ import annotations
 
 import argparse
+import json
 import hashlib
 import re
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any, Iterable
 from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
@@ -53,6 +54,54 @@ def canonicalize_url(url: str) -> str:
         )
     )
     return canonical
+
+
+def _contains(text: str, term: str) -> bool:
+    if not text or not term:
+        return False
+    return re.search(rf"\b{re.escape(term.lower())}\b", text.lower()) is not None
+
+
+def _format_utc(dt: datetime) -> str:
+    return dt.astimezone(timezone.utc).replace(microsecond=0).isoformat()
+
+
+def parse_posted_at(value: str | None) -> str | None:
+    if not value:
+        return None
+
+    text = value.strip()
+    if not text:
+        return None
+
+    date_only = re.fullmatch(r"(\d{4})-(\d{2})-(\d{2})", text)
+    if date_only:
+        year, month, day = map(int, date_only.groups())
+        return _format_utc(datetime(year, month, day, tzinfo=timezone.utc))
+
+    slash_date = re.fullmatch(r"(\d{1,2})/(\d{1,2})/(\d{4})", text)
+    if slash_date:
+        month, day, year = map(int, slash_date.groups())
+        return _format_utc(datetime(year, month, day, tzinfo=timezone.utc))
+
+    relative = re.fullmatch(r"(\d+)\s+(hour|hours|day|days)\s+ago", text.lower())
+    if relative:
+        amount = int(relative.group(1))
+        unit = relative.group(2)
+        now = datetime.now(timezone.utc).replace(microsecond=0)
+        if unit.startswith("hour"):
+            return _format_utc(now - timedelta(hours=amount))
+        return _format_utc(now - timedelta(days=amount))
+
+    iso_text = text.replace("Z", "+00:00")
+    try:
+        parsed = datetime.fromisoformat(iso_text)
+    except ValueError:
+        return None
+
+    if parsed.tzinfo is None:
+        parsed = parsed.replace(tzinfo=timezone.utc)
+    return _format_utc(parsed)
 
 
 def parse_scalar(value: str) -> Any:
@@ -264,6 +313,104 @@ class JobPosting:
             "score": self.score,
             "score_reasons": list(self.score_reasons),
         }
+
+
+def score_jobs(jobs: list[JobPosting], config: DiscoveryConfig) -> list[JobPosting]:
+    scored_jobs: list[JobPosting] = []
+    for job in jobs:
+        haystack = " ".join(
+            part
+            for part in [job.title, job.company, job.location, job.description, job.snippet]
+            if part
+        ).lower()
+        score = 0.0
+        reasons: list[str] = []
+        tags: list[str] = []
+
+        for term in config.include_terms:
+            if _contains(haystack, term):
+                score += 10
+                reasons.append(f"matched: {term}")
+                tags.append(term)
+
+        for location in config.locations:
+            if _contains(job.location, location) or _contains(haystack, location):
+                score += 8
+                reasons.append(f"location: {location}")
+                break
+
+        if _contains(job.title, "senior"):
+            score += 4
+            reasons.append("seniority: senior")
+
+        if _contains(job.title, "project manager"):
+            score += 6
+            reasons.append("role: project manager")
+
+        if job.posted_at:
+            score += 5
+            reasons.append("has posted date")
+        else:
+            score += 2
+            reasons.append("freshly discovered")
+
+        for term in config.exclude_terms:
+            if _contains(haystack, term):
+                score -= 25
+                reasons.append(f"penalty: {term}")
+
+        job.score = score
+        job.score_reasons = reasons
+        job.tags = tags
+        scored_jobs.append(job)
+
+    return sorted(scored_jobs, key=lambda item: item.score, reverse=True)
+
+
+class DiscoveryState:
+    def __init__(self, discovery_dir: Path | str = DISCOVERY_DIR) -> None:
+        self.discovery_dir = Path(discovery_dir)
+        self.discovery_dir.mkdir(parents=True, exist_ok=True)
+        self.seen_path = self.discovery_dir / "seen.json"
+        self.jobs_path = self.discovery_dir / "jobs.jsonl"
+        self._seen = self._load_seen()
+
+    def _load_seen(self) -> dict[str, dict[str, Any]]:
+        if not self.seen_path.exists():
+            return {}
+        data = json.loads(self.seen_path.read_text(encoding="utf-8"))
+        if not isinstance(data, dict):
+            raise ValueError("seen.json must contain a JSON object")
+        result: dict[str, dict[str, Any]] = {}
+        for key, value in data.items():
+            if isinstance(value, dict):
+                result[str(key)] = dict(value)
+        return result
+
+    def filter_new(self, jobs: Iterable[JobPosting]) -> list[JobPosting]:
+        return [job for job in jobs if job.id not in self._seen]
+
+    def record_jobs(self, jobs: Iterable[JobPosting]) -> None:
+        records = list(jobs)
+        if not records:
+            return
+
+        with self.jobs_path.open("a", encoding="utf-8") as handle:
+            for job in records:
+                handle.write(json.dumps(job.to_record(), ensure_ascii=False, sort_keys=True))
+                handle.write("\n")
+                if job.id not in self._seen:
+                    self._seen[job.id] = {
+                        "discovered_at": job.discovered_at,
+                        "canonical_url": job.canonical_url,
+                        "title": job.title,
+                        "company": job.company,
+                    }
+
+        self.seen_path.write_text(
+            json.dumps(self._seen, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
+            encoding="utf-8",
+        )
 
 
 def _normalize_list(values: Iterable[Any] | None) -> list[str]:
