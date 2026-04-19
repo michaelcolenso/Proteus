@@ -621,6 +621,12 @@ def _normalize_list(values: Iterable[Any] | None) -> list[str]:
     return [str(value) for value in values]
 
 
+def _markdown_inline(text: str | None) -> str:
+    if not text:
+        return ""
+    return re.sub(r"\s+", " ", text).strip()
+
+
 def _parse_timestamp(value: str | None) -> datetime | None:
     parsed = parse_posted_at(value)
     if not parsed:
@@ -681,9 +687,9 @@ def render_latest_report(jobs: Iterable[JobPosting], errors: Iterable[str], limi
                 ]
             )
             if job.description:
-                lines.append(f"- Description: {job.description}")
+                lines.append(f"- Description: {_markdown_inline(job.description)}")
             elif job.snippet:
-                lines.append(f"- Snippet: {job.snippet}")
+                lines.append(f"- Snippet: {_markdown_inline(job.snippet)}")
 
     if error_list:
         lines.extend(["", "## Source Errors"])
@@ -697,6 +703,8 @@ def render_latest_report(jobs: Iterable[JobPosting], errors: Iterable[str], limi
 def write_autopilot_inputs(jobs: Iterable[JobPosting], output_dir: Path | str) -> list[Path]:
     output_path = Path(output_dir)
     output_path.mkdir(parents=True, exist_ok=True)
+    for existing in output_path.glob("*.txt"):
+        existing.unlink()
     written: list[Path] = []
     for job in jobs:
         file_path = output_path / f"{job.id}.txt"
@@ -726,6 +734,12 @@ def discover(config: DiscoveryConfig, fixture_path: Path | str | None = None) ->
             source_name = str(source.get("name") or source.get("type") or "source")
             errors.append(f"{source_name}: {exc}")
     return jobs, errors
+
+
+def resolve_runtime_dir(fixture_path: Path | str | None = None) -> Path:
+    if fixture_path is not None:
+        return DISCOVERY_DIR / "dry_run"
+    return DISCOVERY_DIR
 
 
 def load_config(path: Path | str = DEFAULT_CONFIG) -> DiscoveryConfig:
@@ -769,18 +783,19 @@ def main() -> int:
     args = parser.parse_args()
 
     config = load_config(args.config)
-    state = DiscoveryState(DISCOVERY_DIR)
+    runtime_dir = resolve_runtime_dir(args.dry_run_fixtures)
+    state = DiscoveryState(runtime_dir)
     jobs, errors = discover(config, args.dry_run_fixtures)
     recent_jobs = filter_recent_jobs(jobs, args.since_hours)
     ranked = score_jobs(recent_jobs, config)
     fresh = state.filter_new(ranked)
     state.record_jobs(fresh)
 
-    latest_path = DISCOVERY_DIR / "latest.md"
+    latest_path = runtime_dir / "latest.md"
     latest_path.write_text(render_latest_report(ranked, errors, args.limit), encoding="utf-8")
 
     if args.autopilot_top > 0:
-        autopilot_dir = DISCOVERY_DIR / "job_texts"
+        autopilot_dir = runtime_dir / "job_texts"
         selected_jobs = ranked[: args.autopilot_top]
         written = write_autopilot_inputs(selected_jobs, autopilot_dir)
         for path in written:

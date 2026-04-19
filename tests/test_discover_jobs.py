@@ -15,8 +15,10 @@ from scripts.discover_jobs import (
     parse_career_page,
     parse_lever_jobs,
     parse_posted_at,
+    resolve_runtime_dir,
     score_jobs,
     render_latest_report,
+    write_autopilot_inputs,
 )
 
 
@@ -242,6 +244,44 @@ class ReportTests(unittest.TestCase):
         )
         jobs = filter_recent_jobs([fresh, stale], since_hours=24, now=datetime(2026, 4, 19, 12, 0, tzinfo=timezone.utc))
         self.assertEqual([job.url for job in jobs], ["https://example.com/fresh"])
+
+    def test_render_latest_report_normalizes_multiline_detail(self):
+        job = JobPosting(
+            title="Project Manager",
+            company="Acme",
+            location="Seattle, WA",
+            url="https://example.com/job",
+            source="fixture",
+            description="Lead projects\nacross teams",
+            score=10.0,
+            score_reasons=["matched: project manager"],
+        )
+        report = render_latest_report([job], [], limit=10)
+        self.assertIn("- Description: Lead projects across teams", report)
+        self.assertNotIn("\nacross teams", report)
+
+    def test_write_autopilot_inputs_prunes_old_text_files(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            output_dir = Path(tmp)
+            stale = output_dir / "stale.txt"
+            stale.write_text("stale", encoding="utf-8")
+            job = JobPosting(
+                title="Project Manager",
+                company="Acme",
+                location="Seattle, WA",
+                url="https://example.com/job",
+                source="fixture",
+            )
+
+            written = write_autopilot_inputs([job], output_dir)
+
+            self.assertEqual([path.name for path in written], [f"{job.id}.txt"])
+            self.assertFalse(stale.exists())
+            self.assertEqual(sorted(path.name for path in output_dir.glob("*.txt")), [f"{job.id}.txt"])
+
+    def test_resolve_runtime_dir_uses_dry_run_subdir_for_fixtures(self):
+        self.assertEqual(resolve_runtime_dir(Path("/tmp/example.json")), Path(__file__).resolve().parents[1] / "applications/discovery/dry_run")
+        self.assertEqual(resolve_runtime_dir(None), Path(__file__).resolve().parents[1] / "applications/discovery")
 
 
 class AdapterTests(unittest.TestCase):
