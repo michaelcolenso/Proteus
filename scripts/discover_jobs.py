@@ -223,10 +223,32 @@ def parse_lever_jobs(payload: Any, source: dict[str, Any]) -> list["JobPosting"]
                 source=source_name,
                 description=description,
                 snippet=snippet,
+                posted_at=parse_lever_created_at(item.get("createdAt")),
             )
         )
 
     return jobs
+
+
+def parse_lever_created_at(value: Any) -> str | None:
+    if not isinstance(value, (int, float)):
+        return None
+    return _format_utc(datetime.fromtimestamp(value / 1000, tz=timezone.utc))
+
+
+def lever_api_url(url: str) -> str:
+    parts = urlsplit(url.strip())
+    if parts.netloc == "api.lever.co":
+        return canonicalize_url(url)
+
+    if parts.netloc != "jobs.lever.co":
+        return canonicalize_url(url)
+
+    company = parts.path.strip("/").split("/", 1)[0]
+    if not company:
+        return canonicalize_url(url)
+
+    return f"https://api.lever.co/v0/postings/{company}?mode=json"
 
 
 def parse_career_page(html: str, source: dict[str, Any]) -> list["JobPosting"]:
@@ -276,7 +298,7 @@ def fetch_source(source: dict[str, Any]) -> list["JobPosting"]:
 
     source_type = str(source.get("type", ""))
     if source_type == "lever":
-        payload = json.loads(fetch_text(str(source["url"]).rstrip("/") + "?mode=json"))
+        payload = json.loads(fetch_text(lever_api_url(str(source["url"]))))
         return parse_lever_jobs(payload, source)
 
     if source_type == "career_page":
@@ -635,6 +657,17 @@ def count_enabled_sources(config: DiscoveryConfig) -> int:
     return sum(1 for source in config.sources if _source_is_enabled(source))
 
 
+def dedupe_jobs(jobs: Iterable[JobPosting]) -> list[JobPosting]:
+    unique: list[JobPosting] = []
+    seen: set[str] = set()
+    for job in jobs:
+        if job.id in seen:
+            continue
+        seen.add(job.id)
+        unique.append(job)
+    return unique
+
+
 def _markdown_inline(text: str | None) -> str:
     if not text:
         return ""
@@ -840,7 +873,8 @@ def main() -> int:
         state.reset()
 
     jobs, errors = discover(config, args.dry_run_fixtures)
-    recent_jobs = filter_recent_jobs(jobs, args.since_hours)
+    unique_jobs = dedupe_jobs(jobs)
+    recent_jobs = filter_recent_jobs(unique_jobs, args.since_hours)
     ranked = score_jobs(recent_jobs, config)
     fresh = state.filter_new(ranked)
     state.record_jobs(fresh)
@@ -859,7 +893,9 @@ def main() -> int:
         else:
             print("No autopilot inputs written because no ranked jobs matched.")
 
-    print(f"Discovered {len(jobs)} jobs; {len(ranked)} recent matches; {len(fresh)} new; wrote {latest_path}")
+    duplicate_count = len(jobs) - len(unique_jobs)
+    duplicate_note = f"; {duplicate_count} duplicate links removed" if duplicate_count else ""
+    print(f"Discovered {len(jobs)} jobs{duplicate_note}; {len(ranked)} recent matches; {len(fresh)} new; wrote {latest_path}")
     if errors:
         print(f"Source errors: {len(errors)}")
         for error in errors:

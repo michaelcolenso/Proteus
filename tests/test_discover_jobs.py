@@ -10,11 +10,14 @@ from scripts.discover_jobs import (
     JobPosting,
     canonicalize_url,
     count_enabled_sources,
+    dedupe_jobs,
     filter_recent_jobs,
+    lever_api_url,
     load_fixture_jobs,
     load_config,
     nonnegative_int,
     parse_career_page,
+    parse_lever_created_at,
     parse_lever_jobs,
     parse_posted_at,
     resolve_runtime_dir,
@@ -77,6 +80,16 @@ sources:
 
         self.assertEqual(canonical_a, "https://example.com/job?a=1&b=2")
         self.assertEqual(canonical_a, canonical_b)
+
+    def test_lever_api_url_maps_public_board_to_json_endpoint(self):
+        self.assertEqual(
+            lever_api_url("https://jobs.lever.co/skylineconstruction"),
+            "https://api.lever.co/v0/postings/skylineconstruction?mode=json",
+        )
+        self.assertEqual(
+            lever_api_url("https://api.lever.co/v0/postings/skylineconstruction?mode=json"),
+            "https://api.lever.co/v0/postings/skylineconstruction?mode=json",
+        )
 
     def test_load_config_uses_repo_default_from_scripts_cwd(self):
         repo_root = Path(__file__).resolve().parents[1]
@@ -229,6 +242,24 @@ class ScoringAndStateTests(unittest.TestCase):
             self.assertFalse((Path(tmp) / "seen.json").exists())
             self.assertEqual(state.filter_new([job]), [job])
 
+    def test_dedupe_jobs_preserves_first_occurrence(self):
+        first = JobPosting(
+            title="Project Manager",
+            company="Builder",
+            location="Seattle, WA",
+            url="https://example.com/job?utm_source=x",
+            source="first",
+        )
+        duplicate = JobPosting(
+            title="Project Manager",
+            company="Builder",
+            location="Seattle, WA",
+            url="https://example.com/job",
+            source="duplicate",
+        )
+
+        self.assertEqual(dedupe_jobs([first, duplicate]), [first])
+
 
 class ReportTests(unittest.TestCase):
     def test_render_latest_report_includes_ranked_jobs_and_errors(self):
@@ -356,6 +387,7 @@ class AdapterTests(unittest.TestCase):
                 "hostedUrl": "https://jobs.lever.co/acme/123",
                 "categories": {"location": "Seattle, WA"},
                 "descriptionPlain": "Manage multifamily construction.",
+                "createdAt": 1776556800000,
             }
         ]
         jobs = parse_lever_jobs(payload, {"name": "acme", "url": "https://jobs.lever.co/acme"})
@@ -363,6 +395,10 @@ class AdapterTests(unittest.TestCase):
         self.assertEqual(jobs[0].title, "Senior Project Manager")
         self.assertEqual(jobs[0].company, "acme")
         self.assertEqual(jobs[0].location, "Seattle, WA")
+        self.assertEqual(jobs[0].posted_at, "2026-04-19T00:00:00+00:00")
+
+    def test_parse_lever_created_at_ignores_missing_values(self):
+        self.assertIsNone(parse_lever_created_at(None))
 
     def test_parse_generic_career_page_links(self):
         html = """

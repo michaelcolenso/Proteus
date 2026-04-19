@@ -1,7 +1,7 @@
 # Public job discovery settings.
 #
-# Live discovery only reads enabled public sources below. Keep source entries
-# disabled until you replace the sample URLs with real public career pages.
+# Live discovery only reads enabled public sources below. Use `enabled: false`
+# when a source becomes noisy or blocks public fetching.
 queries:
   - construction project manager
   - senior project manager construction
@@ -12,7 +12,9 @@ queries:
 
 locations:
   - Seattle, WA
+  - Seattle, Washington
   - Bellevue, WA
+  - Bellevue, Washington
   - Remote
 
 include_terms:
@@ -33,17 +35,46 @@ exclude_terms:
   - account executive
   - internship
   - unpaid
+  - chicago
+  - san diego
+  - bay area
+  - denver
+  - scottsdale
+  - arizona
 
 sources:
-  # Lever boards support a JSON endpoint at the board URL plus ?mode=json.
+  # Lever boards are fetched through Lever's public postings API.
   - type: lever
-    name: sample-lever
-    url: https://jobs.lever.co/example
-    enabled: false
+    name: skyline-construction
+    company: Skyline Construction
+    url: https://jobs.lever.co/skylineconstruction
+    enabled: true
 
   # Generic career pages are parsed from public job links on the page.
   # Add company and location fields when the page does not include them.
   - type: career_page
-    name: sample-career-page
-    url: https://example.com/careers
-    enabled: false
+    name: sellen
+    company: Sellen Construction
+    url: https://jobs.jobvite.com/sellencareers
+    location: Seattle, WA
+    enabled: true
+
+  - type: career_page
+    name: mn-custom-homes
+    company: MN Custom Homes
+    url: https://jobs.jobvite.com/mncustom/search?c=Construction+Operation&p=0
+    location: Bellevue, WA
+    enabled: true
+
+  - type: career_page
+    name: pcl-seattle-bellevue
+    company: PCL Construction
+    url: https://careers.pcl.com/search/?q=&locationsearch=Bellevue
+    enabled: true
+
+  - type: career_page
+    name: absher
+    company: Absher Construction
+    url: https://www.absherco.com/careers/
+    location: Seattle, WA
+    enabled: true
