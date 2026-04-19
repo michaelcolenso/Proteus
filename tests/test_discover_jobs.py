@@ -222,6 +222,21 @@ class AdapterTests(unittest.TestCase):
         self.assertEqual(jobs[0].url, "https://example.com/careers/senior-project-manager")
         self.assertEqual(jobs[0].title, "Senior Project Manager - Seattle")
 
+    def test_parse_generic_career_page_links_uses_aria_label_and_title(self):
+        html = """
+        <html><body>
+          <a href="/careers/senior-superintendent" aria-label="Senior Superintendent">View role</a>
+          <a href="/careers/project-engineer" title="Project Engineer">View role</a>
+          <a href="/about">About</a>
+        </body></html>
+        """
+        jobs = parse_career_page(html, {"name": "Acme Builders", "url": "https://example.com/careers"})
+        self.assertEqual(len(jobs), 2)
+        self.assertEqual([job.title for job in jobs], ["Senior Superintendent", "Project Engineer"])
+        self.assertEqual(jobs[0].url, "https://example.com/careers/senior-superintendent")
+        self.assertEqual(jobs[1].url, "https://example.com/careers/project-engineer")
+        self.assertTrue(all(job.title != "About" for job in jobs))
+
 
 if __name__ == "__main__":
     unittest.main()

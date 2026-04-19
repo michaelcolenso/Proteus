@@ -121,15 +121,20 @@ def parse_posted_at(value: str | None) -> str | None:
 class LinkCollector(HTMLParser):
     def __init__(self) -> None:
         super().__init__()
-        self.links: list[tuple[str, str]] = []
+        self.links: list[dict[str, str]] = []
         self._current_href: str | None = None
         self._current_text: list[str] = []
+        self._current_aria_label: str = ""
+        self._current_title: str = ""
 
     def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
         if tag.lower() != "a":
             return
-        self._current_href = dict(attrs).get("href")
+        attr_map = dict(attrs)
+        self._current_href = attr_map.get("href")
         self._current_text = []
+        self._current_aria_label = str(attr_map.get("aria-label") or "")
+        self._current_title = str(attr_map.get("title") or "")
 
     def handle_data(self, data: str) -> None:
         if self._current_href is not None:
@@ -139,9 +144,18 @@ class LinkCollector(HTMLParser):
         if tag.lower() != "a" or self._current_href is None:
             return
         text = re.sub(r"\s+", " ", "".join(self._current_text)).strip()
-        self.links.append((self._current_href, text))
+        self.links.append(
+            {
+                "href": self._current_href,
+                "text": text,
+                "aria_label": self._current_aria_label.strip(),
+                "title": self._current_title.strip(),
+            }
+        )
         self._current_href = None
         self._current_text = []
+        self._current_aria_label = ""
+        self._current_title = ""
 
 
 def fetch_text(url: str, timeout: int = 12) -> str:
@@ -155,6 +169,22 @@ def _first_string(*values: Any) -> str:
     for value in values:
         if isinstance(value, str) and value.strip():
             return value.strip()
+    return ""
+
+
+def _normal_job_link_text(*values: str) -> str:
+    for value in values:
+        text = re.sub(r"\s+", " ", value or "").strip()
+        if text:
+            return text
+    return ""
+
+
+def _career_page_link_title(link: dict[str, str], keywords: tuple[str, ...]) -> str:
+    for field in (link.get("text", ""), link.get("aria_label", ""), link.get("title", "")):
+        normalized = re.sub(r"\s+", " ", field or "").strip()
+        if normalized and any(keyword in normalized.lower() for keyword in keywords):
+            return normalized
     return ""
 
 
@@ -207,15 +237,25 @@ def parse_career_page(html: str, source: dict[str, Any]) -> list["JobPosting"]:
     source_name = str(source.get("name", "career_page"))
     location = str(source.get("location", ""))
     base_url = str(source["url"])
-    keywords = ("project manager", "construction manager", "superintendent", "estimator", "preconstruction")
+    keywords = (
+        "project manager",
+        "construction manager",
+        "superintendent",
+        "estimator",
+        "preconstruction",
+        "project engineer",
+        "field engineer",
+        "project executive",
+        "owner representative",
+    )
 
     jobs: list[JobPosting] = []
-    for href, text in collector.links:
-        if not href or not text:
+    for link in collector.links:
+        href = link["href"]
+        if not href:
             continue
-        normalized_text = re.sub(r"\s+", " ", text).strip()
-        lowered = normalized_text.lower()
-        if not any(keyword in lowered for keyword in keywords):
+        normalized_text = _career_page_link_title(link, keywords)
+        if not normalized_text:
             continue
         jobs.append(
             JobPosting(
