@@ -263,7 +263,8 @@ class JobDiscovery:
         # Match any job in the same state to honour radius_miles — nearby cities
         # (e.g. Bellevue, Redmond, Kirkland for Seattle/WA) share the state
         # abbreviation and would otherwise be filtered out entirely.
-        if self._target_state and self._target_state in loc:
+        # Use word-boundary matching so "wa" doesn't match "iowa" or "ottawa".
+        if self._target_state and re.search(r"\b" + re.escape(self._target_state) + r"\b", loc):
             return True
         return False
 
