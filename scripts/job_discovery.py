@@ -232,7 +232,7 @@ class JobDiscovery:
             )
             if not matched:
                 return False
-        if any(ex in text for ex in self._exclude_kw):
+        if any(re.search(r"\b" + re.escape(ex) + r"\b", text) for ex in self._exclude_kw):
             return False
         return True
 
@@ -452,8 +452,11 @@ class JobDiscovery:
         if job.description:
             body += f"\n\n{job.description}\n"
         tmp.write_text(body)
-        # Snapshot before so we can identify and rename the newly created brief
-        before = set(ALERTS_DIR.glob("*.md"))
+        # Snapshot mtimes before so we detect both newly created files AND
+        # in-place overwrites (autopilot writes a deterministic filename; if
+        # that file already exists it overwrites in-place, yielding an empty
+        # new_files set under a pure set-difference approach).
+        before_mtimes = {f: f.stat().st_mtime for f in ALERTS_DIR.glob("*.md")}
         cmd = [
             "python3", str(SCRIPTS_DIR / "application_autopilot.py"),
             "--file", str(tmp),
@@ -463,17 +466,20 @@ class JobDiscovery:
         result = subprocess.run(cmd, capture_output=True, text=True, cwd=str(REPO_ROOT))
         tmp.unlink(missing_ok=True)
         if result.returncode == 0:
-            # Rename the generated brief to include the job title so multiple
-            # same-company postings on the same day don't overwrite each other.
-            new_files = set(ALERTS_DIR.glob("*.md")) - before
-            if new_files:
-                generated = next(iter(new_files))
+            # Rename the affected brief to include the job title so multiple
+            # same-company postings on the same day don't share a filename.
+            after = set(ALERTS_DIR.glob("*.md"))
+            before_set = set(before_mtimes)
+            changed = (after - before_set) | {
+                f for f in (after & before_set)
+                if f.stat().st_mtime != before_mtimes[f]
+            }
+            if changed:
+                generated = next(iter(changed))
                 title_slug = re.sub(r"[^\w]+", "-", job.title.lower()).strip("-")[:40]
                 base = generated.stem.replace("_autopilot", "") + f"_{title_slug}"
                 unique = generated.with_name(f"{base}_autopilot.md")
                 if unique.exists():
-                    # Same company + title already written this scan — add URL
-                    # hash suffix to guarantee a distinct filename.
                     url_suffix = hashlib.md5(job.url.encode()).hexdigest()[:6]
                     unique = generated.with_name(f"{base}_{url_suffix}_autopilot.md")
                 generated.rename(unique)
