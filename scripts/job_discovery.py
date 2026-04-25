@@ -33,7 +33,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import List, Dict, Optional, Tuple
 from urllib.error import URLError
-from urllib.parse import urlparse
+from urllib.parse import parse_qs, urlencode, urlparse, urlunparse
 from urllib.request import Request, urlopen
 
 try:
@@ -162,12 +162,30 @@ class JobDiscovery:
 
     # ── Deduplication ──────────────────────────────────────────────────────────
 
+    # Query-string keys that vary between feeds for the same posting
+    _TRACKING_PARAMS = frozenset({
+        "utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content",
+        "ref", "source", "from", "trk", "ss", "pk_campaign", "via",
+    })
+
+    @classmethod
+    def _canonical_url(cls, url: str) -> str:
+        """Strip tracking params and fragment so equivalent URLs hash the same."""
+        try:
+            parsed = urlparse(url)
+            qs = parse_qs(parsed.query, keep_blank_values=True)
+            cleaned = {k: v for k, v in qs.items() if k.lower() not in cls._TRACKING_PARAMS}
+            new_query = urlencode(sorted(cleaned.items()), doseq=True)
+            return urlunparse(parsed._replace(query=new_query, fragment=""))
+        except Exception:
+            return url
+
     def is_seen(self, url: str) -> bool:
-        return hashlib.md5(url.encode()).hexdigest()[:12] in self.seen_jobs
+        return hashlib.md5(self._canonical_url(url).encode()).hexdigest()[:12] in self.seen_jobs
 
     def mark_seen(self, job, score: Optional[float] = None):
         """Accept RawJob or ScoredJob — both carry title, company, url."""
-        url = job.url
+        url = self._canonical_url(job.url)
         h = hashlib.md5(url.encode()).hexdigest()[:12]
         self.seen_jobs[h] = {
             "title":      job.title,
@@ -422,10 +440,13 @@ class JobDiscovery:
             if new_files:
                 generated = next(iter(new_files))
                 title_slug = re.sub(r"[^\w]+", "-", job.title.lower()).strip("-")[:40]
-                unique = generated.with_name(
-                    generated.stem.replace("_autopilot", "")
-                    + f"_{title_slug}_autopilot.md"
-                )
+                base = generated.stem.replace("_autopilot", "") + f"_{title_slug}"
+                unique = generated.with_name(f"{base}_autopilot.md")
+                if unique.exists():
+                    # Same company + title already written this scan — add URL
+                    # hash suffix to guarantee a distinct filename.
+                    url_suffix = hashlib.md5(job.url.encode()).hexdigest()[:6]
+                    unique = generated.with_name(f"{base}_{url_suffix}_autopilot.md")
                 generated.rename(unique)
         return result.returncode == 0
 
@@ -478,13 +499,16 @@ class JobDiscovery:
 
         relevant = [j for j in all_jobs
                     if self._matches_keywords(j) and self._matches_location(j)]
-        # Deduplicate by URL within this scan (same posting from multiple sources)
-        # then filter against the persistent seen-jobs cache
+        # Deduplicate by canonical URL within this scan (same posting from
+        # multiple sources, possibly with different tracking params)
+        # then filter against the persistent seen-jobs cache.
         seen_in_run: set = set()
         deduped = []
         for j in relevant:
-            if j.url not in seen_in_run:
-                seen_in_run.add(j.url)
+            canon = self._canonical_url(j.url)
+            if canon not in seen_in_run:
+                seen_in_run.add(canon)
+                j.url = canon  # normalise stored URL for consistent hashing
                 deduped.append(j)
         new_jobs = [j for j in deduped if not self.is_seen(j.url)]
 
@@ -493,6 +517,7 @@ class JobDiscovery:
 
         if not new_jobs:
             print("  No new jobs. Check back later.\n")
+            self._save_discovered_jobs([], [])  # clear stale entries from prior run
             return {"auto_apply": [], "review": [], "skipped": 0, "total_new": 0}
 
         print(f"  Scoring {len(new_jobs)} new job(s)...\n")
