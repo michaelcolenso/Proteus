@@ -400,11 +400,13 @@ class JobDiscovery:
 
     def run_autopilot(self, job: ScoredJob) -> bool:
         ALERTS_DIR.mkdir(parents=True, exist_ok=True)
-        tmp = ALERTS_DIR / f"_tmp_{job.url[:8].replace('https://','').replace('/','_')}.txt"
+        tmp = ALERTS_DIR / f"_tmp_{hashlib.md5(job.url.encode()).hexdigest()[:8]}.txt"
         tmp.write_text(
             f"{job.title}\nCompany: {job.company}\n{job.location}\n\nJob URL: {job.url}\n"
             f"ATS Score: {job.score:.0f}%\n"
         )
+        # Snapshot before so we can identify and rename the newly created brief
+        before = set(ALERTS_DIR.glob("*.md"))
         cmd = [
             "python3", str(SCRIPTS_DIR / "application_autopilot.py"),
             "--file", str(tmp),
@@ -413,6 +415,18 @@ class JobDiscovery:
         ]
         result = subprocess.run(cmd, capture_output=True, text=True, cwd=str(REPO_ROOT))
         tmp.unlink(missing_ok=True)
+        if result.returncode == 0:
+            # Rename the generated brief to include the job title so multiple
+            # same-company postings on the same day don't overwrite each other.
+            new_files = set(ALERTS_DIR.glob("*.md")) - before
+            if new_files:
+                generated = next(iter(new_files))
+                title_slug = re.sub(r"[^\w]+", "-", job.title.lower()).strip("-")[:40]
+                unique = generated.with_name(
+                    generated.stem.replace("_autopilot", "")
+                    + f"_{title_slug}_autopilot.md"
+                )
+                generated.rename(unique)
         return result.returncode == 0
 
     # ── String helpers ─────────────────────────────────────────────────────────
@@ -484,9 +498,7 @@ class JobDiscovery:
         print(f"  Scoring {len(new_jobs)} new job(s)...\n")
         auto, review, skipped = self.score_and_triage(new_jobs)
 
-        self._save_seen_jobs()
         self._save_discovered_jobs(auto, review)
-
         self._print_results(auto, review, skipped)
 
         if auto_apply and auto:
@@ -506,6 +518,10 @@ class JobDiscovery:
             # flood every non-auto scan (user has seen them in the output).
             for sj in auto:
                 self.mark_seen(sj)
+
+        # Single save after all mark_seen calls so auto-candidate entries are
+        # persisted regardless of which branch above ran.
+        self._save_seen_jobs()
 
         return {
             "auto_apply": auto,
