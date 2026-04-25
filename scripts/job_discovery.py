@@ -33,7 +33,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import List, Dict, Optional, Tuple
 from urllib.error import URLError
-from urllib.parse import parse_qs, urlencode, urlparse, urlunparse
+from urllib.parse import parse_qs, urlencode, urljoin, urlparse, urlunparse
 from urllib.request import Request, urlopen
 
 try:
@@ -270,7 +270,7 @@ class JobDiscovery:
                 board_name = data.get("board", {}).get("name") or slug.replace("-", " ").title()
                 count = 0
                 for item in data.get("jobs", []):
-                    loc = item.get("location", {}).get("name", "")
+                    loc = (item.get("location") or {}).get("name", "")
                     jobs.append(RawJob(
                         title=item.get("title", ""),
                         company=board_name,
@@ -295,7 +295,7 @@ class JobDiscovery:
                         title=item.get("text", ""),
                         company=slug.replace("-", " ").title(),
                         url=item.get("hostedUrl", ""),
-                        location=item.get("categories", {}).get("location", ""),
+                        location=(item.get("categories") or {}).get("location", ""),
                         posted_date=str(item.get("createdAt", "")),
                         description=item.get("descriptionPlain", ""),
                         source="Lever",
@@ -482,14 +482,7 @@ class JobDiscovery:
 
     @staticmethod
     def _resolve_url(base: str, href: str) -> str:
-        if href.startswith("http"):
-            return href
-        if href.startswith("//"):
-            return "https:" + href
-        parsed = urlparse(base)
-        if href.startswith("/"):
-            return f"{parsed.scheme}://{parsed.netloc}{href}"
-        return base.rstrip("/") + "/" + href.lstrip("/")
+        return urljoin(base, href)
 
     # ── Main run ───────────────────────────────────────────────────────────────
 
