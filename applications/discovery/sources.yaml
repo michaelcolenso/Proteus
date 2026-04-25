@@ -1,0 +1,80 @@
+# Public job discovery settings.
+#
+# Live discovery only reads enabled public sources below. Use `enabled: false`
+# when a source becomes noisy or blocks public fetching.
+queries:
+  - construction project manager
+  - senior project manager construction
+  - multifamily project manager
+  - construction superintendent
+  - construction estimator
+  - owner's representative construction
+
+locations:
+  - Seattle, WA
+  - Seattle, Washington
+  - Bellevue, WA
+  - Bellevue, Washington
+  - Remote
+
+include_terms:
+  - project manager
+  - senior project manager
+  - construction manager
+  - superintendent
+  - estimator
+  - preconstruction
+  - owner representative
+  - multifamily
+  - luxury residential
+  - general contractor
+
+exclude_terms:
+  - software engineer
+  - product manager
+  - account executive
+  - internship
+  - unpaid
+  - chicago
+  - san diego
+  - bay area
+  - denver
+  - scottsdale
+  - arizona
+
+sources:
+  # Lever boards are fetched through Lever's public postings API.
+  - type: lever
+    name: skyline-construction
+    company: Skyline Construction
+    url: https://jobs.lever.co/skylineconstruction
+    enabled: true
+
+  # Generic career pages are parsed from public job links on the page.
+  # Add company and location fields when the page does not include them.
+  - type: career_page
+    name: sellen
+    company: Sellen Construction
+    url: https://jobs.jobvite.com/sellencareers
+    location: Seattle, WA
+    enabled: true
+
+  - type: career_page
+    name: mn-custom-homes
+    company: MN Custom Homes
+    url: https://jobs.jobvite.com/mncustom/search?c=Construction+Operation&p=0
+    location: Bellevue, WA
+    enabled: true
+
+  - type: career_page
+    name: pcl-seattle-bellevue
+    company: PCL Construction
+    url: https://careers.pcl.com/search/?q=&locationsearch=Bellevue
+    enabled: true
+
+  - type: career_page
+    name: absher
+    company: Absher Construction
+    url: https://www.absherco.com/careers/
+    location: Seattle, WA
+    enabled: true

@@ -18,6 +18,17 @@ exports/
 dist/
 build/
 
+# Ignore generated Python/runtime artifacts
+__pycache__/
+*.py[cod]
+
+# Ignore generated job discovery state and reports
+applications/discovery/dry_run/
+applications/discovery/job_texts/
+applications/discovery/jobs.jsonl
+applications/discovery/latest.md
+applications/discovery/seen.json
+
 # Ignore OS-specific files
 .DS_Store
 Thumbs.db

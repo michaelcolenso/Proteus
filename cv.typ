@@ -15,9 +15,11 @@
   profilePhoto: none,
 )
 #importModules((
-      "education",
-
   "professional",
-    "projects",
-    "skills"
+  "education",
+  "skills"
+))
+#pagebreak()
+#importModules((
+  "projects",
 ))

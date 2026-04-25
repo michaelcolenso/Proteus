@@ -107,6 +107,34 @@ The autopilot flow combines:
 - Top achievement evidence to emphasize
 - Suggested follow-up date and commands
 
+### Job Discovery
+
+Discover fresh public job postings and rank them for construction PM relevance:
+
+```bash
+./generate.sh discover --limit 25
+./generate.sh discover --autopilot-top 5
+./generate.sh discover --since-hours 0
+./generate.sh discover --reset-state
+```
+
+Discovery reads editable source settings from `applications/discovery/sources.yaml` and writes the latest ranked report to `applications/discovery/latest.md`. The report separates total recent matches from newly discovered postings, so repeat runs are easy to interpret.
+
+Useful output paths:
+- `applications/discovery/latest.md`: latest ranked live report
+- `applications/discovery/jobs.jsonl`: append-only discovery history
+- `applications/discovery/seen.json`: dedupe state
+- `applications/discovery/job_texts/`: top jobs prepared for autopilot
+- `applications/discovery/dry_run/`: isolated fixture-run output
+
+Dry-run fixture runs write isolated output under `applications/discovery/dry_run/`:
+
+```bash
+./generate.sh discover --dry-run-fixtures /tmp/proteus-discovery/jobs.json --reset-state
+```
+
+The first version uses public sources only and does not use logged-in accounts, captcha solving, or access-control bypasses.
+
 ### Application Autopilot UI
 
 Prefer a browser form instead of CLI flags? Run the local UI:
