@@ -105,6 +105,7 @@ class ScoredJob:
     matched: List[str]
     missing: List[str]
     discovered_at: str = field(default_factory=lambda: datetime.now().isoformat())
+    description: str = ""
 
     @classmethod
     def from_raw(cls, job: RawJob, score: float,
@@ -113,6 +114,7 @@ class ScoredJob:
             title=job.title, company=job.company, url=job.url,
             location=job.location, source=job.source,
             score=score, matched=matched, missing=missing,
+            description=job.description,
         )
 
 
@@ -171,6 +173,8 @@ class JobDiscovery:
     @classmethod
     def _canonical_url(cls, url: str) -> str:
         """Strip tracking params and fragment so equivalent URLs hash the same."""
+        if not url:
+            return ""
         try:
             parsed = urlparse(url)
             qs = parse_qs(parsed.query, keep_blank_values=True)
@@ -419,10 +423,13 @@ class JobDiscovery:
     def run_autopilot(self, job: ScoredJob) -> bool:
         ALERTS_DIR.mkdir(parents=True, exist_ok=True)
         tmp = ALERTS_DIR / f"_tmp_{hashlib.md5(job.url.encode()).hexdigest()[:8]}.txt"
-        tmp.write_text(
-            f"{job.title}\nCompany: {job.company}\n{job.location}\n\nJob URL: {job.url}\n"
-            f"ATS Score: {job.score:.0f}%\n"
+        body = (
+            f"{job.title}\nCompany: {job.company}\n{job.location}\n\n"
+            f"Job URL: {job.url}\nATS Score: {job.score:.0f}%\n"
         )
+        if job.description:
+            body += f"\n\n{job.description}\n"
+        tmp.write_text(body)
         # Snapshot before so we can identify and rename the newly created brief
         before = set(ALERTS_DIR.glob("*.md"))
         cmd = [
@@ -506,6 +513,8 @@ class JobDiscovery:
         deduped = []
         for j in relevant:
             canon = self._canonical_url(j.url)
+            if not canon:
+                continue  # skip jobs with null/empty URLs from malformed ATS payloads
             if canon not in seen_in_run:
                 seen_in_run.add(canon)
                 j.url = canon  # normalise stored URL for consistent hashing
