@@ -125,6 +125,10 @@ class ScoredJob:
         )
 
 
+# Descriptions shorter than this are treated as feed snippets and trigger a
+# full-page fetch so scoring is based on complete posting text.
+_MIN_DESC_LEN = 300
+
 # ── Main class ─────────────────────────────────────────────────────────────────
 
 class JobDiscovery:
@@ -141,6 +145,8 @@ class JobDiscovery:
         ]
         self._exclude_kw = [k.lower() for k in search.get("exclude_keywords", [])]
         self._target_city = search.get("location", "Seattle, WA").split(",")[0].strip().lower()
+        loc_parts = search.get("location", "").split(",")
+        self._target_state = loc_parts[1].strip().lower() if len(loc_parts) > 1 else ""
 
     # ── Config & persistence ───────────────────────────────────────────────────
 
@@ -250,7 +256,16 @@ class JobDiscovery:
         if not job.location:
             return True  # unknown location — include to avoid false negatives
         loc = job.location.lower()
-        return self._target_city in loc or "remote" in loc or "nationwide" in loc
+        if "remote" in loc or "nationwide" in loc:
+            return True
+        if self._target_city in loc:
+            return True
+        # Match any job in the same state to honour radius_miles — nearby cities
+        # (e.g. Bellevue, Redmond, Kirkland for Seattle/WA) share the state
+        # abbreviation and would otherwise be filtered out entirely.
+        if self._target_state and self._target_state in loc:
+            return True
+        return False
 
     # ── RSS scanning ───────────────────────────────────────────────────────────
 
@@ -400,8 +415,11 @@ class JobDiscovery:
         skipped = 0
 
         for job in jobs:
-            if not job.description and HAS_REQUESTS and HAS_BS4:
-                job.description = self._fetch_description(job.url)
+            # Fetch full page when description is absent or a short feed snippet.
+            if len(job.description) < _MIN_DESC_LEN and HAS_REQUESTS and HAS_BS4:
+                fetched = self._fetch_description(job.url)
+                if fetched:
+                    job.description = fetched
 
             text = f"{job.title} {job.company} {job.location} {job.description}"
             kw    = self.analyzer.extract_keywords(text)
@@ -418,12 +436,11 @@ class JobDiscovery:
                 self.mark_seen(job, score)
                 review_list.append(scored)
             else:
-                # Only mark seen if we had description text to score against.
-                # An empty description (fetch failed, deps absent, or source
-                # provides no text) means the score is title-only and may be
-                # artificially low — leave the job unseen so it's retried once
-                # enrichment becomes possible.
-                if job.description:
+                # Only mark seen if the description meets the minimum length so
+                # we know the score was based on adequate text.  Snippet-only
+                # or empty descriptions may produce artificially low scores;
+                # leave the job unseen so it's retried once enrichment succeeds.
+                if len(job.description) >= _MIN_DESC_LEN:
                     self.mark_seen(job, score)
                 skipped += 1
 
