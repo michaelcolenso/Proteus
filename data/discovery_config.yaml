@@ -57,5 +57,6 @@ scoring:
   review_threshold: 60       # Add to review list at this score
 
 polling:
-  business_hours_interval_min: 15   # Poll interval 6am–6pm local
+  business_hours_interval_min: 15   # Poll interval 6am–6pm local time
   off_hours_interval_min: 60        # Poll interval outside business hours
+  timezone: "America/Los_Angeles"   # IANA timezone for business-hours window (Python 3.9+ ZoneInfo)

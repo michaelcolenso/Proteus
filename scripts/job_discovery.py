@@ -25,6 +25,7 @@ import argparse
 import hashlib
 import json
 import re
+import math
 import subprocess
 import sys
 import time
@@ -35,6 +36,12 @@ from typing import List, Dict, Optional, Tuple
 from urllib.error import URLError
 from urllib.parse import parse_qs, urlencode, urljoin, urlparse, urlunparse
 from urllib.request import Request, urlopen
+
+try:
+    from zoneinfo import ZoneInfo
+    HAS_ZONEINFO = True
+except ImportError:
+    HAS_ZONEINFO = False
 
 try:
     import yaml
@@ -128,7 +135,10 @@ class JobDiscovery:
         self.seen_jobs: Dict = self._load_seen_jobs()
 
         search = self.config.get("search", {})
-        self._search_kw = [k.lower() for k in search.get("keywords", [])]
+        # Precompute token lists for partial-token keyword matching
+        self._search_kw: List[List[str]] = [
+            re.findall(r"\b\w+\b", k.lower()) for k in search.get("keywords", [])
+        ]
         self._exclude_kw = [k.lower() for k in search.get("exclude_keywords", [])]
         self._target_city = search.get("location", "Seattle, WA").split(",")[0].strip().lower()
 
@@ -208,8 +218,20 @@ class JobDiscovery:
 
     def _matches_keywords(self, job: RawJob) -> bool:
         text = f"{job.title} {job.company} {job.location} {job.description}".lower()
-        if self._search_kw and not any(kw in text for kw in self._search_kw):
-            return False
+        text_words = set(re.findall(r"\b\w+\b", text))
+        if self._search_kw:
+            # Partial-token matching: a keyword phrase matches when at least
+            # ceil(60%) of its tokens appear as individual words anywhere in
+            # the text.  This lets "Senior Project Manager" match the phrase
+            # "construction project manager" (2/3 tokens present) without
+            # requiring the exact multi-word sequence.
+            matched = any(
+                sum(1 for t in tokens if t in text_words) >= math.ceil(len(tokens) * 0.6)
+                for tokens in self._search_kw
+                if tokens
+            )
+            if not matched:
+                return False
         if any(ex in text for ex in self._exclude_kw):
             return False
         return True
@@ -648,7 +670,11 @@ Examples:
             discovery.run(auto_apply=args.auto)
             # Use business/off-hours interval if no explicit override
             if not args.interval:
-                hour = datetime.now().hour
+                tz_name = polling.get("timezone", "America/Los_Angeles")
+                try:
+                    hour = datetime.now(ZoneInfo(tz_name)).hour if HAS_ZONEINFO else datetime.now().hour
+                except Exception:
+                    hour = datetime.now().hour
                 interval = (
                     polling.get("business_hours_interval_min", 15)
                     if 6 <= hour < 18
