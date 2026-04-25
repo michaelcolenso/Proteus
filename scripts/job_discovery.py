@@ -165,12 +165,15 @@ class JobDiscovery:
     def is_seen(self, url: str) -> bool:
         return hashlib.md5(url.encode()).hexdigest()[:12] in self.seen_jobs
 
-    def mark_seen(self, job: RawJob, score: Optional[float] = None):
-        self.seen_jobs[job.url_hash()] = {
+    def mark_seen(self, job, score: Optional[float] = None):
+        """Accept RawJob or ScoredJob — both carry title, company, url."""
+        url = job.url
+        h = hashlib.md5(url.encode()).hexdigest()[:12]
+        self.seen_jobs[h] = {
             "title":      job.title,
             "company":    job.company,
-            "url":        job.url,
-            "score":      score,
+            "url":        url,
+            "score":      score if score is not None else getattr(job, "score", None),
             "first_seen": datetime.now().isoformat(),
         }
 
@@ -352,14 +355,17 @@ class JobDiscovery:
             match = self.analyzer.calculate_match_score(kw)
             score = match["score"]
 
-            self.mark_seen(job, score)
             scored = ScoredJob.from_raw(job, score, match["matches"], match["missing"])
 
             if score >= thresh_auto:
+                # Do NOT mark seen here — run() will mark seen only after a
+                # successful autopilot so failed jobs are retried next scan.
                 auto_list.append(scored)
             elif score >= thresh_review:
+                self.mark_seen(job, score)
                 review_list.append(scored)
             else:
+                self.mark_seen(job, score)
                 skipped += 1
 
         auto_list.sort(key=lambda x: x.score, reverse=True)
@@ -402,6 +408,7 @@ class JobDiscovery:
         cmd = [
             "python3", str(SCRIPTS_DIR / "application_autopilot.py"),
             "--file", str(tmp),
+            "--output-dir", str(ALERTS_DIR),
             "--update-tracker",
         ]
         result = subprocess.run(cmd, capture_output=True, text=True, cwd=str(REPO_ROOT))
@@ -488,7 +495,17 @@ class JobDiscovery:
             for sj in auto:
                 print(f"  Autopilot → {sj.title} @ {sj.company} ({sj.score:.0f}%)")
                 ok = self.run_autopilot(sj)
-                print(f"    {'✓ Brief saved to applications/job_alerts/' if ok else '✗ Autopilot failed'}")
+                if ok:
+                    # Mark seen only on success so failures are retried next scan
+                    self.mark_seen(sj)
+                    print(f"    ✓ Brief saved to applications/job_alerts/")
+                else:
+                    print(f"    ✗ Autopilot failed — will retry on next scan")
+        else:
+            # Not running autopilot — mark auto candidates seen so they don't
+            # flood every non-auto scan (user has seen them in the output).
+            for sj in auto:
+                self.mark_seen(sj)
 
         return {
             "auto_apply": auto,
