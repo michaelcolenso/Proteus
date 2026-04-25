@@ -182,7 +182,9 @@ class JobDiscovery:
 
     @classmethod
     def _canonical_url(cls, url: str) -> str:
-        """Strip tracking params and fragment so equivalent URLs hash the same."""
+        """Normalise URL for dedup: lowercase scheme/host, strip tracking params,
+        trailing slash, and fragment so equivalent URLs from different sources
+        hash to the same key."""
         if not url:
             return ""
         try:
@@ -190,7 +192,15 @@ class JobDiscovery:
             qs = parse_qs(parsed.query, keep_blank_values=True)
             cleaned = {k: v for k, v in qs.items() if k.lower() not in cls._TRACKING_PARAMS}
             new_query = urlencode(sorted(cleaned.items()), doseq=True)
-            return urlunparse(parsed._replace(query=new_query, fragment=""))
+            path = parsed.path.rstrip("/") or "/"
+            return urlunparse((
+                parsed.scheme.lower(),
+                parsed.netloc.lower(),
+                path,
+                parsed.params,
+                new_query,
+                "",  # fragment stripped
+            ))
         except Exception:
             return url
 
@@ -390,16 +400,8 @@ class JobDiscovery:
         skipped = 0
 
         for job in jobs:
-            # Fetch full description if we only have a title.
-            # Track fetch failures separately so a transient 403/timeout doesn't
-            # permanently suppress the job via mark_seen on a low sparse-text score.
-            fetch_failed = False
             if not job.description and HAS_REQUESTS and HAS_BS4:
-                fetched = self._fetch_description(job.url)
-                if fetched:
-                    job.description = fetched
-                else:
-                    fetch_failed = True
+                job.description = self._fetch_description(job.url)
 
             text = f"{job.title} {job.company} {job.location} {job.description}"
             kw    = self.analyzer.extract_keywords(text)
@@ -416,9 +418,12 @@ class JobDiscovery:
                 self.mark_seen(job, score)
                 review_list.append(scored)
             else:
-                # Only mark seen if enrichment succeeded; a failed fetch may
-                # have produced an artificially low score that would clear on retry.
-                if not fetch_failed:
+                # Only mark seen if we had description text to score against.
+                # An empty description (fetch failed, deps absent, or source
+                # provides no text) means the score is title-only and may be
+                # artificially low — leave the job unseen so it's retried once
+                # enrichment becomes possible.
+                if job.description:
                     self.mark_seen(job, score)
                 skipped += 1
 
