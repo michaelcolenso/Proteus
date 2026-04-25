@@ -390,9 +390,16 @@ class JobDiscovery:
         skipped = 0
 
         for job in jobs:
-            # Fetch full description if we only have a title
+            # Fetch full description if we only have a title.
+            # Track fetch failures separately so a transient 403/timeout doesn't
+            # permanently suppress the job via mark_seen on a low sparse-text score.
+            fetch_failed = False
             if not job.description and HAS_REQUESTS and HAS_BS4:
-                job.description = self._fetch_description(job.url)
+                fetched = self._fetch_description(job.url)
+                if fetched:
+                    job.description = fetched
+                else:
+                    fetch_failed = True
 
             text = f"{job.title} {job.company} {job.location} {job.description}"
             kw    = self.analyzer.extract_keywords(text)
@@ -409,7 +416,10 @@ class JobDiscovery:
                 self.mark_seen(job, score)
                 review_list.append(scored)
             else:
-                self.mark_seen(job, score)
+                # Only mark seen if enrichment succeeded; a failed fetch may
+                # have produced an artificially low score that would clear on retry.
+                if not fetch_failed:
+                    self.mark_seen(job, score)
                 skipped += 1
 
         auto_list.sort(key=lambda x: x.score, reverse=True)
