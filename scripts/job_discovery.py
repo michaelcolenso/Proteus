@@ -396,7 +396,7 @@ class JobDiscovery:
         ALERTS_DIR.mkdir(parents=True, exist_ok=True)
         tmp = ALERTS_DIR / f"_tmp_{job.url[:8].replace('https://','').replace('/','_')}.txt"
         tmp.write_text(
-            f"{job.title}\n{job.company}\n{job.location}\n\nJob URL: {job.url}\n"
+            f"{job.title}\nCompany: {job.company}\n{job.location}\n\nJob URL: {job.url}\n"
             f"ATS Score: {job.score:.0f}%\n"
         )
         cmd = [
@@ -457,7 +457,15 @@ class JobDiscovery:
 
         relevant = [j for j in all_jobs
                     if self._matches_keywords(j) and self._matches_location(j)]
-        new_jobs  = [j for j in relevant if not self.is_seen(j.url)]
+        # Deduplicate by URL within this scan (same posting from multiple sources)
+        # then filter against the persistent seen-jobs cache
+        seen_in_run: set = set()
+        deduped = []
+        for j in relevant:
+            if j.url not in seen_in_run:
+                seen_in_run.add(j.url)
+                deduped.append(j)
+        new_jobs = [j for j in deduped if not self.is_seen(j.url)]
 
         print(f"\n  Found {len(all_jobs)} total  |  "
               f"{len(relevant)} relevant  |  {len(new_jobs)} new\n")
