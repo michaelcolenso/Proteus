@@ -46,14 +46,14 @@ jobs:
           typst --version
 
       - name: Install required fonts
-        env:
-          FONT_URL: <https://github.com/adobe-fonts/source-sans/releases/download/3.052R/TTF-source-sans-3.052R.zip>
         run: |
           set -euo pipefail
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends fonts-roboto fonts-font-awesome unzip
           mkdir -p ~/.local/share/fonts
-          curl -fsSL -o /tmp/ss.zip "$FONT_URL"
+          GHBASE="<github.com/adobe-fonts/source-sans/releases/download>"
+          FONT="3.052R/TTF-source-sans-3.052R.zip"
+          curl -fsSL -o /tmp/ss.zip "https://${GHBASE}/${FONT}"
           unzip -q /tmp/ss.zip -d ~/.local/share/fonts/
           rm -f /tmp/ss.zip
           fc-cache -f
