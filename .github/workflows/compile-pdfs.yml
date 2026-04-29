@@ -42,30 +42,26 @@ jobs:
       - name: Verify Typst installation
         run: |
           set -euo pipefail
-          echo "Checking Typst installation..."
           which typst
           typst --version
-          echo "PATH: $PATH"
 
       - name: Install required fonts
+        env:
+          FONT_URL: <https://github.com/adobe-fonts/source-sans/releases/download/3.052R/TTF-source-sans-3.052R.zip>
         run: |
           set -euo pipefail
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends fonts-roboto fonts-font-awesome unzip
           mkdir -p ~/.local/share/fonts
-          curl -fsSL -o /tmp/TTF-source-sans-3.052R.zip <https://github.com/adobe-fonts/source-sans/releases/download/3.052R/TTF-source-sans-3.052R.zip>
-          unzip -q /tmp/TTF-source-sans-3.052R.zip -d ~/.local/share/fonts/
-          rm -f /tmp/TTF-source-sans-3.052R.zip
+          curl -fsSL -o /tmp/ss.zip "$FONT_URL"
+          unzip -q /tmp/ss.zip -d ~/.local/share/fonts/
+          rm -f /tmp/ss.zip
           fc-cache -f
 
       - name: Compile CVs, cover letter, and portfolio
         run: |
           set -euo pipefail
           echo "=== Compiling all documents ==="
-          which typst
-          typst --version
-          echo ""
-
           sources=(
             cv.typ
             cv_estimator.typ
@@ -75,13 +71,11 @@ jobs:
             letter.typ
             portfolio.typ
           )
-
           for source in "${sources[@]}"; do
             output="${source%.typ}.pdf"
             echo "Compiling ${source}..."
             typst compile "${source}" "${output}"
           done
-
           echo "=== Compilation complete ==="
           ls -lh *.pdf
 
