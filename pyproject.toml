@@ -1,0 +1,8 @@
+[project]
+name = "proteus"
+version = "0.1.0"
+description = "CV generation and construction job discovery utilities"
+requires-python = ">=3.10"
+dependencies = [
+    "scrapling[fetchers]>=0.4.7",
+]

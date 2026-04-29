@@ -86,7 +86,7 @@ case $1 in
         fi
 
         echo "=== Exporting CV to format(s): $formats ==="
-        python3 scripts/export_cv.py cv --formats $formats
+        uv run python scripts/export_cv.py cv --formats $formats
         ;;
 
     "autopilot")
@@ -96,18 +96,29 @@ case $1 in
         fi
         shift
         echo "=== Building application autopilot brief ==="
-        python3 scripts/application_autopilot.py --file "$@"
+        uv run python scripts/application_autopilot.py --file "$@"
         ;;
 
     "autopilot-ui")
         echo "=== Launching application autopilot UI ==="
-        python3 scripts/autopilot_ui.py "${@:2}"
+        uv run python scripts/autopilot_ui.py "${@:2}"
+        ;;
+
+    "dashboard")
+        echo "=== Launching Proteus application dashboard ==="
+        uv run python scripts/dashboard_ui.py "${@:2}"
         ;;
 
     "discover")
         shift
         echo "=== Discovering fresh job postings ==="
-        python3 scripts/discover_jobs.py "$@"
+        uv run python scripts/discover_jobs.py "$@"
+        ;;
+
+    "prepare-applications")
+        shift
+        echo "=== Preparing application packages ==="
+        uv run python scripts/prepare_applications.py "$@"
         ;;
 
     "clean")
@@ -130,7 +141,9 @@ case $1 in
         echo "  export [formats] Export CV to multiple formats"
         echo "  autopilot <file> Generate tailored application brief from job posting"
         echo "  autopilot-ui [args] Launch local web UI for autopilot"
+        echo "  dashboard [args] Launch local discovery/applications dashboard"
         echo "  discover [args]  Discover fresh public job postings"
+        echo "  prepare-applications [args] Prepare CV and cover-letter packages from discovery"
         echo "  clean           Remove all compiled PDFs"
         echo "  help            Show this help message"
         echo ""
@@ -145,11 +158,14 @@ case $1 in
         echo "  ./generate.sh export txt html    # Export CV to specific formats"
         echo "  ./generate.sh autopilot sample_job_posting.txt"
         echo "  ./generate.sh autopilot-ui --port 8787"
+        echo "  ./generate.sh dashboard --port 8790"
         echo "  ./generate.sh discover --limit 25"
         echo "  ./generate.sh discover --autopilot-top 5"
         echo "  ./generate.sh discover --since-hours 0"
         echo "  ./generate.sh discover --reset-state"
         echo "  ./generate.sh discover --dry-run-fixtures /tmp/proteus-discovery/jobs.json"
+        echo "  ./generate.sh prepare-applications --limit 25"
+        echo "  ./generate.sh prepare-applications --all --no-compile"
         echo "  ./generate.sh clean              # Remove PDFs"
         echo ""
         echo "Export Formats:"

@@ -30,6 +30,11 @@ try:  # pragma: no cover - optional dependency
 except ModuleNotFoundError:  # pragma: no cover - local fallback
     yaml = None
 
+try:  # pragma: no cover - optional live-fetch dependency
+    from scrapling.fetchers import Fetcher as ScraplingFetcher  # type: ignore
+except ModuleNotFoundError:  # pragma: no cover - local fallback
+    ScraplingFetcher = None  # type: ignore[assignment]
+
 
 def utc_now() -> str:
     return datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
@@ -159,10 +164,48 @@ class LinkCollector(HTMLParser):
 
 
 def fetch_text(url: str, timeout: int = 12) -> str:
+    if ScraplingFetcher is not None:
+        try:
+            page = ScraplingFetcher.get(
+                url,
+                stealthy_headers=True,
+                impersonate="chrome",
+                timeout=timeout,
+            )
+            status = getattr(page, "status", None)
+            if isinstance(status, int) and status >= 400:
+                raise ValueError(f"HTTP {status} for {url}")
+            return page_to_html(page)
+        except ValueError:
+            raise
+        except Exception:
+            return fetch_text_urllib(url, timeout)
+
+    return fetch_text_urllib(url, timeout)
+
+
+def fetch_text_urllib(url: str, timeout: int = 12) -> str:
     request = Request(url, headers={"User-Agent": "ProteusJobDiscovery/1.0 (+public job discovery)"})
     with urlopen(request, timeout=timeout) as response:
         data = response.read()
         return data.decode("utf-8", errors="replace")
+
+
+def page_to_html(page: Any) -> str:
+    body = getattr(page, "body", None)
+    if isinstance(body, bytes):
+        return body.decode("utf-8", errors="replace")
+    if isinstance(body, str):
+        return body
+    for attribute in ("html_content", "html", "body"):
+        value = getattr(page, attribute, None)
+        if isinstance(value, str):
+            return value
+        if callable(value):
+            rendered = value()
+            if isinstance(rendered, str):
+                return rendered
+    return str(page)
 
 
 def _first_string(*values: Any) -> str:
@@ -292,6 +335,73 @@ def parse_career_page(html: str, source: dict[str, Any]) -> list["JobPosting"]:
     return jobs
 
 
+def parse_search_page(html: str, source: dict[str, Any]) -> list["JobPosting"]:
+    collector = LinkCollector()
+    collector.feed(html)
+
+    company = str(source.get("company") or "Multiple employers")
+    source_name = str(source.get("name", "search_page"))
+    location = str(source.get("location", ""))
+    base_url = str(source["url"])
+    keywords = (
+        "project manager",
+        "construction manager",
+        "construction project manager",
+        "superintendent",
+        "estimator",
+        "preconstruction",
+        "project engineer",
+        "field engineer",
+        "owner representative",
+    )
+    exclusions = (
+        "software",
+        "product manager",
+        "program manager",
+        "account executive",
+    )
+
+    jobs: list[JobPosting] = []
+    for link in collector.links:
+        title = _career_page_link_title(link, keywords)
+        if not title:
+            continue
+        lowered_title = title.lower()
+        if any(exclusion in lowered_title for exclusion in exclusions):
+            continue
+
+        jobs.append(
+            JobPosting(
+                title=title,
+                company=company,
+                location=location,
+                url=urljoin(base_url, link["href"]),
+                source=source_name,
+                posted_at=_extract_nearby_posted_at(html, link["href"]),
+            )
+        )
+
+    return jobs
+
+
+def _extract_nearby_posted_at(html: str, href: str) -> str | None:
+    href_index = html.find(href)
+    if href_index < 0:
+        return None
+    window = html[max(0, href_index - 1200) : href_index + 1200]
+    datetime_match = re.search(r"<time\b[^>]*\bdatetime=[\"']([^\"']+)[\"']", window, re.IGNORECASE)
+    if datetime_match:
+        return parse_posted_at(datetime_match.group(1))
+    text_match = re.search(
+        r">\s*((?:today|yesterday|\d+\+?\s*(?:h|hr|hrs|hour|hours|d|day|days|w|wk|wks|week|weeks)\s+ago))\s*<",
+        window,
+        re.IGNORECASE,
+    )
+    if text_match:
+        return parse_posted_at(text_match.group(1))
+    return None
+
+
 def fetch_source(source: dict[str, Any]) -> list["JobPosting"]:
     if source.get("enabled") is False:
         return []
@@ -304,6 +414,10 @@ def fetch_source(source: dict[str, Any]) -> list["JobPosting"]:
     if source_type == "career_page":
         html = fetch_text(str(source["url"]))
         return parse_career_page(html, source)
+
+    if source_type == "search_page":
+        html = fetch_text(str(source["url"]))
+        return parse_search_page(html, source)
 
     raise ValueError(f"Unsupported source type: {source_type}")
 

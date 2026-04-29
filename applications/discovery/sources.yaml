@@ -52,6 +52,65 @@ sources:
 
   # Generic career pages are parsed from public job links on the page.
   # Add company and location fields when the page does not include them.
+  # Public search pages and aggregators use the same relevance filters as
+  # direct employer pages, then the local scoring pass ranks the results.
+  - type: search_page
+    name: worksource-wa
+    company: Multiple employers
+    url: https://www.worksourcewa.com/jobsearch/powersearch.aspx?q=construction+project+manager&where=Seattle%2C+WA&sort=dt.rv.di
+    location: Seattle, WA
+    enabled: true
+
+  - type: search_page
+    name: indeed-seattle-construction-pm
+    company: Multiple employers
+    url: https://www.indeed.com/jobs?q=construction+project+manager&l=Seattle%2C+WA&sort=date
+    location: Seattle, WA
+    enabled: true
+
+  - type: search_page
+    name: indeed-seattle-construction-manager
+    company: Multiple employers
+    url: https://www.indeed.com/jobs?q=construction+manager&l=Seattle%2C+WA&sort=date
+    location: Seattle, WA
+    enabled: true
+
+  - type: search_page
+    name: ziprecruiter-seattle-construction-pm
+    company: Multiple employers
+    url: https://www.ziprecruiter.com/jobs-search?search=construction+project+manager&location=Seattle%2C+WA
+    location: Seattle, WA
+    # Returns HTTP 403 in unattended public fetches; keep as a quick toggle.
+    enabled: false
+
+  - type: search_page
+    name: builtin-seattle-construction-pm
+    company: Multiple employers
+    url: https://www.builtinseattle.com/jobs?search=construction%20project%20manager
+    location: Seattle, WA
+    enabled: true
+
+  - type: search_page
+    name: governmentjobs-washington-construction-pm
+    company: Public agencies
+    url: https://www.governmentjobs.com/careers/washington?keywords=construction%20project%20manager
+    location: Washington
+    enabled: true
+
+  - type: search_page
+    name: constructionjobs-seattle
+    company: Multiple employers
+    url: https://www.constructionjobs.com/jobs/search?keywords=construction%20project%20manager&location=Seattle%2C%20WA
+    location: Seattle, WA
+    enabled: true
+
+  - type: search_page
+    name: ihireconstruction-seattle
+    company: Multiple employers
+    url: https://www.ihireconstruction.com/search?kw=construction%20project%20manager&loc=Seattle%2C%20WA
+    location: Seattle, WA
+    enabled: true
+
   - type: career_page
     name: sellen
     company: Sellen Construction
@@ -76,5 +135,19 @@ sources:
     name: absher
     company: Absher Construction
     url: https://www.absherco.com/careers/
+    location: Seattle, WA
+    enabled: true
+
+  - type: career_page
+    name: dpr-seattle
+    company: DPR Construction
+    url: https://www.dpr.com/company/careers/current-positions
+    location: Seattle, WA
+    enabled: true
+
+  - type: career_page
+    name: walsh-construction-seattle
+    company: Walsh Construction
+    url: https://www.walshconstruction.com/careers/
     location: Seattle, WA
     enabled: true
