@@ -90,80 +90,90 @@
   approach: none,
   outcome: none,
   tags: (),
+  photo: none,
+  photo-height: 150pt,
 ) = {
   block(
     width: 100%,
-    inset: (x: 18pt, y: 16pt),
+    inset: 0pt,
     radius: 2pt,
     fill: white,
     stroke: (
       left: 2pt + gold,
       rest: 0.4pt + hairline,
     ),
+    clip: true,
     breakable: true,
   )[
-    // Header row: title + metadata
-    #grid(
-      columns: (1fr, auto),
-      column-gutter: 12pt,
-      align: (left, right),
-      [
-        #text(
-          font: display-font,
-          size: 15pt,
-          weight: "medium",
-          fill: navy,
-        )[#title]
-        #linebreak()
-        #text(size: 9.5pt, fill: slate, style: "italic")[#location · #year]
-      ],
-      [
-        #text(
-          font: display-font,
-          size: 16pt,
-          weight: "light",
-          fill: gold-dark,
-        )[#value]
-        #linebreak()
-        #text(size: 8pt, fill: slate, tracking: 1.2pt)[#upper(role)]
-      ],
-    )
-
-    #v(8pt)
-    #line(length: 100%, stroke: 0.3pt + hairline)
-    #v(6pt)
-
-    // Scope line
-    #if scope != none [
-      #text(font: heading-font, size: 8pt, tracking: 1.4pt, fill: gold-dark, weight: "medium")[#upper("Scope")] #h(4pt)
-      #text(size: 10pt, fill: charcoal)[#scope]
-      #v(5pt)
-    ]
-
-    // Case-study three-beat narrative
-    #if challenge != none [
-      #text(font: heading-font, size: 8pt, tracking: 1.4pt, fill: gold-dark, weight: "medium")[#upper("Challenge")] #h(4pt)
-      #text(size: 10pt, fill: charcoal)[#challenge]
-      #v(5pt)
-    ]
-    #if approach != none [
-      #text(font: heading-font, size: 8pt, tracking: 1.4pt, fill: gold-dark, weight: "medium")[#upper("Approach")] #h(4pt)
-      #text(size: 10pt, fill: charcoal)[#approach]
-      #v(5pt)
-    ]
-    #if outcome != none [
-      #text(font: heading-font, size: 8pt, tracking: 1.4pt, fill: gold-dark, weight: "medium")[#upper("Outcome")] #h(4pt)
-      #text(size: 10pt, fill: charcoal)[#outcome]
-    ]
-
-    // Tag row
-    #if tags.len() > 0 {
-      v(8pt)
-      line(length: 100%, stroke: 0.3pt + hairline)
-      v(5pt)
-      set text(size: 8pt, fill: slate, font: heading-font, tracking: 0.8pt)
-      tags.map(upper).join("  ·  ")
+    // Optional photo strip — full-width, cropped to fixed height
+    #if photo != none {
+      image(photo, width: 100%, height: photo-height, fit: "cover")
     }
+
+    #pad(x: 18pt, top: 16pt, bottom: 16pt)[
+      // Header row: title + metadata
+      #grid(
+        columns: (1fr, auto),
+        column-gutter: 12pt,
+        align: (left, right),
+        [
+          #text(
+            font: display-font,
+            size: 15pt,
+            weight: "medium",
+            fill: navy,
+          )[#title]
+          #linebreak()
+          #text(size: 9.5pt, fill: slate, style: "italic")[#location · #year]
+        ],
+        [
+          #text(
+            font: display-font,
+            size: 16pt,
+            weight: "light",
+            fill: gold-dark,
+          )[#value]
+          #linebreak()
+          #text(size: 8pt, fill: slate, tracking: 1.2pt)[#upper(role)]
+        ],
+      )
+
+      #v(8pt)
+      #line(length: 100%, stroke: 0.3pt + hairline)
+      #v(6pt)
+
+      // Scope line
+      #if scope != none [
+        #text(font: heading-font, size: 8pt, tracking: 1.4pt, fill: gold-dark, weight: "medium")[#upper("Scope")] #h(4pt)
+        #text(size: 10pt, fill: charcoal)[#scope]
+        #v(5pt)
+      ]
+
+      // Case-study three-beat narrative
+      #if challenge != none [
+        #text(font: heading-font, size: 8pt, tracking: 1.4pt, fill: gold-dark, weight: "medium")[#upper("Challenge")] #h(4pt)
+        #text(size: 10pt, fill: charcoal)[#challenge]
+        #v(5pt)
+      ]
+      #if approach != none [
+        #text(font: heading-font, size: 8pt, tracking: 1.4pt, fill: gold-dark, weight: "medium")[#upper("Approach")] #h(4pt)
+        #text(size: 10pt, fill: charcoal)[#approach]
+        #v(5pt)
+      ]
+      #if outcome != none [
+        #text(font: heading-font, size: 8pt, tracking: 1.4pt, fill: gold-dark, weight: "medium")[#upper("Outcome")] #h(4pt)
+        #text(size: 10pt, fill: charcoal)[#outcome]
+      ]
+
+      // Tag row
+      #if tags.len() > 0 {
+        v(8pt)
+        line(length: 100%, stroke: 0.3pt + hairline)
+        v(5pt)
+        set text(size: 8pt, fill: slate, font: heading-font, tracking: 0.8pt)
+        tags.map(upper).join("  ·  ")
+      }
+    ]
   ]
   v(10pt)
 }
