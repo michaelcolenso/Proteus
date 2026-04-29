@@ -20,7 +20,7 @@
   value: "Portfolio",
   year: "2017 – 2018",
   role: "Project Manager",
-  // photo: "../../src/portfolio/bahamas.jpg",  // add file to src/portfolio/ to enable
+  photo: "../../src/portfolio/bahamas.jpg",
   scope: [Construction of multiple luxury vacation homes within an exclusive private island community for ultra-high-net-worth members of Discovery Land Company.],
   challenge: [Remote island logistics, fragile supply chains, international customs, and a clientele expecting the standards of a five-star resort delivered to a private residence.],
   approach: [Established strategic vendor partnerships to ensure material availability despite supply-chain constraints; implemented a dedicated customs and logistics workflow; coordinated craftspeople across international borders while preserving a white-glove on-site experience.],
@@ -43,7 +43,7 @@
   value: "$8M+",
   year: "2020 – 2022",
   role: "Project Manager",
-  // photo: "../../src/portfolio/toth.jpg",  // add file to src/portfolio/ to enable
+  photo: "../../src/portfolio/toth.jpg",
   scope: [A portfolio of ultra-high-net-worth residential projects for discerning Seattle clients, coordinated with world-class architects and specialty craftspeople.],
   challenge: [Clients with exacting aesthetic standards, bespoke finishes with long lead times, and an expectation of trusted-advisor discretion across every interaction with designers, vendors, and household staff.],
   approach: [Cultivated trusted-advisor relationships through transparent weekly reporting and proactive issue escalation; developed detailed finish schedules and mock-up programs; managed specialty trades including stone, millwork, lighting, and integrated home systems.],
@@ -66,7 +66,7 @@
   value: "High-rise",
   year: "2021",
   role: "Project Manager",
-  // photo: "../../src/portfolio/highrise.jpg",  // add file to src/portfolio/ to enable
+  photo: "../../src/portfolio/highrise.jpg",
   scope: [Custom apartment buildout on the 57th floor of an active high-rise tower, integrating luxury finishes with base-building systems during occupancy of surrounding floors.],
   challenge: [Operating inside a live high-rise required strict access control, careful material staging via freight elevators, and coordination with building engineering to avoid disrupting neighbors or base-building systems.],
   approach: [Developed a meticulous logistics plan around freight-elevator windows; phased noisy work around residential quiet hours; integrated custom millwork, stone, and smart-home systems with the existing MEP backbone.],
@@ -110,8 +110,8 @@
   value: "$12M+",
   year: "2009",
   role: "Project Manager",
-  // photo: "../../src/portfolio/alaska.jpg",    // add file to src/portfolio/ to enable
-  // photo-height: 160pt,
+  photo: "../../src/portfolio/alaska.jpg",
+  photo-height: 160pt,
   scope: [Complete renovation and seismic retrofit of a 1904 iconic historic office building in downtown Seattle — a showcase of preservation craftsmanship.],
   challenge: [Preserving the building's historic character while implementing modern seismic standards and building systems; navigating stringent historic-preservation requirements; absorbing significant owner-directed scope changes without straining the relationship.],
   approach: [Worked hand-in-glove with preservation architects, structural engineers, and SHPO; negotiated and executed \$6M+ in scope changes while maintaining a cooperative owner relationship; documented each preservation decision for the historic record.],
@@ -134,7 +134,7 @@
   value: "$12M",
   year: "2022 – 2024",
   role: "Project Manager",
-  // photo: "../../src/portfolio/eastlake.jpg",  // add file to src/portfolio/ to enable
+  photo: "../../src/portfolio/eastlake.jpg",
   scope: [Boutique 8-story, 57-unit podium-style multifamily development in Seattle's Eastlake neighborhood — 35,000 SF, Type III/V wood frame over concrete podium.],
   challenge: [A tight urban site requiring careful coordination with neighboring properties, city agencies, and a design-forward owner targeting a premium lease-up in a discerning neighborhood.],
   approach: [Managed full P&L, 18 subcontractors, and direct owner relationship from groundbreak through certificate of occupancy; implemented a comprehensive safety program and maintained open communication with neighbors.],
