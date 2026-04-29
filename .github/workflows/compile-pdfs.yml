@@ -52,10 +52,8 @@ jobs:
           set -euo pipefail
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends fonts-roboto fonts-font-awesome unzip
-          # Install Source Sans Pro
           mkdir -p ~/.local/share/fonts
-          curl -fsSL -o /tmp/TTF-source-sans-3.052R.zip \
-            <https://github.com/adobe-fonts/source-sans/releases/download/3.052R/TTF-source-sans-3.052R.zip>
+          curl -fsSL -o /tmp/TTF-source-sans-3.052R.zip <https://github.com/adobe-fonts/source-sans/releases/download/3.052R/TTF-source-sans-3.052R.zip>
           unzip -q /tmp/TTF-source-sans-3.052R.zip -d ~/.local/share/fonts/
           rm -f /tmp/TTF-source-sans-3.052R.zip
           fc-cache -f
@@ -64,14 +62,10 @@ jobs:
         run: |
           set -euo pipefail
           echo "=== Compiling all documents ==="
-
-          # Verify Typst is available
-          echo "Verifying Typst before compilation..."
           which typst
           typst --version
           echo ""
 
-          # Compile CVs, cover letter, and portfolio
           sources=(
             cv.typ
             cv_estimator.typ
@@ -110,11 +104,7 @@ jobs:
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-
-          # Add generated PDFs
           git add *.pdf
-
-          # Check if there are changes to commit
           if git diff --staged --quiet; then
             echo "No changes to commit"
           else
