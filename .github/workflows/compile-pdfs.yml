@@ -55,15 +55,15 @@ jobs:
           # Install Source Sans Pro
           mkdir -p ~/.local/share/fonts
           curl -fsSL -o /tmp/TTF-source-sans-3.052R.zip \
-            https://github.com/adobe-fonts/source-sans/releases/download/3.052R/TTF-source-sans-3.052R.zip
+            <https://github.com/adobe-fonts/source-sans/releases/download/3.052R/TTF-source-sans-3.052R.zip>
           unzip -q /tmp/TTF-source-sans-3.052R.zip -d ~/.local/share/fonts/
           rm -f /tmp/TTF-source-sans-3.052R.zip
           fc-cache -f
 
-      - name: Compile CVs and cover letter
+      - name: Compile CVs, cover letter, and portfolio
         run: |
           set -euo pipefail
-          echo "=== Compiling CVs and cover letter ==="
+          echo "=== Compiling all documents ==="
 
           # Verify Typst is available
           echo "Verifying Typst before compilation..."
@@ -71,7 +71,7 @@ jobs:
           typst --version
           echo ""
 
-          # Compile CVs and cover letter
+          # Compile CVs, cover letter, and portfolio
           sources=(
             cv.typ
             cv_estimator.typ
@@ -79,6 +79,7 @@ jobs:
             cv_senior_pm.typ
             cv_superintendent.typ
             letter.typ
+            portfolio.typ
           )
 
           for source in "${sources[@]}"; do
@@ -101,10 +102,11 @@ jobs:
             cv_senior_pm.pdf
             cv_superintendent.pdf
             letter.pdf
+            portfolio.pdf
           if-no-files-found: error
 
       - name: Commit and push PDFs
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        if: github.event_name == 'push' && github.ref == 'refs/heads/primary'
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
