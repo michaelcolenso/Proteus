@@ -46,6 +46,7 @@ jobs:
           typst --version
 
       - name: Install required fonts
+        continue-on-error: true
         run: |
           set -euo pipefail
           sudo apt-get update
