@@ -118,7 +118,23 @@ Discover fresh public job postings and rank them for construction PM relevance:
 ./generate.sh discover --reset-state
 ```
 
-Discovery reads editable source settings from `applications/discovery/sources.yaml` and writes the latest ranked report to `applications/discovery/latest.md`. The report separates total recent matches from newly discovered postings, so repeat runs are easy to interpret.
+Discovery reads editable source settings from `applications/discovery/sources.yaml` and writes the latest ranked report to `applications/discovery/latest.md`. The report separates total recent matches from newly discovered postings, so repeat runs are easy to interpret. Live discovery uses [Scrapling](https://github.com/D4Vinci/Scrapling). Install and sync Python dependencies with `uv`:
+
+```bash
+uv sync
+```
+
+The default sources include direct employer career pages plus broader public search/aggregator pages such as WorkSourceWA, Indeed, ZipRecruiter, Built In Seattle, GovernmentJobs, ConstructionJobs, and iHireConstruction. If a source gets noisy or blocks public fetching, set `enabled: false` for that entry in `applications/discovery/sources.yaml`.
+
+Prepare CV and cover-letter packages from the ranked discovery results:
+
+```bash
+./generate.sh prepare-applications --limit 25
+./generate.sh prepare-applications --all --no-compile
+./generate.sh prepare-applications --limit 25 --update-tracker
+```
+
+By default this prepares the top 25 ranked matches with score 25+ and skips obvious noise such as rail transit, electrical-only, software, product/program manager, account executive, and coordinator roles. Use `--include-noisy` when you want the full ranked set above the score threshold. Packages are written under `applications/packages/YYYY-MM-DD/<company-role>/` with `job_posting.txt`, `application.md`, `cover_letter.typ`, and compiled `cv.pdf` / `cover_letter.pdf` when Typst is available.
 
 Useful output paths:
 - `applications/discovery/latest.md`: latest ranked live report
@@ -126,6 +142,15 @@ Useful output paths:
 - `applications/discovery/seen.json`: dedupe state
 - `applications/discovery/job_texts/`: top jobs prepared for autopilot
 - `applications/discovery/dry_run/`: isolated fixture-run output
+- `applications/packages/`: prepared per-role CV and cover-letter packages
+
+Launch the local dashboard to review the full pipeline in a browser:
+
+```bash
+./generate.sh dashboard --port 8790
+```
+
+Then open `http://127.0.0.1:8790`. The dashboard shows discovered matches, prepared application packages, and tracker rows. From the dashboard you can open each job post, preview package files, prepare an individual match, prepare the current filtered batch, run discovery, and mark prepared packages as applied or skipped.
 
 Dry-run fixture runs write isolated output under `applications/discovery/dry_run/`:
 
@@ -140,7 +165,7 @@ The first version uses public sources only and does not use logged-in accounts, 
 Prefer a browser form instead of CLI flags? Run the local UI:
 
 ```bash
-python3 scripts/autopilot_ui.py --port 8787
+./generate.sh autopilot-ui --port 8787
 ```
 
 Then open `http://127.0.0.1:8787` and paste the job posting text. The UI generates the same autopilot brief file and can optionally append a row to `applications/tracker.md`.
@@ -152,7 +177,7 @@ Then open `http://127.0.0.1:8787` and paste the job posting text. The UI generat
 - **HTML**: Styled HTML for portfolio websites
 
 **Requirements**:
-- Python 3.x (required)
+- `uv` for Python environment and dependency management
 - `pdftotext` from poppler-utils (optional, for TXT)
 - `pandoc` (optional, for MD/HTML)
 
@@ -170,7 +195,7 @@ profile, and optionally export a tailored CV variant in one step:
 
 ```bash
 # Analyze from a file and export a senior PM variant
-./scripts/job_pipeline.py \
+uv run python scripts/job_pipeline.py \
   --file sample_job_posting.txt \
   --company "Example Builder" \
   --title "Senior Project Manager" \
@@ -178,7 +203,7 @@ profile, and optionally export a tailored CV variant in one step:
   --formats pdf txt
 
 # Analyze inline text and print JSON output
-./scripts/job_pipeline.py \
+uv run python scripts/job_pipeline.py \
   --text "Senior Project Manager with multifamily experience..." \
   --company "Inline Co" \
   --title "Senior PM" \
@@ -364,22 +389,22 @@ The `scripts/achievements.py` tool provides powerful querying and reporting:
 
 ```bash
 # List all achievements
-python3 scripts/achievements.py list
+uv run python scripts/achievements.py list
 
 # Filter by tags (for CV variants)
-python3 scripts/achievements.py list --tags senior-pm multifamily
+uv run python scripts/achievements.py list --tags senior-pm multifamily
 
 # Show database statistics
-python3 scripts/achievements.py stats
+uv run python scripts/achievements.py stats
 
 # Get specific achievement by ID
-python3 scripts/achievements.py get eastlake-value
+uv run python scripts/achievements.py get eastlake-value
 
 # Generate detailed report
-python3 scripts/achievements.py report --tags senior-pm --sort value
+uv run python scripts/achievements.py report --tags senior-pm --sort value
 
 # Export to JSON
-python3 scripts/achievements.py export --format json --output achievements.json
+uv run python scripts/achievements.py export --format json --output achievements.json
 ```
 
 ### Integrating Achievements in Typst
@@ -442,10 +467,10 @@ Achievements are tagged for easy filtering:
 Example workflow for creating a Superintendent-focused CV:
 ```bash
 # See all superintendent achievements
-python3 scripts/achievements.py report --tags superintendent
+uv run python scripts/achievements.py report --tags superintendent
 
 # Export for reference
-python3 scripts/achievements.py export --tags superintendent --output superintendent_achievements.json
+uv run python scripts/achievements.py export --tags superintendent --output superintendent_achievements.json
 ```
 
 ### Adding New Achievements
@@ -643,13 +668,13 @@ Optimize your CV keywords for ATS compatibility by analyzing job postings:
 
 ```bash
 # Analyze a job posting
-python3 scripts/analyze_job.py --file job_posting.txt
+uv run python scripts/analyze_job.py --file job_posting.txt
 
 # Generate keyword suggestions
-python3 scripts/analyze_job.py --file job_posting.txt --suggest
+uv run python scripts/analyze_job.py --file job_posting.txt --suggest
 
 # Save keyword profile
-python3 scripts/analyze_job.py --file job_posting.txt --suggest --output new_keywords.toml
+uv run python scripts/analyze_job.py --file job_posting.txt --suggest --output new_keywords.toml
 ```
 
 **Features**:

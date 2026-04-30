@@ -15,6 +15,7 @@ from scripts.discover_jobs import (
     lever_api_url,
     load_fixture_jobs,
     load_config,
+    parse_search_page,
     nonnegative_int,
     parse_career_page,
     parse_lever_created_at,
@@ -22,6 +23,7 @@ from scripts.discover_jobs import (
     parse_posted_at,
     resolve_runtime_dir,
     score_jobs,
+    page_to_html,
     render_latest_report,
     write_autopilot_inputs,
 )
@@ -426,6 +428,141 @@ class AdapterTests(unittest.TestCase):
         self.assertEqual(jobs[0].url, "https://example.com/careers/senior-superintendent")
         self.assertEqual(jobs[1].url, "https://example.com/careers/project-engineer")
         self.assertTrue(all(job.title != "About" for job in jobs))
+
+    def test_fetch_text_uses_scrapling_fetcher_when_available(self):
+        import scripts.discover_jobs as discover_jobs
+
+        class FakePage:
+            html_content = "<html><body>ok</body></html>"
+
+        class FakeFetcher:
+            calls = []
+
+            @staticmethod
+            def get(url, **kwargs):
+                FakeFetcher.calls.append((url, kwargs))
+                return FakePage()
+
+        original_fetcher = discover_jobs.ScraplingFetcher
+        try:
+            discover_jobs.ScraplingFetcher = FakeFetcher
+            html = discover_jobs.fetch_text("https://example.com/jobs")
+        finally:
+            discover_jobs.ScraplingFetcher = original_fetcher
+
+        self.assertEqual(html, "<html><body>ok</body></html>")
+        self.assertEqual(FakeFetcher.calls[0][0], "https://example.com/jobs")
+        self.assertEqual(FakeFetcher.calls[0][1]["stealthy_headers"], True)
+
+    def test_page_to_html_prefers_raw_body_for_json_responses(self):
+        class FakeJsonResponse:
+            body = b'[{"title":"Project Manager"}]'
+            html_content = '<html><body>[{"title":"Project Manager"}]</body></html>'
+
+        self.assertEqual(page_to_html(FakeJsonResponse()), '[{"title":"Project Manager"}]')
+
+    def test_fetch_text_reports_scrapling_http_errors(self):
+        import scripts.discover_jobs as discover_jobs
+
+        class FakePage:
+            status = 403
+            body = b"blocked"
+
+        class FakeFetcher:
+            @staticmethod
+            def get(url, **kwargs):
+                return FakePage()
+
+        original_fetcher = discover_jobs.ScraplingFetcher
+        try:
+            discover_jobs.ScraplingFetcher = FakeFetcher
+            with self.assertRaisesRegex(ValueError, "HTTP 403"):
+                discover_jobs.fetch_text("https://example.com/blocked")
+        finally:
+            discover_jobs.ScraplingFetcher = original_fetcher
+
+    def test_fetch_text_falls_back_to_urllib_when_scrapling_raises(self):
+        import scripts.discover_jobs as discover_jobs
+
+        class BrokenFetcher:
+            @staticmethod
+            def get(url, **kwargs):
+                raise TimeoutError("timeout")
+
+        class FakeResponse:
+            def __enter__(self):
+                return self
+
+            def __exit__(self, exc_type, exc, tb):
+                return False
+
+            def read(self):
+                return b"fallback html"
+
+        original_fetcher = discover_jobs.ScraplingFetcher
+        original_urlopen = discover_jobs.urlopen
+        try:
+            discover_jobs.ScraplingFetcher = BrokenFetcher
+            discover_jobs.urlopen = lambda request, timeout: FakeResponse()
+            self.assertEqual(discover_jobs.fetch_text("https://example.com/jobs"), "fallback html")
+        finally:
+            discover_jobs.ScraplingFetcher = original_fetcher
+            discover_jobs.urlopen = original_urlopen
+
+    def test_parse_search_page_extracts_public_aggregator_result_links(self):
+        html = """
+        <html><body>
+          <article class="job-card">
+            <a href="/jobs/123">Senior Construction Project Manager</a>
+            <span>Acme Builders</span>
+            <span>Seattle, WA</span>
+            <time datetime="2026-04-18">1 day ago</time>
+            <p>Lead commercial tenant improvement projects.</p>
+          </article>
+          <article class="job-card">
+            <a href="/jobs/software">Software Project Manager</a>
+          </article>
+        </body></html>
+        """
+        jobs = parse_search_page(
+            html,
+            {
+                "name": "public-board",
+                "company": "Multiple employers",
+                "url": "https://jobs.example.com/search",
+                "location": "Seattle, WA",
+            },
+        )
+
+        self.assertEqual(len(jobs), 1)
+        self.assertEqual(jobs[0].title, "Senior Construction Project Manager")
+        self.assertEqual(jobs[0].company, "Multiple employers")
+        self.assertEqual(jobs[0].location, "Seattle, WA")
+        self.assertEqual(jobs[0].url, "https://jobs.example.com/jobs/123")
+        self.assertEqual(jobs[0].source, "public-board")
+        self.assertEqual(jobs[0].posted_at, "2026-04-18T00:00:00+00:00")
+
+    def test_fetch_source_supports_search_page_sources(self):
+        import scripts.discover_jobs as discover_jobs
+
+        original_fetch_text = discover_jobs.fetch_text
+        try:
+            discover_jobs.fetch_text = lambda url: "<a href='/jobs/pm'>Construction Project Manager</a>"
+            jobs = discover_jobs.fetch_source(
+                {
+                    "type": "search_page",
+                    "name": "aggregator",
+                    "company": "Multiple employers",
+                    "url": "https://aggregator.example/search",
+                    "location": "Seattle, WA",
+                }
+            )
+        finally:
+            discover_jobs.fetch_text = original_fetch_text
+
+        self.assertEqual(len(jobs), 1)
+        self.assertEqual(jobs[0].title, "Construction Project Manager")
+        self.assertEqual(jobs[0].url, "https://aggregator.example/jobs/pm")
 
 
 if __name__ == "__main__":

@@ -86,7 +86,7 @@ case $1 in
         fi
 
         echo "=== Exporting CV to format(s): $formats ==="
-        python3 scripts/export_cv.py cv --formats $formats
+        uv run python scripts/export_cv.py cv --formats $formats
         ;;
 
     "autopilot")
@@ -96,34 +96,36 @@ case $1 in
         fi
         shift
         echo "=== Building application autopilot brief ==="
-        python3 scripts/application_autopilot.py --file "$@"
+        uv run python scripts/application_autopilot.py --file "$@"
         ;;
 
     "autopilot-ui")
         echo "=== Launching application autopilot UI ==="
-        python3 scripts/autopilot_ui.py "${@:2}"
+        uv run python scripts/autopilot_ui.py "${@:2}"
+        ;;
+
+    "dashboard")
+        echo "=== Launching Proteus application dashboard ==="
+        uv run python scripts/dashboard_ui.py "${@:2}"
         ;;
 
     "discover")
-        echo "=== Scanning for new jobs (one-shot) ==="
-        python3 scripts/job_discovery.py "${@:2}"
+        shift
+        echo "=== Discovering fresh job postings ==="
+        uv run python scripts/discover_jobs.py "$@"
         ;;
 
-    "discover-auto")
-        echo "=== Scanning for new jobs + auto-generating briefs ==="
-        python3 scripts/job_discovery.py --auto "${@:2}"
-        ;;
-
-    "discover-daemon")
-        echo "=== Job discovery daemon (Ctrl+C to stop) ==="
-        python3 scripts/job_discovery.py --daemon "${@:2}"
+    "prepare-applications")
+        shift
+        echo "=== Preparing application packages ==="
+        uv run python scripts/prepare_applications.py "$@"
         ;;
 
     "clean")
         echo "=== Cleaning compiled PDFs ==="
         rm -f cv.pdf letter.pdf portfolio.pdf
         echo -e "${GREEN}✓ Cleaned all PDF files${NC}"
-        ;;
+        ;; FFs
 
     "help"|"--help"|"-h")
         echo "CV Generation Script"
@@ -139,7 +141,9 @@ case $1 in
         echo "  export [formats] Export CV to multiple formats"
         echo "  autopilot <file> Generate tailored application brief from job posting"
         echo "  autopilot-ui [args] Launch local web UI for autopilot"
+        echo "  dashboard [args] Launch local discovery/applications dashboard"
         echo "  discover [args]  Discover fresh public job postings"
+        echo "  prepare-applications [args] Prepare CV and cover-letter packages from discovery"
         echo "  clean           Remove all compiled PDFs"
         echo "  help            Show this help message"
         echo ""

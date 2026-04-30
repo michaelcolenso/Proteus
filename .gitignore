@@ -25,6 +25,7 @@ applications/discovery/job_texts/
 applications/discovery/jobs.jsonl
 applications/discovery/latest.md
 applications/discovery/seen.json
+applications/packages/
 
 # Ignore OS-specific files
 .DS_Store
