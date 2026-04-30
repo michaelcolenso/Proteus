@@ -103,7 +103,7 @@
       rest: 0.4pt + hairline,
     ),
     clip: true,
-    breakable: true,
+    breakable: false,
   )[
     // Optional photo strip — full-width, cropped to fixed height
     #if photo != none {
