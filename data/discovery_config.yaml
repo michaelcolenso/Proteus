@@ -1,0 +1,62 @@
+# Job Discovery Configuration
+# Edit this file to customize sources, keywords, and thresholds.
+
+search:
+  keywords:
+    - "construction project manager"
+    - "senior project manager construction"
+    - "construction manager"
+    - "superintendent construction"
+    - "owner's representative construction"
+    - "senior PM construction"
+  location: "Seattle, WA"
+  radius_miles: 50
+  exclude_keywords:
+    - "junior"
+    - "intern"
+    - "entry level"
+    - "entry-level"
+    - "assistant project manager"
+    - "APM"
+
+sources:
+  rss:
+    - name: Indeed
+      url: "https://www.indeed.com/rss?q=construction+project+manager&l=Seattle%2C+WA&radius=50&sort=date"
+    - name: Indeed-Superintendent
+      url: "https://www.indeed.com/rss?q=superintendent+construction&l=Seattle%2C+WA&radius=50&sort=date"
+    - name: ZipRecruiter
+      url: "https://www.ziprecruiter.com/candidate/search?search=construction+project+manager&location=Seattle%2C+WA&radius=50mi&rss=1"
+    - name: Craigslist
+      url: "https://seattle.craigslist.org/search/jjj?query=construction+project+manager&format=rss"
+    - name: SimplyHired
+      url: "https://www.simplyhired.com/search?q=construction+project+manager&l=seattle%2C+wa&rss=1"
+
+  # Public ATS APIs — no auth required
+  ats_apis:
+    greenhouse:
+      - turner-construction
+      - skanska
+      - mortenson
+      - hensel-phelps
+    lever:
+      - swinerton
+      - clark-construction
+
+  # Company career pages to scrape directly
+  company_pages:
+    - name: "Lease Crutcher Lewis"
+      url: "https://www.lewisbuilds.com/careers"
+    - name: "Absher Construction"
+      url: "https://www.absher.com/careers"
+    - name: "Andersen Construction"
+      url: "https://www.andersen-const.com/careers"
+
+scoring:
+  auto_apply_threshold: 80   # Run autopilot + alert at this score
+  review_threshold: 60       # Add to review list at this score
+
+polling:
+  business_hours_interval_min: 15   # Poll interval 6am–6pm local time
+  off_hours_interval_min: 60        # Poll interval outside business hours
+  timezone: "America/Los_Angeles"   # IANA timezone for business-hours window (Python 3.9+ ZoneInfo)

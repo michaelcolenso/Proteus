@@ -125,7 +125,7 @@ case $1 in
         echo "=== Cleaning compiled PDFs ==="
         rm -f cv.pdf letter.pdf portfolio.pdf
         echo -e "${GREEN}✓ Cleaned all PDF files${NC}"
-        ;;
+        ;; FFs
 
     "help"|"--help"|"-h")
         echo "CV Generation Script"
@@ -158,14 +158,10 @@ case $1 in
         echo "  ./generate.sh export txt html    # Export CV to specific formats"
         echo "  ./generate.sh autopilot sample_job_posting.txt"
         echo "  ./generate.sh autopilot-ui --port 8787"
-        echo "  ./generate.sh dashboard --port 8790"
-        echo "  ./generate.sh discover --limit 25"
-        echo "  ./generate.sh discover --autopilot-top 5"
-        echo "  ./generate.sh discover --since-hours 0"
-        echo "  ./generate.sh discover --reset-state"
-        echo "  ./generate.sh discover --dry-run-fixtures /tmp/proteus-discovery/jobs.json"
-        echo "  ./generate.sh prepare-applications --limit 25"
-        echo "  ./generate.sh prepare-applications --all --no-compile"
+        echo "  ./generate.sh discover           # One-shot scan"
+        echo "  ./generate.sh discover-auto      # Scan + auto-generate briefs"
+        echo "  ./generate.sh discover-daemon    # Continuous polling"
+        echo "  ./generate.sh discover --reset   # Clear cache, rescan everything"
         echo "  ./generate.sh clean              # Remove PDFs"
         echo ""
         echo "Export Formats:"
