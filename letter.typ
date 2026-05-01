@@ -1,117 +1,194 @@
-// Imports
-#import "@preview/brilliant-cv:2.0.3": letter
+// ============================================================================
+// COVER LETTER — Editorial stationery matched to the luxury residential
+// portfolio. Shares the navy / gold / cream palette and typography stack so
+// the letter, CV, and portfolio read as one piece of correspondence.
+// ----------------------------------------------------------------------------
+// Compile with:   typst compile letter.typ
+//            or:  ./generate.sh letter
+// ============================================================================
+
+#import "modules_en/portfolio/theme.typ": *
+
 #let metadata = toml("./metadata.toml")
 
-// Extract color from metadata
-#let accent-color = if metadata.layout.awesome_color == "darknight" {
-  rgb("#1E2022")
-} else if metadata.layout.awesome_color == "skyblue" {
-  rgb("#0395DE")
-} else if metadata.layout.awesome_color == "red" {
-  rgb("#DC3522")
-} else if metadata.layout.awesome_color == "nephritis" {
-  rgb("#27AE60")
-} else if metadata.layout.awesome_color == "concrete" {
-  rgb("#95A5A6")
-} else {
-  // Assume hex color
-  rgb(metadata.layout.awesome_color)
-}
+// ---- Recipient + subject (edit per application) -----------------------------
+#let recipient-name    = "Landsea Homes"
+#let recipient-address = "Issaquah, Washington"
+#let letter-subject    = "Senior Project Manager Position"
+#let letter-date       = datetime.today().display("[month repr:long] [day], [year]")
 
-// Custom letterhead configuration
-#let use-custom-letterhead = true
-
-// Configure letter with custom styling
-#show: letter.with(
-  metadata,
-  myAddress: "Seattle, Washington",
-  recipientName: "Landsea Homes",
-  recipientAddress: "Issaquah, Washington",
-  date: datetime.today().display("[month repr:long] [day], [year]"),
-  subject: "Re: Senior Project Manager Position",
-  signature: image("src/signature.png"),
+// ---- Document metadata ------------------------------------------------------
+#set document(
+  title: "Michael Colenso — Cover Letter",
+  author: "Michael Colenso",
 )
 
-// Custom letterhead overlay (if enabled)
-#if use-custom-letterhead {
-  place(
-    top + left,
-    dx: 0pt,
-    dy: -20pt,
-    block(
-      width: 100%,
-      {
-        // Name in large, elegant typography
-        text(
-          size: 24pt,
-          weight: "bold",
-          fill: accent-color,
-          font: metadata.layout.fonts.header_font,
-          [Michael Colenso]
-        )
-        v(-8pt)
-        // Title/profession line
-        text(
-          size: 10pt,
-          fill: rgb("#555555"),
-          font: metadata.layout.fonts.regular_fonts.at(0),
-          tracking: 0.5pt,
-          smallcaps[Construction Project Manager]
-        )
-        v(4pt)
-        // Elegant separator line
-        line(length: 100%, stroke: 0.5pt + accent-color.lighten(40%))
-        v(2pt)
-        // Contact information in refined layout
-        text(
-          size: 9pt,
-          fill: rgb("#444444"),
-          {
-            metadata.personal.info.phone
-            h(12pt)
-            sym.circle.filled.small
-            h(12pt)
-            metadata.personal.info.email
-            h(12pt)
-            sym.circle.filled.small
-            h(12pt)
-            [Seattle, WA]
-          }
-        )
-        v(16pt)
-      }
+// ---- Page setup -------------------------------------------------------------
+#set page(
+  paper: "us-letter",
+  margin: (x: 1.0in, top: 0.85in, bottom: 0.95in),
+  fill: cream,
+  footer: [
+    #set text(
+      font: heading-font,
+      size: 7.5pt,
+      tracking: 2.2pt,
+      weight: "medium",
+      fill: slate,
     )
-  )
-  // Add spacing to account for letterhead
-  v(85pt)
-}
-
-// Enhanced typography and spacing for body text
-#set par(
-  leading: 0.65em,        // Line spacing within paragraphs
-  spacing: 1.2em,         // Space between paragraphs
-  justify: true,          // Justified text for professional appearance
-  first-line-indent: 0pt  // No first-line indent (modern style)
+    #grid(
+      columns: (1fr, auto, 1fr),
+      column-gutter: 14pt,
+      align: (left + horizon, center + horizon, right + horizon),
+      upper("Michael Colenso"),
+      line(length: 28pt, stroke: 0.5pt + gold),
+      upper("Cover Letter · Seattle, WA"),
+    )
+  ],
+  footer-descent: 26pt,
 )
 
+// ---- Type ------------------------------------------------------------------
 #set text(
-  size: 11pt,             // Slightly larger for better readability
-  font: metadata.layout.fonts.regular_fonts.at(0)
+  font: body-font,
+  size: 10.5pt,
+  fill: charcoal,
+  lang: "en",
 )
 
+#set par(
+  justify: true,
+  leading: 0.72em,
+  spacing: 1.05em,
+  first-line-indent: 0pt,
+)
+
+#show link: set text(fill: gold-dark)
+
+// ============================================================================
+// 1. LETTERHEAD
+// ============================================================================
+#grid(
+  columns: (1fr, auto),
+  column-gutter: 18pt,
+  align: (left + bottom, right + bottom),
+  [
+    #text(
+      font: display-font,
+      size: 28pt,
+      weight: "light",
+      fill: navy,
+    )[Michael Colenso]
+    #v(-2pt)
+    #text(
+      font: heading-font,
+      size: 8.5pt,
+      tracking: 2.8pt,
+      weight: "medium",
+      fill: gold-dark,
+    )[#upper("Construction Project Manager")]
+  ],
+  [
+    #set text(size: 8.8pt, fill: slate)
+    #set par(leading: 0.85em, justify: false)
+    #align(right)[
+      #metadata.personal.info.phone \
+      #link("mailto:" + metadata.personal.info.email)[#metadata.personal.info.email] \
+      Seattle, Washington
+    ]
+  ],
+)
+
+#v(10pt)
+#line(length: 100%, stroke: 0.6pt + gold)
+
+// ============================================================================
+// 2. DATE · RECIPIENT · SUBJECT
+// ============================================================================
+#v(30pt)
+
+#text(
+  font: heading-font,
+  size: 8.5pt,
+  tracking: 1.8pt,
+  weight: "medium",
+  fill: gold-dark,
+)[#upper(letter-date)]
+
+#v(18pt)
+
+#block(spacing: 0pt)[
+  #text(
+    font: heading-font,
+    size: 11pt,
+    weight: "medium",
+    fill: navy,
+  )[#recipient-name] \
+  #text(size: 10pt, fill: slate)[#recipient-address]
+]
+
+#v(18pt)
+
+#block(spacing: 0pt)[
+  #text(
+    font: heading-font,
+    size: 8pt,
+    tracking: 1.6pt,
+    weight: "medium",
+    fill: gold-dark,
+  )[#upper("Re")]
+  #h(8pt)
+  #text(
+    font: heading-font,
+    size: 10.5pt,
+    weight: "medium",
+    fill: navy,
+  )[#letter-subject]
+]
+
+#v(22pt)
+#line(length: 36pt, stroke: 1pt + gold)
+#v(18pt)
+
+// ============================================================================
+// 3. BODY
+// ============================================================================
 Dear Hiring Manager,
 
 I'm a Seattle-based Construction Manager with 20+ years delivering multifamily, high-rise, senior living, and luxury residential projects. My background includes high-end custom homes with Toth Construction and ultra-luxury resort residential work with Discovery Land Company, along with large technical builds across Seattle, LA, and Chicago.
 
 I lead with strong field presence, clear communication, and disciplined scheduling. I'm fluent in the Seattle subcontractor network, permitting processes, and managing multiple jobsites while maintaining quality, safety, and cost control. My teams rely on predictable planning, early problem-solving, and coordination that keeps owners confident and projects on track.
 
-Landsea's focus on autonomy, accountability, and high standards aligns with how I run work. I'd bring deep regional experience, luxury-level quality expectations, and steady leadership to support your projects in Issaquah and the surrounding area.
+Your focus on autonomy, accountability, and high standards aligns with how I run work. I'd bring deep regional experience, luxury-level quality expectations, and steady leadership to support your projects in Issaquah and the surrounding area.
 
 I'd welcome a conversation about how I can contribute.
 
-#v(1.2em)
+// ============================================================================
+// 4. SIGN-OFF
+// ============================================================================
+#v(14pt)
 
-Best regards,
+With regards,
 
 #v(2pt)
 
+#image("src/signature.png", height: 46pt)
+
+#v(-6pt)
+
+#text(
+  font: display-font,
+  size: 13pt,
+  weight: "medium",
+  fill: navy,
+)[Michael Colenso]
+
+#v(1pt)
+
+#text(
+  font: heading-font,
+  size: 8pt,
+  tracking: 1.8pt,
+  weight: "medium",
+  fill: gold-dark,
+)[#upper("Construction Project Manager")]
