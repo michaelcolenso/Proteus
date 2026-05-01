@@ -62,6 +62,7 @@
   fill: cream-deep,
   stroke: (left: 2pt + gold),
   radius: 2pt,
+  breakable: false,
 )[
   #text(
     font: heading-font,
