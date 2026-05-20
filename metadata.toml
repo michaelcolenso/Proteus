@@ -87,8 +87,8 @@ language = "en"
 # each section must contains the following fields
 [lang.en]
     header_quote = "Construction leader with 18+ years delivering $300M+ in residential and mixed-use projects, including luxury remodels, historic renovations, and multifamily builds. Known for aligning preconstruction and production teams, tightening schedules, and protecting margins through rigorous job costing, value engineering, and change management. Track record includes delivering a $40M project 2 months early, navigating $6M+ in negotiated changes, and maintaining zero recordable safety incidents while earning trusted-advisor status with discerning clients."
-    cv_footer = "Head of Remodeling"
-    letter_footer = "Head of Remodeling"
+    cv_footer = "Construction Project Manager"
+    letter_footer = "Construction Project Manager"
 
 [lang.fr]
     header_quote = "Chef de projet de construction techniquement compétent et axé sur le client, livrant des projets complexes à temps et dans les limites du budget."
