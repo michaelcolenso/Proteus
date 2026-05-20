@@ -27,7 +27,7 @@
 #set page(
   paper: "us-letter",
   margin: (x: 1.0in, top: 0.85in, bottom: 0.95in),
-  fill: cream,
+  fill: white,
   footer: [
     #set text(
       font: heading-font,
@@ -42,7 +42,7 @@
       align: (left + horizon, center + horizon, right + horizon),
       upper("Michael Colenso"),
       line(length: 28pt, stroke: 0.5pt + gold),
-      upper("Cover Letter · Seattle, WA"),
+      upper("Seattle, WA"),
     )
   ],
   footer-descent: 26pt,
