@@ -7,9 +7,9 @@
 //            or:  copy to letter.typ and run ./generate.sh letter
 // ============================================================================
 
-#import "modules_en/portfolio/theme.typ": *
+#import "../modules_en/portfolio/theme.typ": *
 
-#let metadata = toml("./metadata.toml")
+#let metadata = toml("../metadata.toml")
 
 // ---- Recipient + subject (edit per application) -----------------------------
 #let recipient-name    = "Mercer Builders"
@@ -181,7 +181,7 @@ With regards,
 
 #v(2pt)
 
-#image("src/signature.png", height: 46pt)
+#image("../src/signature.png", height: 46pt)
 
 #v(-6pt)
 
