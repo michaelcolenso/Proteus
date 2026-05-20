@@ -8,6 +8,8 @@
 
     #columns[
 
+    #v(4pt)
+
     #cvEntry(
       title: [Hotel Delivered 2 Months Early — Hyatt Place Hotel & Apartments],
       society: [157-room hotel + 102 residential units],
@@ -21,6 +23,8 @@
       tags: ("Hospitality", "Multi-Family", "Last Planner System", "Change Management")
     )
 
+    #v(8pt)
+
     #cvEntry(
       title: [\$200M Twin Towers — 255 S. King St],
       society: [23-story hotel + 18-story office/parking],
@@ -32,6 +36,8 @@
       ),
       tags: ("High-Rise Construction", "Hospitality")
     )
+
+    #v(8pt)
 
     #cvEntry(
       title: [Award-Winning Historic Renovation — The Alaska Building],
@@ -45,6 +51,8 @@
       ),
       tags: ("Historic Restoration", "Seismic Retrofit", "Award-Winning Projects")
     )
+
+    #v(8pt)
 
     #cvEntry(
       title: [2210 Eastlake],
@@ -60,6 +68,8 @@
 
     #colbreak()
 
+    #v(4pt)
+
     #cvEntry(
       title: [Quail Park of Lynnwood Expansion],
       society: [Senior living facility expansion],
@@ -73,6 +83,8 @@
       tags: ("Senior Living", "Facility Expansion", "Project Coordination")
     )
 
+    #v(8pt)
+
     #cvEntry(
       title: [Barton Senior Residences — 15% Faster, 10% Under Budget],
       society: [Senior care facility],
@@ -84,6 +96,8 @@
       ),
       tags: ("Healthcare Facilities", "Lean Construction", "Scheduling")
     )
+
+    #v(8pt)
 
     #cvEntry(
       title: [Temple Lofts — Historic Seismic Retrofit],
@@ -97,6 +111,8 @@
       ),
       tags: ("Historic Renovation", "Seismic Retrofit", "Multi-Family Housing")
     )
+
+    #v(8pt)
 
     #cvEntry(
       title: [Luxury Residential Portfolio],
